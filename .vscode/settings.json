@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "ziggy.db.elephantsql.com",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "Queries",
+      "database": "irhkhcgz",
+      "username": "irhkhcgz",
+      "password": "VFFnZURgQ7rBBZ6aDfpBg4co6RCEpl1v"
+    }
+  ]
+}
