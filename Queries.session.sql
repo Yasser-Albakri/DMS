@@ -1,5 +1,5 @@
-SELECT *
-from acc_info;
+-- SELECT *
+-- from acc_info;
 
 -- SELECT *
 -- from out_info;
