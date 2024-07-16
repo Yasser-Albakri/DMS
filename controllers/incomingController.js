@@ -58,7 +58,7 @@ exports.getIncome = catchAsync(async (req, res, next) => {
 
 exports.createIncome = catchAsync(async (req, res, next) => {
   try {
-    upload.single("document")(req, res, async (err) => {
+    upload.single("file")(req, res, async (err) => {
       if (err) {
         return next(new AppError(err, 400));
       }
