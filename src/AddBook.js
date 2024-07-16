@@ -12,7 +12,6 @@ const AddBook = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
-        file: null,
         account_id: null,
         type: 1,
         book_number: "",
@@ -26,6 +25,17 @@ const AddBook = () => {
         note:"",
         incoming_date:"",
     });
+
+    const [uplo, setUplo] = useState();
+    const [file, setFile] = useState(null);
+
+    // useEffect(() => {
+    //     if (uplo) {
+    //       const objectUrl = URL.createObjectURL(uplo); // create here
+    //       setPreview(objectUrl);
+    //     }
+    //     return () => URL.revokeObjectURL(uplo);      // And revoke on unmount
+    //   }, [uplo]);
 
     const [filePreview, setFilePreview] = useState(null);
     const fileInputRef = useRef(null);
@@ -46,32 +56,12 @@ const AddBook = () => {
     }, [Id]);
 
     const handleChange = (e) => {
-        const { id, value, files, name } = e.target;
-        if (files) {
-            const file = files[0];
-            setFormData({
-                ...formData,
-                file: file
-            });
-
-            const fileURL = URL.createObjectURL(file);
-            if (file.type === 'application/pdf' || file.type.startsWith('image/')) {
-                setFilePreview(fileURL);
-            } else {
-                setFilePreview(null);
-            }
-        } else if (name === 'referral') {
-            setFormData({
-                ...formData,
-                [name]: value
-            });
-        } else {
+        const { id, value } = e.target;
             setFormData({
                 ...formData,
                 [id]: value
             });
-        }
-    };
+        };
 
     const handleRemoveFile = () => {
         setFormData({
@@ -83,6 +73,22 @@ const AddBook = () => {
             fileInputRef.current.value = '';
         }
     };
+
+
+    const handleFileChange = (e) => {
+        setUplo(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        const fileURL = URL.createObjectURL(selectedFile);
+        setFilePreview(fileURL);
+
+        console.log('File selected:', selectedFile);
+        console.log('File name:', selectedFile.name);
+        console.log('File type:', selectedFile.type);
+        console.log('File size:', selectedFile.size);
+        
+    }
+    
 
     const nextStep = () => {
         if (currentStep < steps.length - 1) {
@@ -96,22 +102,28 @@ const AddBook = () => {
         }
     };
 
+    const formDataToSend = new FormData();
+    formDataToSend.append('document', file);
+
+    for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
+
+      const lop = uplo;
+      console.log(formDataToSend.get("document".value));
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // const url = Id ? `http://127.0.0.1:4000/income${Id}` : 'http://127.0.0.1:4000/income';
         // const method = Id ? 'PUT' : 'POST';
-
-        const data = new FormData();
-        for (const key in formData) {
-            if (key === 'file' && formData[key] instanceof File) {
-                data.append(key, formData[key]);
-            } else {
-                data.append(key, formData[key]);
-            }
-        }
+        
+      console.log(file.name);
+        
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/income", {
+            const response = await axios.post(
+                "http://127.0.0.1:4000/income", 
+                {
                 account_id: formData.account_id,
                 type: formData.type,
                 book_number: formData.book_number,
@@ -120,26 +132,17 @@ const AddBook = () => {
                 user_id: formData.user_id,
                 note: formData.note,
                 incoming_number: formData.incoming_number,
-                file_path: formData.file,
+                file_path: file.name,
                 incoming_date: formData.incoming_date,
                 issuing_authority: formData.issuing_authority,
                 section: formData.section,
-            }
+                referral: formData.referral,
+                }
         );
             console.log(response.data);
             console.log(response);
             console.log(formData)
-            console.log('Form Data Debug:', JSON.stringify(formData, (key, value) => {
-                if (key === 'file' && value instanceof File) {
-                    return {
-                        name: value.name,
-                        type: value.type,
-                        size: value.size,
-                        lastModified: value.lastModified,
-                    };
-                }
-                return value;
-            }, 2));
+            alert("Book added successfully!");
             navigate('/BookReceived'); // Adjust the path to where you want to navigate after success
         } catch (error) {
             console.error("Error:", error);
@@ -151,10 +154,9 @@ const AddBook = () => {
         <div className="step" key="step1">
             <div className="form-group one">
                 <label htmlFor="file">الكتاب:</label>
-                <input type="file" className="form-control" ref={fileInputRef} id="file" name='document' onChange={handleChange} />
-                {formData.file && (
-                    <button type="button" className="btn btn-danger" onClick={handleRemoveFile}>Remove File</button>
-                )}
+                <input type="file" className="form-control" id="file" name='document' onChange={handleFileChange} />
+                {/* {console.log(uplo)}
+                {console.log(filePreview)} */}
             </div>
             <div className="form-group one">
                 <label htmlFor="account_id">تسلسل بطاقة:</label>
@@ -211,10 +213,10 @@ const AddBook = () => {
             <div className="form-group">
                 <label>الاحالة:</label>
                 <div>
-                    <input type="radio" name='referral' value='مدير القسم' checked={formData.referral === 'مدير القسم'} onChange={handleChange} />
+                    <input type="radio" name='referral' id='referral' value='مدير القسم' checked={formData.referral === 'مدير القسم'} onChange={handleChange} />
                     <label>مدير القسم</label>
-                    <input type="radio" name='referral' value='معلون مدير القسم' checked={formData.referral === 'معلون مدير القسم'} onChange={handleChange} />
-                    <label>معلون مدير القسم</label>
+                    <input type="radio" name='referral' id='referral' value='معاون مدير القسم' checked={formData.referral === 'معاون مدير القسم'} onChange={handleChange} />
+                    <label>معاون مدير القسم</label>
                 </div>
             </div>
             <button type="button" className="btn btn-secondary" onClick={prevStep}>رجوع</button>
@@ -243,7 +245,7 @@ const AddBook = () => {
             </form>
             <div className='disBook'>
                 {filePreview && (
-                    formData.file.type === 'application/pdf' ? (
+                    file.type === 'application/pdf' ? (
                         <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
                     ) : (
                         <img src={filePreview} alt="File Preview" />

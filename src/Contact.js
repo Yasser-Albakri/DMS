@@ -184,12 +184,6 @@ export default function Contact() {
                 case `/Card/${id}`:
                 setData({
                     title: "البطاقة",
-                    categories: [
-                        { number: 1, subject: "مذكرة" },
-                        { number: 2, subject: "طلب" },
-                        { number: 3, subject: "كتاب" },
-                        { number: 4, subject: "اجازة" }
-                    ]
                 });
                 break;
             case "/Cards":
@@ -222,7 +216,6 @@ export default function Contact() {
             case "/Vacations":
                 setData({
                     title: "اخر الاجازات",
-                    totalPublished: 8,
                     publishedBooks: [
                         { id: 3, title: "اجازة" }
                     ]
@@ -291,8 +284,8 @@ export default function Contact() {
         if (!Array.isArray(cards)) return null;
         return cards.map((card) => (
             <tr key={card.account_id} >
-                <Link to={`/Card/${card.account_id}`} style={{textDecoration:'none', color:'black', margin:'5px', backgroundColor: 'rgb(238 238 238)', padding:'10px', borderRadius:'20px', display:"flex", justifyContent:"space-around", alignItems:"center" }}>
-                    <td>{card.account_id}</td>
+                <Link to={`/Card/${card.id}`} style={{textDecoration:'none', color:'black', margin:'5px', backgroundColor: 'rgb(238 238 238)', padding:'10px', borderRadius:'20px', display:"flex", justifyContent:"space-around", alignItems:"center" }}>
+                    <td>{card.id}</td>
                     <td>{card.fullname}</td>
                     <td>{card.company_name}</td>
                     <td>{card.renewal}</td>
@@ -310,6 +303,30 @@ export default function Contact() {
                 <td>{section.id}</td>
             </tr>
         ));
+    };
+
+    const renderVaca = () => {
+        return outgoing
+            .filter(outgoing => outgoing.type === 3) // Adjust this condition based on your actual requirement
+            .map((outgoing) => (
+                <tr key={outgoing.id}>
+                    <td>
+                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            {outgoing.document_number}
+                        </Link>
+                    </td>
+                    <td>
+                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            {outgoing.subject}
+                        </Link>
+                    </td>
+                    <td>
+                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            {outgoing.leave_status}
+                        </Link>
+                    </td>
+                </tr>
+            ));
     };
 
 
@@ -395,7 +412,7 @@ export default function Contact() {
                         </div>
                         <hr />
                         <table>
-                            <tr>
+                            <tr style={{textDecoration:'none', color:'black', borderRadius:'20px', display:"flex", justifyContent:"space-around", alignItems:"center" }}>
                                 <td className="td1">التسلسل</td>
                                 <td>اسم المستثمر</td>
                                 <td>اسم المؤسسة</td>
@@ -430,7 +447,7 @@ export default function Contact() {
                         <hr />
                         <table>
                             <tbody>
-                            {renderOutgoing()}
+                            {renderVaca()}
                             </tbody>
                         </table>
                     </div>
@@ -441,7 +458,7 @@ export default function Contact() {
                         <div className="info">
                             <div className="tex">
                                 <h3>{data.title}</h3>
-                                <p>عدد الكتب الكلي : <span>{data.totalReceived}</span></p>
+                                <p>عدد الكتب الكلي : <span>{DocLen}</span></p>
                             </div>
                             <div className="divs">
                                 <div>

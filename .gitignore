@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+DMS-BackEnd
 /.pnp
 .pnp.js
 

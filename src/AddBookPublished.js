@@ -7,7 +7,6 @@ import axios from 'axios';
 const AddBookPublished = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
-        file: '',
         account_id: '',
         type: null,
         document_number: '',
@@ -20,31 +19,17 @@ const AddBookPublished = () => {
     });
     const history = useNavigate();
 
-    
+    const [uplo, setUplo] = useState("");
+    const [file, setFile] = useState(null);
 
     const [filePreview, setFilePreview] = useState(null);
 
     const handleChange = (e) => {
-        const { id, value, files } = e.target;
-        if (files) {
-            const file = files[0];
-            setFormData({
-                ...formData,
-                [id]: file
-            });
-
-            const fileURL = URL.createObjectURL(file);
-            if (file.type === 'application/pdf' || file.type.startsWith('image/')) {
-                setFilePreview(fileURL);
-            } else {
-                setFilePreview(null);
-            }
-        } else {
+        const { id, value } = e.target;
             setFormData({
                 ...formData,
                 [id]: value
             });
-        }
     };
 
     const nextStep = () => {
@@ -65,12 +50,21 @@ const AddBookPublished = () => {
         }
     };
 
+    const handleFileChange = (e) => {
+        setUplo(e.target.value);
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        const fileURL = URL.createObjectURL(selectedFile);
+        setFilePreview(fileURL);
+    };
+
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const response = await axios.post("http://127.0.0.1:4000/outgoing/", {
-                file_path: formData.file,
+                file_path: uplo,
                 account_id: formData.account_id,
                 type: formData.type,
                 document_number: formData.document_number,
@@ -100,8 +94,9 @@ const AddBookPublished = () => {
     const steps = [
         <div className="step" key="step1">
             <div className="form-group">
-                <label htmlFor="file">الكتاب:</label>
-                <input type="file" className="form-control" id="file" onChange={handleChange}  />
+                <label htmlFor="uplo">الكتاب:</label>
+                <input type="file" className="form-control" id="uplo" onChange={handleFileChange}  />
+                {console.log(uplo)}
             </div>
             <div className="form-group">
                 <label htmlFor="account_id">تسلسل بطاقة:</label>
@@ -117,11 +112,11 @@ const AddBookPublished = () => {
             </div>
             <div className="form-group">
                 <label htmlFor="document_number">رقم الكتاب:</label>
-                <input type="number" className="form-control" id="document_number" value={formData.document_number} onChange={handleChange} required />
+                <input type="number" className="form-control" id="document_number" value={formData.document_number} onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="document_date">تاريخ الكتاب:</label>
-                <input type="date" className="form-control" id="document_date" value={formData.document_date} onChange={handleChange} required />
+                <input type="date" className="form-control" id="document_date" value={formData.document_date} onChange={handleChange} />
             </div>
             <button type="button" className="btn btn-secondary" onClick={PrevPage}>رجوع</button>
             <button type="button" className="btn btn-primary" onClick={nextStep}>التالي</button>
@@ -129,19 +124,19 @@ const AddBookPublished = () => {
         <div className="step" key="step2">
             <div className="form-group">
                 <label htmlFor="subject">موضوع الكتاب:</label>
-                <input type="text" className="form-control" id="subject" value={formData.subject} onChange={handleChange} required />
+                <input type="text" className="form-control" id="subject" value={formData.subject} onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="executing_uthority">الجهة المنفذة:</label>
-                <input type="text" className="form-control" id="executing_uthority" value={formData.executing_uthority} onChange={handleChange} required />
+                <input type="text" className="form-control" id="executing_uthority" value={formData.executing_uthority} onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="addressed_entity">الجهة الموجه لها:</label>
-                <input type="text" className="form-control" id="addressed_entity" value={formData.addressed_entity} onChange={handleChange} required />
+                <input type="text" className="form-control" id="addressed_entity" value={formData.addressed_entity} onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="note">ملاحظة:</label>
-                <input type="text" className="form-control" id="note" value={formData.note} onChange={handleChange} required />
+                <input type="text" className="form-control" id="note" value={formData.note} onChange={handleChange} />
             </div>
             <button type="button" className="btn btn-secondary" onClick={prevStep}>رجوع</button>
             <button type="submit" className="btn btn-success">حفظ</button>
@@ -169,7 +164,7 @@ const AddBookPublished = () => {
             </form>
             <div className='disBook'>
                 {filePreview && (
-                    formData.file.type === 'application/pdf' ? (
+                    file.type === 'application/pdf' ? (
                         <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
                     ) : (
                         <img src={filePreview} alt="File Preview" />

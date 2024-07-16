@@ -39,6 +39,9 @@ const MultiStepForm = () => {
         ipn:""
       });
 
+      const [upLoadPath, setUpLoadPath] = useState();
+      const [upLoadUnio, setUpLoadUnio] = useState(); 
+
       const handleChange = (e) => {
         const { id, value, files, name } = e.target;
         if (files && files[0]) {
@@ -116,12 +119,12 @@ const MultiStepForm = () => {
                 job_position: formData.job_position,
                 governorate: formData.governorate,
                 address: formData.address,
-                id_path: formData.id_path,
+                id_path: upLoadPath,
                 name_doctor: formData.name_doctor,
                 doctor_specialty: formData.doctor_specialty,
                 place_work: formData.place_work,
                 clinic: formData.clinic, // Send boolean value
-                union_path: formData.union_path,
+                union_path: upLoadUnio,
                 type: formData.type,
                 technical_manager: formData.technical_manager,
                 area: formData.area,
@@ -246,16 +249,15 @@ const MultiStepForm = () => {
                     <option value="اهلي عام">اهلي عام</option>
                     <option value="اهلي تخصصي">اهلي تخصصي</option>
                     <option value="استثماري">استثماري</option>
-                    <option value="اهلي اخرى">اهلي اخرى</option>
+                    <option value="اهلي اخرى">اهلي اخرى 
+                        <input
+                        type='text'
+                        name='sub_branch'
+                        value={formData.sub_branch}
+                        onChange={handleCustomSubBranchChange}
+                        />
+                    </option>
                 </select>
-                {formData.sub_branch === 'اهلي اخرى' && (
-                <input
-                    type='text'
-                    name='sub_branch'
-                    value={formData.sub_branch}
-                    onChange={handleCustomSubBranchChange}
-                />
-                )}
                 <select name='sub_branch' id='clin' style={{display:'none'}} value={formData.sub_branch} onChange={handleChange}>
                     <option value=""></option>
                     <option value="عيادة تخصصية للمفراس الحلزوني">عيادة تخصصية للمفراس الحلزوني</option>
@@ -300,7 +302,8 @@ const MultiStepForm = () => {
             </div>
             <div className="form-group">
                 <label htmlFor="id_path">المستمسكات:</label>
-                <input type="file" className="form-control" name='id_path' id="id_path" onChange={handleChange} />
+                <input type="file" className="form-control" name='id_path' id="id_path" onChange={(e) => setUpLoadPath(e.target.value)} />
+                {console.log(upLoadPath)}
             </div>
             <button type="button" className="btn btn-secondary" onClick={prevStep}>رجوع</button>
             <button type="button" className="btn btn-primary" onClick={nextStep}>التالي</button>
@@ -328,7 +331,8 @@ const MultiStepForm = () => {
       </div>
             <div className="form-group">
                 <label htmlFor="union_path">هوية نقابة مجددة:</label>
-                <input type="file" className="form-control" name='union_path' id="union_path" onChange={handleChange} />
+                <input type="file" className="form-control" name='union_path' id="union_path" onChange={(e) => setUpLoadUnio(e.target.value)} />
+                {console.log(upLoadUnio)}
             </div>
             <button type="button" className="btn btn-secondary" onClick={prevStep}>رجوع</button>
             <button type="button" className="btn btn-primary" onClick={nextStep}>التالي</button>

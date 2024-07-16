@@ -51,10 +51,11 @@ const BookPublish = ({ book }) => {
                 <form method="POST">
                     <label>اضافة ملاحظة :</label>
                     <input type="text" name="note" />
+                    <input type='submit' value='Submit' className='btn btn-success' />
                 </form>
                 <div className="buttons">
                     <button className="btn btn-primary"><Link to={`/AddMural/${Id}`} style={{textDecoration:"none", color:"white"}}>اضافة جدارية</Link></button>
-                    <button className="btn btn-secondary"><Link to={`/AddBook/${Id}`} style={{textDecoration:"none", color:"white"}}>تعديل</Link></button>
+                    <button className="btn btn-secondary"><Link to={`//${Id}`} style={{textDecoration:"none", color:"white"}}>تعديل</Link></button>
                 </div>
             </div>
             <div className="book-preview" style={{ borderRadius: '40px' }}>
