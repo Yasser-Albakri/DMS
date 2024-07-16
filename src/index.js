@@ -90,7 +90,7 @@ const router = createBrowserRouter([
     element: <Divisions />,
   },
   {
-    path: "AddExtension",
+    path: "AddExtension/:id",
     element: <AddExtension />,
   },
   {

@@ -8,7 +8,6 @@ export default function FetchCard () {
     const params = useParams();
     const id = params.id;
     
-    const [documents, setDocuments] = useState([]);
     const [card, setCard] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -81,24 +80,50 @@ export default function FetchCard () {
             fetchCard();
         }, [id]);
 
-    const renderCard = () => {
-        if (!Array.isArray(Income)) return null;
-        return Income.map((Incom) =>
-            Incom.account_id === card.account_id ? (
-                <tr key={Incom.account_id}>
-                    <Link to={`/BookRec/${Incom.account_id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                        <td>{Incom.book_number}</td>
-                        <td className="td2">{Incom.topic}</td>
-                    </Link>
-                </tr>
-            ) : null
-        );
-    };
+        const renderOug = () => {
+            return outgoing
+                .filter(outgoing => outgoing.account_id === id) // Adjust this condition based on your actual requirement
+                .map((outgoing) => (
+                    <tr key={outgoing.id}>
+                        <td>
+                            <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {outgoing.document_number}
+                            </Link>
+                        </td>
+                        <td>
+                            <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {outgoing.subject}
+                            </Link>
+                        </td>
+                    </tr>
+                ));
+        };
+
+
+        const renderInc = () => {
+            return Income
+                .filter(Income => Income.account_id === id) // Adjust this condition based on your actual requirement
+                .map((Income) => (
+                    <tr key={Income.id}>
+                        <td>
+                            <Link to={`/BookRes/${Income.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {Income.book_number}
+                            </Link>
+                        </td>
+                        <td>
+                            <Link to={`/BookRec/${Income.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                                {Income.topic}
+                            </Link>
+                        </td>
+                    </tr>
+                ));
+        };
 
     return (
         <table>
             <tbody>
-                {renderCard()}
+                {renderOug()}
+                {renderInc()}
             </tbody>
         </table>
     )

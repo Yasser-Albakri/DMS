@@ -1,40 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Forms.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const AddExtension = () => {
+    const history = useNavigate();
+    const params = useParams();
+    const id = params.id;
     const [currentStep] = useState(0);
+    const [attached, setAttached] = useState();
     const [formData, setFormData] = useState({
-        document: '',
-        title: '',
+        topic: '',
+        inc_id: id,
+        date: '',
         number: '',
-        bookDate: '',
     });
 
-    const [documentPreview, setdocumentPreview] = useState(null);
+    const [file, setFile] = useState();
+
+    useEffect (() => {
+        const fetchAttach = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:4000/attached`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch book');
+                }
+                const result = await response.json();
+                setAttached(result);
+                console.log(result);
+                console.log(result.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }; fetchAttach();
+    }, []);
+
+    const [filePreview, setFilePreview] = useState(null);
+    const [uplo, setUplo] = useState("");
 
     const handleChange = (e) => {
-        const { id, value, documents } = e.target;
-        if (documents) {
-            const document = documents[0];
-            setFormData({
-                ...formData,
-                [id]: document
-        });
-
-        const documentURL = URL.createObjectURL(document);
-        if (document.type === 'application/pdf' || document.type.startsWith('image/')) {
-                setdocumentPreview(documentURL);
-            } else {
-                setdocumentPreview(null);
-            }
-        } else {
+        const { id, value } = e.target;
             setFormData({
                 ...formData,
                 [id]: value
             });
-        }
     };
 
     const navigate = useNavigate();
@@ -42,40 +53,67 @@ const AddExtension = () => {
         navigate(-1);
     };
 
-    const handleSubmit = (e) => {
+
+    const handleFileChange = (e) => {
+        setUplo(e.target.value);
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        const fileURL = URL.createObjectURL(selectedFile);
+        setFilePreview(fileURL);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert('Form submitted!');
-        console.log(formData);
+
+        try {
+            const response = await axios.post('http://127.0.0.1:4000/attached', {
+                file_path: uplo,
+                topic: formData.topic,
+                inc_id: formData.inc_id,
+                date: formData.date,
+                number: formData.number,
+            })
+            console.log(response);
+            console.log(formData);
+            alert("Extension added successfully");
+            history(`/BookRec/${id}`);
+        }
+        catch (error) {
+            console.error("Error:", error);
+            alert(`Error: ${error.message}`);
+        }
+
+        
     };
 
 
     const steps = [
         <div className="step" key="step1">
             <div className="form-group">
-                <label htmlFor="document">الملحق:</label>
-                <input type="document" className="form-control" id="document" onChange={handleChange} required />
+                <label htmlFor="file">الملحق:</label>
+                <input type="file" className="form-control" id="file" onChange={handleFileChange} />
             </div>
             <div className="form-group">
-                <label htmlFor="title">موضوع الملحق:</label>
-                <input type="text" className="form-control" id="title" value={formData.title} onChange={handleChange} required />
+                <label htmlFor="topic">موضوع الملحق:</label>
+                <input type="text" className="form-control" id="topic" value={formData.topic} onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="number">رقم الملحق:</label>
-                <input type="number" className="form-control" id="number" value={formData.number} onChange={handleChange} required />
+                <input type="inc_id" className="form-control" id="number" value={formData.number} onChange={handleChange} />
             </div>
             <div className="form-group">
-                <label htmlFor="bookDate">تاريخ الملحق:</label>
-                <input type="date" className="form-control" id="bookDate" value={formData.bookDate} onChange={handleChange} required />
+                <label htmlFor="date">تاريخ الملحق:</label>
+                <input type="date" className="form-control" id="date" value={formData.date} onChange={handleChange} />
             </div>
             <button type="button" className="btn btn-secondary" onClick={PrevPage}>رجوع</button>
-            <button type="submit" className="btn btn-success">حفظ</button>
+            <button type="submit" className="btn btn-success" onClick={handleSubmit}>حفظ</button>
         </div>
     ];
 
 
     return (
         <div className="container">
-            <form onSubmit={handleSubmit}>
+            <form>
                 <h2 className='text-center'>اضافة ملحق</h2>
                 <div style={{ direction: 'ltr', textAlign: 'center' }}>
                     {steps.map((_, index) => (
@@ -92,11 +130,11 @@ const AddExtension = () => {
                 {steps[currentStep]}
             </form>
             <div className='disBook'>
-                {documentPreview && (
-                    formData.document.type === 'application/pdf' ? (
-                        <iframe src={documentPreview} title="PDF Preview" width="100%" height="600px"></iframe>
+                {filePreview && (
+                    file.type === 'application/pdf' ? (
+                        <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
                     ) : (
-                        <img src={documentPreview} alt="document Preview" />
+                        <img src={filePreview} alt="document Preview" />
                     )
                 )}
             </div>
