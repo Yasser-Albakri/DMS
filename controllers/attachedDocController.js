@@ -45,7 +45,7 @@ exports.getAttachedDocument = catchAsync(async (req, res, next) => {
 
 exports.createAttachedDocument = catchAsync(async (req, res, next) => {
   try {
-    upload.single("attachedDocument")(req, res, async (err) => {
+    upload.single("file")(req, res, async (err) => {
       if (err) {
         return next(new AppError(err, 400));
       }
