@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const generalModel = require("./../models/generalModel");
+const upload = require("./../config/multerConfig");
 
 exports.getAllCards = catchAsync(async (req, res, next) => {
   try {
@@ -39,14 +40,33 @@ exports.getCard = catchAsync(async (req, res, next) => {
 
 exports.createCard = catchAsync(async (req, res, next) => {
   try {
-    const data = req.body;
-    const card = await generalModel.addElement("account_card", data);
-    res.status(201).json({
-      status: "success",
-      length: card.length,
-      data: {
-        card,
-      },
+    upload.fields([
+      { name: "unionFile", maxCount: 1 },
+      { name: "idFile", maxCount: 1 },
+    ])(req, res, async (err) => {
+      if (err) {
+        return next(new AppError(err, 400));
+      }
+
+      const data = req.body;
+
+      if (req.files) {
+        if (req.files["unionFile"]) {
+          data.union_path = req.files["unionFile"][0].path;
+        }
+        if (req.files["idFile"]) {
+          data.id_path = req.files["idFile"][0].path;
+        }
+      }
+
+      const card = await generalModel.addElement("account_card", data);
+      res.status(201).json({
+        status: "success",
+        length: card.length,
+        data: {
+          card,
+        },
+      });
     });
   } catch (err) {
     console.error(err);
