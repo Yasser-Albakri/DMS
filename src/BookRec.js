@@ -1,27 +1,24 @@
-// BookDisplay.js
 import React from "react";
 import "./Forms.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const BookRec = ({ book }) => {
+const BookRec = () => {
   const params = useParams();
   const Id = params.id;
-  const userToken = localStorage.getItem('userToken');
+  const userToken = localStorage.getItem("userToken");
 
   const [bookData, setBookData] = useState([]);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${userToken}`
-            }
-          }
-        );
+        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch book");
         }
@@ -36,34 +33,10 @@ const BookRec = ({ book }) => {
     fetchBook();
   }, [Id]);
 
-  const docType = bookData.map((item) => item.type);
-  var typeBook = "";
-
-  if (docType[0] === 1) {
-    typeBook = "كتاب";
-  } else if (docType[0] === 2) {
-    typeBook = "مذكرة";
-  } else if (docType[0] === 3) {
-    typeBook = "طلب";
-  }
-
-  const file = bookData.map((item) => item.file_path);
-  const up = file.toString();
-  const lua = `http://127.0.0.1:4000/${up}`;
-
-  function getFileType(filePath) {
-    filePath = filePath.replace(/\\/g, '/'); // Convert backslashes to forward slashes
-    return filePath.split('.').pop().toLowerCase(); // Extract and return the file extension
-  }
-  var filePath = lua;
-  const fileType = getFileType(filePath);
-  filePath = filePath.replace(/\\/g, '/');
-  console.log(fileType);
-  console.log(filePath);
-  
-  
-
-
+  const getFileType = (filePath) => {
+    filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
+    return filePath.split(".").pop().toLowerCase(); // Extract and return the file extension
+  };
 
   return (
     <div className="book-container">
@@ -82,9 +55,17 @@ const BookRec = ({ book }) => {
         </p>
         <p>
           <strong>نوع الكتاب:</strong>{" "}
-          {bookData.map((item) => (
-            <span key={item.id}>{typeBook}</span>
-          ))}
+          {bookData.map((item) => {
+            const typeBook =
+              item.type === 1
+                ? "كتاب"
+                : item.type === 2
+                ? "مذكرة"
+                : item.type === 3
+                ? "طلب"
+                : "غير معروف";
+            return <span key={item.id}>{typeBook}</span>;
+          })}
         </p>
         <p>
           <strong>رقم الكتاب:</strong>{" "}
@@ -149,22 +130,37 @@ const BookRec = ({ book }) => {
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
         <div className="book-preview-content">
-          {
-            fileType === "pdf" ? (
-              <iframe
-                src={filePath}
-                title="PDF Preview"
+          {bookData.map((item) => {
+            const filePath = `http://127.0.0.1:4000/${item.file_path.replace(
+              /\\/g,
+              "/"
+            )}`;
+            const fileType = getFileType(filePath);
+
+            return fileType === "pdf" ? (
+              <object
+                key={item.id}
+                data={filePath}
+                type="application/pdf"
                 width="100%"
                 height="600px"
-              ></iframe>
+              >
+                <p>
+                  Your browser does not support PDFs.{" "}
+                  <a href={filePath}>Download the PDF</a>.
+                </p>
+              </object>
             ) : (
-              <img src="/aa.png" alt="Book Preview" />
-            )
-           }
-           {console.log(filePath)}
+              <img
+                key={item.id}
+                src={filePath}
+                alt="Book Preview"
+                width="100%"
+              />
+            );
+          })}
         </div>
       </div>
-      <a href="/uploads/file-1721229222986.jpg"></a>
     </div>
   );
 };

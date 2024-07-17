@@ -3,7 +3,7 @@ const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-
+const path = require("path");
 const AppError = require("./utils/appError");
 const cardsRouter = require("./routes/accountCardRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -29,9 +29,16 @@ const limiter = rateLimit({
 });
 
 app.use((req, res, next) => {
+  res.setHeader("X-Frame-Options", "ALLOW-FROM http://127.0.0.1:4000");
+  next();
+});
+
+app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/users", userRoutes);
 app.use("/cards", cardsRouter);
