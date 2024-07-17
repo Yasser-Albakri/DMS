@@ -42,7 +42,13 @@ exports.getCount = catchAsync(async (req, res, next) => {
 exports.homePage = catchAsync(async (req, res, next) => {
   try {
     const cards = await generalModel.view(
-      "SELECT id,subject FROM outgoing UNION ALL SELECT id,topic FROM incoming;"
+      `SELECT id,
+    subject,TRUE AS "OI"
+    FROM outgoing
+    UNION ALL
+    SELECT id,
+    topic,FALSE
+    FROM incoming`
     );
     res.status(200).json({
       status: "success",
