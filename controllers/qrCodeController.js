@@ -5,7 +5,7 @@ const QRCode = require("qrcode");
 exports.generateQRCode = catchAsync(async (req, res, next) => {
   try {
     const id = req.params.id;
-    const url = `http://127.0.0.1:4000/outgoing/${id}`;
+    const url = `localhost:3000/BookPublish/${id}`;
 
     const qrCodeDataURL = await QRCode.toDataURL(url);
 
