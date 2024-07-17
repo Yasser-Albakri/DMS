@@ -12,6 +12,12 @@ exports.viewTable = async (
   return types;
 };
 
+exports.view = async (query) => {
+  const result = await client.query(query);
+  const types = result.rows;
+  return types;
+};
+
 exports.addElement = async (table, data) => {
   let fields = [];
   let values = [];

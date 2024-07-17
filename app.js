@@ -11,6 +11,7 @@ const attachedDocRoutes = require("./routes/attachedDocRoutes");
 const outGoingRoutes = require("./routes/outGoingRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
 const QrCodeRoutes = require("./routes/QrCodeRoutes");
+const generalRoutes = require("./routes/generalRoutes");
 const app = express();
 
 app.use(helmet());
@@ -38,6 +39,7 @@ app.use("/attached", attachedDocRoutes);
 app.use("/income", incomeRoutes);
 app.use("/outgoing", outGoingRoutes);
 app.use("/generateQR", QrCodeRoutes);
+app.use("/general", generalRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
