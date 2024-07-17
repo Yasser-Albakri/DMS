@@ -30,6 +30,13 @@ export default function Login() {
                 if (response) {
                     alert("Login successful");
                     console.log(response.data);
+                    // console.log(response.data.user);
+                    // console.log(response.data.user.id);
+                    // console.log(response.data.user.role);
+                    console.log(localStorage);
+                    localStorage.setItem('userId', JSON.stringify(response.data.user.id));
+                    localStorage.setItem('userRole', JSON.stringify(response.data.user.role));
+                    localStorage.setItem('userToken', response.data.token);
                     history('/Home');
                 } else {
                     alert("Login failed: " + response.message);

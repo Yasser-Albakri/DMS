@@ -137,7 +137,6 @@ const AddBookPublished = () => {
           id="document_number"
           value={formData.document_number}
           onChange={handleChange}
-          required
         />
       </div>
       <div className="form-group">
@@ -148,7 +147,6 @@ const AddBookPublished = () => {
           id="document_date"
           value={formData.document_date}
           onChange={handleChange}
-          required
         />
       </div>
       <button type="button" className="btn btn-secondary" onClick={PrevPage}>
@@ -167,7 +165,6 @@ const AddBookPublished = () => {
           id="subject"
           value={formData.subject}
           onChange={handleChange}
-          required
         />
       </div>
       <div className="form-group">
@@ -178,7 +175,6 @@ const AddBookPublished = () => {
           id="executing_uthority"
           value={formData.executing_uthority}
           onChange={handleChange}
-          required
         />
       </div>
       <div className="form-group">
@@ -189,7 +185,6 @@ const AddBookPublished = () => {
           id="addressed_entity"
           value={formData.addressed_entity}
           onChange={handleChange}
-          required
         />
       </div>
       <div className="form-group">
@@ -200,7 +195,6 @@ const AddBookPublished = () => {
           id="note"
           value={formData.note}
           onChange={handleChange}
-          required
         />
       </div>
       <button type="button" className="btn btn-secondary" onClick={prevStep}>

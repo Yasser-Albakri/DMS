@@ -2,8 +2,14 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import './App.css';
 
-export default function SearchBar () {
+export default function SearchBar ({ setSearchTerm }) {
     const loca = useLocation();
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    
+
     if(loca.pathname==="/Reports") {
         return (
             <div className="searchbar">
@@ -31,7 +37,7 @@ export default function SearchBar () {
             </div>
             <form action="" method="post">
                 <input type="submit" value={'بحث'} />
-                <input type="text" />
+                <input type="text" onChange={handleSearchChange} />
             </form>
         </div>
     ) }

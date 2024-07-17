@@ -12,6 +12,7 @@ const AddExtension = () => {
     const [currentStep] = useState(0);
     const [attached, setAttached] = useState();
     const [formData, setFormData] = useState({
+        file: "",
         topic: '',
         inc_id: id,
         date: '',
@@ -38,15 +39,35 @@ const AddExtension = () => {
     }, []);
 
     const [filePreview, setFilePreview] = useState(null);
-    const [uplo, setUplo] = useState("");
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
-            setFormData({
-                ...formData,
-                [id]: value
-            });
-    };
+        const { id, value, files, name } = e.target;
+        if (files) {
+          const file = files[0];
+          setFormData({
+            ...formData,
+            file: file,
+          });
+    
+          const fileURL = URL.createObjectURL(file);
+          if (file.type === "application/pdf" || file.type.startsWith("image/")) {
+            setFilePreview(fileURL);
+          } else {
+            setFilePreview(null);
+          }
+        } else if (name === "referral") {
+          setFormData({
+            ...formData,
+            [name]: value,
+          });
+        } else {
+          setFormData({
+            ...formData,
+            [id]: value,
+          });
+        }
+      };
+    
 
     const navigate = useNavigate();
     const PrevPage = () => {
@@ -54,24 +75,23 @@ const AddExtension = () => {
     };
 
 
-    const handleFileChange = (e) => {
-        setUplo(e.target.value);
-        const selectedFile = e.target.files[0];
-        setFile(selectedFile);
-        const fileURL = URL.createObjectURL(selectedFile);
-        setFilePreview(fileURL);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const data = new FormData();
+        for (const key in formData) {
+            if (key === "file" && formData[key] instanceof File) {
+              data.append(key, formData[key]);
+            } else {
+              data.append(key, formData[key]);
+            }
+          }
+
         try {
-            const response = await axios.post('http://127.0.0.1:4000/attached', {
-                file_path: uplo,
-                topic: formData.topic,
-                inc_id: formData.inc_id,
-                date: formData.date,
-                number: formData.number,
+            const response = await axios.post('http://127.0.0.1:4000/attached', data, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
             })
             console.log(response);
             console.log(formData);
@@ -91,7 +111,7 @@ const AddExtension = () => {
         <div className="step" key="step1">
             <div className="form-group">
                 <label htmlFor="file">الملحق:</label>
-                <input type="file" className="form-control" id="file" onChange={handleFileChange} />
+                <input type="file" className="form-control" id="file" onChange={handleChange} />
             </div>
             <div className="form-group">
                 <label htmlFor="topic">موضوع الملحق:</label>
@@ -131,7 +151,7 @@ const AddExtension = () => {
             </form>
             <div className='disBook'>
                 {filePreview && (
-                    file.type === 'application/pdf' ? (
+                    filePreview.type === 'application/pdf' ? (
                         <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
                     ) : (
                         <img src={filePreview} alt="document Preview" />

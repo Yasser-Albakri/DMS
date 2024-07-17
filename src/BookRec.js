@@ -41,6 +41,22 @@ const BookRec = ({ book }) => {
   }
 
   const file = bookData.map((item) => item.file_path);
+  const up = file.toString();
+  const lua = `http://127.0.0.1:4000/${up}`;
+
+  function getFileType(filePath) {
+    filePath = filePath.replace(/\\/g, '/'); // Convert backslashes to forward slashes
+    return filePath.split('.').pop().toLowerCase(); // Extract and return the file extension
+  }
+  var filePath = lua;
+  const fileType = getFileType(filePath);
+  filePath = filePath.replace(/\\/g, '/');
+  console.log(fileType);
+  console.log(filePath);
+  
+  
+
+
 
   return (
     <div className="book-container">
@@ -126,20 +142,19 @@ const BookRec = ({ book }) => {
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
         <div className="book-preview-content">
-          {file ? (
-            file.type === "application/pdf" ? (
+          {
+            fileType === "pdf" ? (
               <iframe
-                src={file}
+                src={filePath}
                 title="PDF Preview"
                 width="100%"
                 height="600px"
               ></iframe>
             ) : (
-              <img src={file} alt="Book Preview" />
+              <img src={filePath} alt="Book Preview" />
             )
-          ) : (
-            <p>No preview available</p>
-          )}
+           }
+           {console.log(filePath)}
         </div>
       </div>
     </div>

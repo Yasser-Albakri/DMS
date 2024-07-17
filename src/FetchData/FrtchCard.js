@@ -82,7 +82,7 @@ export default function FetchCard () {
 
         const renderOug = () => {
             return outgoing
-                .filter(outgoing => outgoing.account_id === id) // Adjust this condition based on your actual requirement
+                .filter(outgoing => outgoing.id === id) // Adjust this condition based on your actual requirement
                 .map((outgoing) => (
                     <tr key={outgoing.id}>
                         <td>
@@ -102,7 +102,7 @@ export default function FetchCard () {
 
         const renderInc = () => {
             return Income
-                .filter(Income => Income.account_id === id) // Adjust this condition based on your actual requirement
+                .filter(Income => Income.id === id) // Adjust this condition based on your actual requirement
                 .map((Income) => (
                     <tr key={Income.id}>
                         <td>

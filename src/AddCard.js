@@ -17,12 +17,12 @@ const MultiStepForm = () => {
     job_position: "",
     governorate: "",
     address: "",
-    id_path: null,
+    idFile: "",
     name_doctor: "",
     doctor_specialty: "",
     place_work: "",
     clinic: false, // Use boolean value here
-    union_path: null,
+    unionFile: "",
     type: "",
     technical_manager: "",
     area: "",
@@ -86,54 +86,23 @@ const MultiStepForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-
+    const data = new FormData();
     for (const key in formData) {
-      if (formData[key] instanceof File) {
-        formDataToSend.append(key, formData[key]);
+      if (key === "file" && formData[key] instanceof File) {
+        data.append(key, formData[key]);
       } else {
-        formDataToSend.append(key, formData[key]);
+        data.append(key, formData[key]);
       }
     }
 
     // Debug: Log formDataToSend to check if all fields are correctly appended
-    for (var pair of formDataToSend.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
+  
 
     try {
-      const response = await axios.post("http://127.0.0.1:4000/cards", {
-        id: formData.id,
-        branch: formData.branch,
-        fullname: formData.fullname,
-        mother_name: formData.mother_name,
-        nationality: formData.nationality,
-        phone: formData.phone,
-        job_position: formData.job_position,
-        governorate: formData.governorate,
-        address: formData.address,
-        id_path: formData.id_path,
-        name_doctor: formData.name_doctor,
-        doctor_specialty: formData.doctor_specialty,
-        place_work: formData.place_work,
-        clinic: formData.clinic, // Send boolean value
-        union_path: formData.union_path,
-        type: formData.type,
-        technical_manager: formData.technical_manager,
-        area: formData.area,
-        bed_capacity: formData.bed_capacity,
-        number_departments: formData.number_departments,
-        book_number: formData.book_number,
-        book_date: formData.book_date,
-        latest_renewal: formData.latest_renewal,
-        user_id: 0,
-        administrative_manager: formData.administrative_manager,
-        date_added: formData.date_added,
-        sub_branch: formData.sub_branch,
-        company_name: formData.company_name,
-        renewal: formData.renewal,
-        note: formData.note,
-        ipn: formData.ipn,
+      const response = await axios.post("http://127.0.0.1:4000/cards", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       // if (!response.ok) {
@@ -142,7 +111,7 @@ const MultiStepForm = () => {
 
       //const responseData = await response.json();
       console.log(response);
-      console.log(formDataToSend);
+      console.log(data);
 
       alert("Card added successfully");
       history("/Cards");
@@ -415,12 +384,12 @@ const MultiStepForm = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="id_path">المستمسكات:</label>
+        <label htmlFor="idFile">المستمسكات:</label>
         <input
           type="file"
           className="form-control"
-          name="id_path"
-          id="id_path"
+          name="idFile"
+          id="idFile"
           onChange={handleChange}
         />
       </div>
@@ -478,12 +447,12 @@ const MultiStepForm = () => {
         </select>
       </div>
       <div className="form-group">
-        <label htmlFor="union_path">هوية نقابة مجددة:</label>
+        <label htmlFor="unionFile">هوية نقابة مجددة:</label>
         <input
           type="file"
           className="form-control"
-          name="union_path"
-          id="union_path"
+          name="unionFile"
+          id="unionFile"
           onChange={handleChange}
         />
       </div>
