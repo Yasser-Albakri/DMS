@@ -254,12 +254,12 @@ const AddBook = () => {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="date_added">تاريخ الوارد:</label>
+        <label htmlFor="incoming_date">تاريخ الوارد:</label>
         <input
           type="text"
           className="form-control"
-          id="date_added"
-          value={formData.date_added}
+          id="incoming_date"
+          value={formData.incoming_date}
           onChange={handleChange}
         />
       </div>

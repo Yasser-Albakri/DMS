@@ -253,7 +253,7 @@ const MultiStepForm = () => {
         <select
           name="sub_branch"
           id="Hosp"
-          style={{ display: formData.sub_branch === "اهلي اخرى" ? "none" : "block" }}
+          style={{ display: "none"  }}
           value={formData.sub_branch}
           onChange={handleChange}
         >
