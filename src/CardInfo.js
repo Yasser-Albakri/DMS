@@ -65,7 +65,7 @@ export default function CardInfo() {
         <p>
           <strong>التسلسل :</strong>
           {card.map((item) => (
-            <span key={item.accunt_id}>{item.accunt_id}</span>
+            <span key={item.accunt_id}>{item.id}</span>
           ))}
         </p>
         <p>
