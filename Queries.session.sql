@@ -59,3 +59,4 @@
 --         null
 --     )
 -- RETURNING *;
+-- INSERT INTO users(name,username,password,role) values ('Developer','admin','admin',0) ;
