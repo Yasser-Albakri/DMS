@@ -127,7 +127,7 @@ const AddBookPublished = () => {
             <button type="button" className="btn btn-primary" onClick={nextStep}>التالي</button>
         </div>,
         <div className="step" key="step2">
-            <div className="form-group">
+            <div className="form-group one">
                 <label htmlFor="subject one">موضوع الكتاب:</label>
                 <input type="text" className="form-control" id="subject" value={formData.subject} onChange={handleChange} />
             </div>
