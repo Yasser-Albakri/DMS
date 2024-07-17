@@ -24,7 +24,7 @@ export default function SearchBar ({ setSearchTerm }) {
                     <p>موضوع الكتاب : <input type="text" /></p>
                     <p>رقم الوارد : <input type="text" /></p>
                     <p>تاريخ الوارد : <input type="text" /></p>
-                    <input type="submit" value={'بحث'} />
+                    <img alt="" src="/search.png"></img>
                 </form>
             </div>
         )
@@ -36,8 +36,8 @@ export default function SearchBar ({ setSearchTerm }) {
                 <p style={{display: 'inline-block', alignSelf:'center'}}><b> وزارة الصحة - قسم القطاع الصحي الخاص</b></p>
             </div>
             <form action="" method="post">
-                <input type="submit" value={'بحث'} />
-                <input type="text" onChange={handleSearchChange} />
+                <img alt="" src="/search.png" style={{width: "30px", height: "30px" }}></img>
+                <input type="text" placeholder="Search" style={{width: "200px"}} onChange={handleSearchChange} />
             </form>
         </div>
     ) }

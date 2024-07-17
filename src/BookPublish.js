@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 const BookPublish = ({ book }) => {
     const params = useParams();
     const Id = params.id;
+    const userToken = localStorage.getItem('userToken');
 
 
     const [bookData, setBookData] = useState([]);
@@ -17,7 +18,9 @@ const BookPublish = ({ book }) => {
     useEffect (() => {
         const fetchBook = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`);
+                const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}` , 
+                    { headers: { Authorization: `Bearer ${userToken}` } }
+                );
                 if (!response.ok) {
                     throw new Error('Failed to fetch book');
                 }
@@ -30,6 +33,18 @@ const BookPublish = ({ book }) => {
             }
         }; fetchBook();
     }, [Id]);
+
+
+    const docType = bookData.map((item) => item.type);
+  var typeBook = "";
+
+  if (docType[0] === 1) {
+    typeBook = "كتاب";
+  } else if (docType[0] === 2) {
+    typeBook = "مذكرة";
+  } else if (docType[0] === 3) {
+    typeBook = "اجازة";
+  }
     
 
 
@@ -40,7 +55,7 @@ const BookPublish = ({ book }) => {
             <div className="book-details" style={{ borderRadius: '40px' }}>
             <h2>{bookData.map((item) => (<span key={item.id}>{item.subject}</span>))}</h2>
                 <p><strong>رقم البطاقة:</strong> {bookData.map((item) => (<span key={item.id}>{item.account_id}</span>))}</p>
-                <p><strong>نوع الكتاب:</strong> {bookData.map((item) => (<span key={item.id}>{item.type}</span>))}</p>
+                <p><strong>نوع الكتاب:</strong> {typeBook}</p>
                 <p><strong>رقم الكتاب:</strong> {bookData.map((item) => (<span key={item.id}>{item.document_number}</span>))}</p>
                 <p><strong>تاريخ الكتاب:</strong> {bookData.map((item) => (<span key={item.id}>{item.document_date}</span>))}</p>
                 <p><strong>جهة المنفذة:</strong> {bookData.map((item) => (<span key={item.id}>{item.executing_uthority}</span>))}</p>

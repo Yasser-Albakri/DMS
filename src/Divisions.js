@@ -11,7 +11,7 @@ export default function Divisions() {
             <div className="con">
                 <SearchBar />
                 <div style={{ height: '550px', marginBottom: '20px'}}>
-                    <Contact />
+                    <Contact title="الشعب" />
                 </div>
             </div>
             <span className="log">شركة الجدار الناري لخدمات الامن السيبراني</span>

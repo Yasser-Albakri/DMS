@@ -3,16 +3,18 @@ import SearchBar from "./SearchBar";
 import NavBar from "./NavBar";
 import Contact from "./Contact";
 import './App.css'
+import { useState } from 'react'
 
 
 export default function Vacations () {
+    const [searchTerm, setSearchTerm] = useState("");
     return (
         <div className="container" style={{display: 'flex'}}>
             <NavBar />
             <div className="con">
-                <SearchBar />
+                <SearchBar setSearchTerm={setSearchTerm} />
                 <div style={{height: '550px' , marginBottom: '20px'}}>
-                  <Contact />
+                  <Contact title="اخر الكتب" searchTerm={searchTerm} />
                 </div>
             </div>
             <span className="log">.Firewall Qi co</span>

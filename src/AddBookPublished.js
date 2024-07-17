@@ -6,6 +6,7 @@ import axios from "axios";
 
 const AddBookPublished = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const userToken = localStorage.getItem('userToken');
   const [formData, setFormData] = useState({
     file: "",
     account_id: "",
@@ -80,6 +81,7 @@ const AddBookPublished = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userToken}`,
           },
         }
       );

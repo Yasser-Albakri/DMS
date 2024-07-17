@@ -8,13 +8,20 @@ import { Link } from "react-router-dom";
 const BookRec = ({ book }) => {
   const params = useParams();
   const Id = params.id;
+  const userToken = localStorage.getItem('userToken');
 
   const [bookData, setBookData] = useState([]);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`);
+        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${userToken}`
+            }
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch book");
         }
@@ -151,12 +158,13 @@ const BookRec = ({ book }) => {
                 height="600px"
               ></iframe>
             ) : (
-              <img src={filePath} alt="Book Preview" />
+              <img src="/aa.png" alt="Book Preview" />
             )
            }
            {console.log(filePath)}
         </div>
       </div>
+      <a href="/uploads/file-1721229222986.jpg"></a>
     </div>
   );
 };

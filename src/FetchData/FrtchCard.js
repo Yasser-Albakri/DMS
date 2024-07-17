@@ -7,6 +7,7 @@ export default function FetchCard () {
 
     const params = useParams();
     const id = params.id;
+    const userToken = localStorage.getItem('userToken')
     
     const [card, setCard] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,7 +19,13 @@ export default function FetchCard () {
     useEffect(() => {
         const fetchIncom = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/income');
+                const response = await fetch('http://127.0.0.1:4000/income',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -41,7 +48,13 @@ export default function FetchCard () {
     useEffect(() => {
         const fetchOutgoing = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/outgoing');
+                const response = await fetch('http://127.0.0.1:4000/outgoing',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -62,7 +75,13 @@ export default function FetchCard () {
     useEffect(() => {
             const fetchCard = async () => {
                 try {
-                    const response = await fetch(`http://127.0.0.1:4000/cards/${id}`);
+                    const response = await fetch(`http://127.0.0.1:4000/cards/${id}`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${userToken}`
+                            }
+                        }
+                    );
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -82,16 +101,16 @@ export default function FetchCard () {
 
         const renderOug = () => {
             return outgoing
-                .filter(outgoing => outgoing.id === id) // Adjust this condition based on your actual requirement
+                .filter(outgoing => outgoing.account_id === id) // Adjust this condition based on your actual requirement
                 .map((outgoing) => (
-                    <tr key={outgoing.id}>
+                    <tr key={outgoing.account_id}>
                         <td>
-                            <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to={`/BookPublish/${outgoing.account_id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                 {outgoing.document_number}
                             </Link>
                         </td>
                         <td>
-                            <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to={`/BookPublish/${outgoing.account_id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                 {outgoing.subject}
                             </Link>
                         </td>
@@ -102,16 +121,16 @@ export default function FetchCard () {
 
         const renderInc = () => {
             return Income
-                .filter(Income => Income.id === id) // Adjust this condition based on your actual requirement
+                .filter(Income => Income.account_id === id) // Adjust this condition based on your actual requirement
                 .map((Income) => (
-                    <tr key={Income.id}>
+                    <tr key={Income.account_id}>
                         <td>
-                            <Link to={`/BookRes/${Income.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to={`/BookRes/${Income.account_id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                 {Income.book_number}
                             </Link>
                         </td>
                         <td>
-                            <Link to={`/BookRec/${Income.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to={`/BookRec/${Income.account_id}`} style={{ textDecoration: 'none', color: 'black' }}>
                                 {Income.topic}
                             </Link>
                         </td>

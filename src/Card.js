@@ -11,7 +11,7 @@ export default function Card() {
             <div className="con">
                 <SearchBar />
                 <div style={{ height: '550px', marginBottom: '20px'}}>
-                    <Contact />
+                    <Contact title="البطاقة" />
                 </div>
             </div>
             <span className="log">شركة الجدار الناري لخدمات الامن السيبراني</span>

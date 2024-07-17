@@ -7,6 +7,7 @@ import "./Forms.css";
 const AddBook = () => {
   const { Id } = useParams();
   const navigate = useNavigate();
+  const userToken = localStorage.getItem('userToken');
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -114,9 +115,11 @@ const AddBook = () => {
       const response = await axios.post("http://127.0.0.1:4000/income", data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`,
         },
       });
       console.log(response.data);
+      console.log(data);
 
       navigate("/BookReceived"); // Adjust the path to where you want to navigate after success
     } catch (error) {
@@ -274,11 +277,11 @@ const AddBook = () => {
           <input
             type="radio"
             name="referral"
-            value="معلون مدير القسم"
-            checked={formData.referral === "معلون مدير القسم"}
+            value="معاون مدير القسم"
+            checked={formData.referral === "معاون مدير القسم"}
             onChange={handleChange}
           />
-          <label>معلون مدير القسم</label>
+          <label>معاون مدير القسم</label>
         </div>
       </div>
       <button type="button" className="btn btn-secondary" onClick={prevStep}>

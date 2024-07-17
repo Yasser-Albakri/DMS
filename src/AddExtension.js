@@ -9,6 +9,9 @@ const AddExtension = () => {
     const history = useNavigate();
     const params = useParams();
     const id = params.id;
+    const userToken = localStorage.getItem('userToken');
+
+
     const [currentStep] = useState(0);
     const [attached, setAttached] = useState();
     const [formData, setFormData] = useState({
@@ -24,7 +27,13 @@ const AddExtension = () => {
     useEffect (() => {
         const fetchAttach = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:4000/attached`);
+                const response = await fetch(`http://127.0.0.1:4000/attached`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Failed to fetch book');
                 }
@@ -91,6 +100,7 @@ const AddExtension = () => {
             const response = await axios.post('http://127.0.0.1:4000/attached', data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${userToken}`,
                   },
             })
             console.log(response);
@@ -151,7 +161,7 @@ const AddExtension = () => {
             </form>
             <div className='disBook'>
                 {filePreview && (
-                    filePreview.type === 'application/pdf' ? (
+                    formData.file.type === 'application/pdf' ? (
                         <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
                     ) : (
                         <img src={filePreview} alt="document Preview" />

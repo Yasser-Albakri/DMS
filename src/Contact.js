@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { useParams } from "react-router-dom";
 import FetchCard from "./FetchData/FrtchCard";
 
-export default function Contact({ searchTerm }) {
+export default function Contact({ searchTerm, title }) {
 
     const params = useParams();
     const id = params.id;
@@ -14,36 +14,49 @@ export default function Contact({ searchTerm }) {
     console.log(searchTerm);
 
     const loca = useLocation();
-    const [data, setData] = useState(null);
     const [Income, setIncome] = useState([]);
-    const [lengthDoc, setLengthDoc] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [outgoing, setOutgoing] = useState([]);
     const [cards, setCards] = useState([]);
-    const [section, setSection] = useState([]);
     const [lengthCard, setLengthCard] = useState();
-    const [sectionLength, setSectionLength] = useState();
+    const [allBook, setAllBook] = useState([]);
+    const [bookIn, setBookIn] = useState([]);
+    const [bookOut, setBookOut] = useState([]);
+    const [allNote, setAllNote] = useState([]);
+    const [noteIn, setNoteIn] = useState([]);
+    const [noteOut, setNoteOut] = useState([]);
+    const [request, setRequest] = useState([]);
+    const [vac, setVac] = useState([]);
+    const [lenBoIn, setLenBoIn] = useState([]);
+    const [lenBoUt, setLenBoUt] = useState([]);
+    const [allDoc, setAllDoc] = useState([]);
 
     const loc = useLocation();
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
     const userToken = localStorage.getItem('userToken');
-    console.log(userId);
-    console.log(userRole);
+    // console.log(userId);
+    // console.log(userRole);
     
 
     useEffect(() => {
         if(loc.pathname==="/BookReceived") {
         const fetchIncom = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/income');
+                const response = await fetch('http://127.0.0.1:4000/income',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const result = await response.json();
                 setIncome(result.data.incomes);
-                setLengthDoc(result.length)
+                setLenBoIn(result.length)
                 console.log(result.data.incomes);
                 // console.log(result.data.docs);
             } catch (error) {
@@ -56,20 +69,24 @@ export default function Contact({ searchTerm }) {
     }
     }, []);
 
-    const DocLen = lengthDoc;
-
-
 
     useEffect(() => {
         if (loc.pathname === "/PublishedBook" || loc.pathname === '/Vacations') {
         const fetchOutgoing = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/outgoing');
+                const response = await fetch('http://127.0.0.1:4000/outgoing',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const result = await response.json();
                 setOutgoing(result.data.outgoing);
+                setLenBoUt(result.length);
                 console.log(result);
                 console.log(result.data.outgoing);
             } catch (error) {
@@ -88,7 +105,11 @@ export default function Contact({ searchTerm }) {
         if(loc.pathname === "/Cards" || loc.pathname==="/Home") {
         const fetchCards = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/cards');
+              const response = await fetch('http://127.0.0.1:4000/cards', {
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                }
+            });
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -135,7 +156,13 @@ export default function Contact({ searchTerm }) {
         if (loc.pathname === `/Card/${id}`) {
         const fetchCard = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:4000/cards/${id}`);
+                const response = await fetch(`http://127.0.0.1:4000/cards/${id}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -156,93 +183,60 @@ export default function Contact({ searchTerm }) {
 
 
 
+    useEffect (() => {
+            const fetchgeneral = async () => {
+                try {
+                    const response = await fetch('http://127.0.0.1:4000/general',
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${userToken}`
+                            }
+                        }
+                    );
+                    const result = await response.json();
+                    setAllBook(result.data.cards[0].result);
+                    setAllNote(result.data.cards[3].result);
+                    setBookIn(result.data.cards[2].result);
+                    setBookOut(result.data.cards[1].result);
+                    setRequest(result.data.cards[7].result)
+                    setNoteIn(result.data.cards[5].result);
+                    setNoteOut(result.data.cards[4].result);
+                    setVac(result.data.cards[6].result);
+                    //console.log(result);
+                } catch (error) {
+                    setError(error);
+                } finally {
+                    setLoading(false);
+                }
+          
+        };fetchgeneral();
+    }, [])
 
 
-
-
-console.log(localStorage.userToken);
-
-
-
-
-
-
-
-
-
-
-
-
-    useEffect(() => {
-        switch (loca.pathname) {
-            case "/Home":
-            case "/Reports":
-                setData({
-                    title: "اخر الكتب",
-                    categories: [
-                        { number: 1, subject: "مذكرة" },
-                        { number: 2, subject: "طلب" },
-                        { number: 3, subject: "كتاب" },
-                        { number: 4, subject: "اجازة" }
-                    ]
-                });
-                break;
-                case `/Card/${id}`:
-                setData({
-                    title: "البطاقة",
-                });
-                break;
-            case "/Cards":
-                setData({
-                    title: "اخر البطاقات",
-                });
-                break;
-            case "/BookReceived":
-                setData({
-                    title: "اخر الكتب",
-                    totalReceived: 15,
-                    receivedBooks: [
-                        { id: 1, title: "كتاب" },
-                        { id: 2, title: "مذكرة" },
-                        { id: 2, title: "طلب" }
-                    ]
-                });
-                break;
-            case "/PublishedBook":
-                setData({
-                    title: "اخر الكتب",
-                    totalPublished: 8,
-                    publishedBooks: [
-                        { id: 1, title: "كتاب" },
-                        { id: 2, title: "مذكرة" },
-                        { id: 3, title: "اجازة" }
-                    ]
-                });
-                break;
-            case "/Vacations":
-                setData({
-                    title: "اخر الاجازات",
-                    publishedBooks: [
-                        { id: 3, title: "اجازة" }
-                    ]
-                });
-                break;
-            case "/Divisions":
-                setData({
-                    title: "الشعب",
-                    publishedBooks: [
-                        { id: 2, title: "اجازة" }
-                    ]
-                });
-                break;
-            default:
-                setData(null); // Handle unknown paths
-        }
-    }, [loca.pathname]);
-
-
-
-
+//     useEffect (() => {
+//       const fetchgeneralAll = async () => {
+//           try {
+//               const response = await fetch('http://127.0.0.1:4000/general',
+//                   {method: 'POST',
+//                       headers: {
+//                           'Authorization': `Bearer ${userToken}`
+//                       }
+//                   }
+//               );
+//               const result = await response.json();
+//               setAllDoc(result.data.cards);
+//               console.log(result.data.cards);
+//               console.log(result);
+//           } catch (error) {
+//               setError(error);
+//           } finally {
+//               setLoading(false);
+//           }
+    
+//   };fetchgeneralAll();
+// }, [])
+    
+  
 
 
 
@@ -255,22 +249,22 @@ console.log(localStorage.userToken);
                 <Link to={`/BookRec/${Incom.id}`} style={{textDecoration:'none', color:'black', margin:'5px', backgroundColor: 'rgb(238 238 238)', padding:'10px', borderRadius:'20px'}}>
                 <td>{Incom.book_number}</td>
                 <td className="td2">{Incom.topic}</td>
-                <td>{JSON.stringify(Incom.file_path)}</td>
                 </Link>
             </tr>
         ));
     };
 
-    // const renderDocumentsRes = () => {
-    //     if (!Array.isArray(documents)) return null;
-    //     else if (documents.document_type==='')
-    //     return documents.map((document) => (
-    //         <tr key={document.id}>
-    //             <td>{document.document_number}</td>
-    //             <td className="td2">{document.document_title}</td>
-    //         </tr>
-    //     ));
-    // };
+    const renderAllDoc = () => {
+      if (!Array.isArray(allDoc)) return null;
+      return allDoc.map((allDoc) => (
+          <tr key={allDoc.id}>
+              <Link to={`/BookRec/${allDoc.id}`} style={{textDecoration:'none', color:'black', margin:'5px', backgroundColor: 'rgb(238 238 238)', padding:'10px', borderRadius:'20px'}}>
+              <td>{allDoc.id}</td>
+              <td className="td2">{allDoc.subject}</td>
+              </Link>
+          </tr>
+      ));
+  };
 
     const renderOutgoing = () => {
         if (!Array.isArray(outgoing)) return null;
@@ -279,7 +273,7 @@ console.log(localStorage.userToken);
             <tr key={outgoing.id}>
                 <Link to={`/BookPublish/${outgoing.id}`} style={{textDecoration:'none', color:'black', margin:'5px', backgroundColor: 'rgb(238 238 238)', padding:'10px', borderRadius:'20px'}}>
                     <td>{outgoing.document_number}</td>
-                    <td>{outgoing.subject}</td>
+                    <td className="td2">{outgoing.subject}</td>
                 </Link>
             </tr>
         ));
@@ -301,38 +295,29 @@ console.log(localStorage.userToken);
     };
 
 
-    const renderSection = () => {
-        if (!Array.isArray(section)) return null;
-        return section.map((section) => (
-            <tr key={section.id}>
-                <td>{section.name}</td>
-                <td>{section.id}</td>
-            </tr>
-        ));
-    };
+    // const renderSection = () => {
+    //     if (!Array.isArray(section)) return null;
+    //     return section.map((section) => (
+    //         <tr key={section.id}>
+    //             <td>{section.name}</td>
+    //             <td>{section.id}</td>
+    //         </tr>
+    //     ));
+    // };
 
     const renderVaca = () => {
-        return outgoing
-            .filter(outgoing => outgoing.type === 3) // Adjust this condition based on your actual requirement
-            .map((outgoing) => (
-                <tr key={outgoing.id}>
-                    <td>
-                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                            {outgoing.document_number}
-                        </Link>
-                    </td>
-                    <td>
-                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                            {outgoing.subject}
-                        </Link>
-                    </td>
-                    <td>
-                        <Link to={`/BookPublish/${outgoing.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-                            {outgoing.leave_status}
-                        </Link>
-                    </td>
-                </tr>
-            ));
+
+        const filteredOutVaca = outgoing.filter(outgoing => outgoing.type === 3)
+
+        return filteredOutVaca.map(outgoing => (
+            <tr key={outgoing.id}>
+                <Link to={`/Card/${outgoing.id}`} style={{textDecoration: 'none', color: 'black', margin: '5px', backgroundColor: 'rgb(238 238 238)', padding: '10px', borderRadius: '20px', display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+                    <td>{outgoing.document_number}</td>
+                    <td>{outgoing.subject}</td>
+                    <td>{outgoing.executing_uthority}</td>
+                </Link>
+            </tr>
+        ));
     };
 
     const renderSearch = () => {
@@ -340,11 +325,13 @@ console.log(localStorage.userToken);
           return renderCards();
       } else {
           const filteredCards = cards.filter(card => 
-              card.fullname.toLowerCase().includes(searchTerm.toLowerCase())
+            (card.fullname && card.fullname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (card.company_name && card.company_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (card.id && card.id.toString().includes(searchTerm))
           );
   
           return filteredCards.map(card => (
-              <tr key={card.account_id}>
+              <tr key={card.id}>
                   <Link to={`/Card/${card.id}`} style={{textDecoration: 'none', color: 'black', margin: '5px', backgroundColor: 'rgb(238 238 238)', padding: '10px', borderRadius: '20px', display: "flex", justifyContent: "space-around", alignItems: "center"}}>
                       <td>{card.id}</td>
                       <td>{card.fullname}</td>
@@ -355,6 +342,83 @@ console.log(localStorage.userToken);
           ));
       }
   };
+
+
+
+  const renderSearchIncom = () => {
+    if (searchTerm === "") {
+        return renderIncom();
+    } else {
+        const filteredIncom = Income.filter(Income => 
+          (Income.topic && Income.topic.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (Income.section && Income.section.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (Income.issuing_authority && Income.issuing_authority.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (Income.book_number && Income.book_number.toString().includes(searchTerm))
+        );
+
+        return filteredIncom.map(Income => (
+            <tr key={Income.id}>
+                <Link to={`/Card/${Income.id}`} style={{textDecoration: 'none', color: 'black', margin: '5px', backgroundColor: 'rgb(238 238 238)', padding: '10px', borderRadius: '20px', display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+                    <td>{Income.book_number}</td>
+                    <td>{Income.topic}</td>
+                    <td>{Income.issuing_authority}</td>
+                </Link>
+            </tr>
+        ));
+    }
+};
+
+
+
+const renderSearchOutgoing = () => {
+  if (searchTerm === "") {
+      return renderOutgoing();
+  } else {
+      const filteredOutgoing = outgoing.filter(outgoing => 
+        (outgoing.addressed_entity && outgoing.addressed_entity.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.subject && outgoing.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.executing_uthority && outgoing.executing_uthority.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.document_number && outgoing.document_number.toString().includes(searchTerm))
+      );
+
+      return filteredOutgoing.map(outgoing => (
+          <tr key={outgoing.id}>
+              <Link to={`/Card/${outgoing.id}`} style={{textDecoration: 'none', color: 'black', margin: '5px', backgroundColor: 'rgb(238 238 238)', padding: '10px', borderRadius: '20px', display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+                  <td>{outgoing.document_number}</td>
+                  <td>{outgoing.subject}</td>
+                  <td>{outgoing.executing_uthority}</td>
+              </Link>
+          </tr>
+      ));
+  }
+};
+
+
+const renderSearchVac = () => {
+  if (searchTerm === "") {
+      return renderVaca();
+  } else {
+      const filteredOutgoing = outgoing.filter(outgoing => 
+        (outgoing.addressed_entity && outgoing.addressed_entity.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.subject && outgoing.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.executing_uthority && outgoing.executing_uthority.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (outgoing.document_number && outgoing.document_number.toString().includes(searchTerm))
+      );
+
+      const filteredOutVaca = filteredOutgoing.filter(outgoing => outgoing.type === 3)
+    
+
+      return filteredOutVaca.map(outgoing => (
+          <tr key={outgoing.id}>
+              <Link to={`/Card/${outgoing.id}`} style={{textDecoration: 'none', color: 'black', margin: '5px', backgroundColor: 'rgb(238 238 238)', padding: '10px', borderRadius: '20px', display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+                  <td>{outgoing.document_number}</td>
+                  <td>{outgoing.subject}</td>
+                  <td>{outgoing.executing_uthority}</td>
+              </Link>
+          </tr>
+      ));
+  }
+};
 
 
 
@@ -370,10 +434,6 @@ console.log(localStorage.userToken);
         if (loading) return <div>Loading...</div>;
         if (error) return <div>Error: {error.message}</div>;
 
-        if (!data) {
-            return <div>No data available for this route.</div>;
-        }
-
         switch (loca.pathname) {
             case "/Home":
             case "/Reports":
@@ -381,27 +441,27 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
+                                <h3>{title}</h3>
                                 {/* <p>عدد الكتب الكلي : <span>{DocLen}</span></p> */}
                             </div>
                             <div className="divs">
                                 <div>
-                                    <p>0</p>
+                                    <p>{allNote}</p>
                                     <hr />
                                     <p>مذكرة</p>
                                 </div>
                                 <div>
-                                    <p>0</p>
+                                    <p>{request}</p>
                                     <hr />
                                     <p>طلب</p>
                                 </div>
                                 <div>
-                                    <p>0</p>
+                                    <p>{allBook}</p>
                                     <hr />
                                     <p>كتاب</p>
                                 </div>
                                 <div>
-                                    <p>1</p>
+                                    <p>{vac}</p>
                                     <hr />
                                     <p>اجازة</p>
                                 </div>
@@ -409,7 +469,7 @@ console.log(localStorage.userToken);
                         </div>
                         <hr />
                         <table>
-                            <tr>
+                            <tr style={{textDecoration:'none', color:'black', borderRadius:'20px', display:"flex", justifyContent:"space-around", alignItems:"center" }}>
                                 <td className="td1">الرقم</td>
                                 <td>الموضوع</td>
                                 <td>اسم المؤسسة</td>
@@ -429,7 +489,7 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
+                                <h3>{title}</h3>
                                 <p>عدد البطاقات الكلي : <span>{lengthCard}</span></p>
                             </div>
                         </div>
@@ -445,7 +505,7 @@ console.log(localStorage.userToken);
                         <hr />
                         <table>
                             <tbody>
-                                {renderCards()}
+                              {searchTerm=== "" ? renderCards() : renderSearch()}
                             </tbody>
                         </table>
                     </div>
@@ -455,8 +515,8 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
-                                <p>عدد الاجازات الكلي : <span>{lengthCard}</span></p>
+                                <h3>{title}</h3>
+                                <p>عدد الاجازات الكلي : <span>{vac}</span></p>
                             </div>
                         </div>
                         <hr />
@@ -470,7 +530,7 @@ console.log(localStorage.userToken);
                         <hr />
                         <table>
                             <tbody>
-                            {renderVaca()}
+                            { searchTerm === "" ? renderVaca() : renderSearchVac() }
                             </tbody>
                         </table>
                     </div>
@@ -480,22 +540,22 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
-                                <p>عدد الكتب الكلي : <span>{DocLen}</span></p>
+                                <h3>{title}</h3>
+                                <p>عدد الكتب الكلي : <span>{lenBoIn}</span></p>
                             </div>
                             <div className="divs">
                                 <div>
-                                    <p>0</p>
+                                    <p>{noteIn}</p>
                                     <hr />
                                     <p>مذكرة</p>
                                 </div>
                                 <div>
-                                    <p>0</p>
+                                    <p>{request}</p>
                                     <hr />
                                     <p>طلب</p>
                                 </div>
                                 <div>
-                                    <p>1</p>
+                                    <p>{bookIn}</p>
                                     <hr />
                                     <p>كتاب</p>
                                 </div>
@@ -511,7 +571,7 @@ console.log(localStorage.userToken);
                         <hr />
                         <table>
                             <tbody>
-                                {renderIncom()}
+                                {searchTerm === "" ? renderIncom() : renderSearchIncom() }
                             </tbody>
                         </table>
                     </div>
@@ -521,22 +581,22 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
-                                <p>عدد الكتب الكلي : <span>{data.totalPublished}</span></p>
+                                <h3>{title}</h3>
+                                <p>عدد الكتب الكلي : <span>{lenBoUt}</span></p>
                             </div>
                             <div className="divs">
                                 <div>
-                                    <p>0</p>
+                                    <p>{noteOut}</p>
                                     <hr />
                                     <p>مذكرة</p>
                                 </div>
                                 <div>
-                                    <p>0</p>
+                                    <p>{bookOut}</p>
                                     <hr />
                                     <p>كتاب</p>
                                 </div>
                                 <div>
-                                    <p>1</p>
+                                    <p>{vac}</p>
                                     <hr />
                                     <p>اجازة</p>
                                 </div>
@@ -552,7 +612,7 @@ console.log(localStorage.userToken);
                         <hr />
                         <table>
                             <tbody>
-                            {renderOutgoing()}
+                            { searchTerm === "" ? renderOutgoing(): renderSearchOutgoing()}
                             </tbody>
                         </table>
                     </div>
@@ -562,8 +622,8 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <h3>{data.title}</h3>
-                                <p>عدد الشعب الكلي : <span>{sectionLength}</span></p>
+                                <h3>{title}</h3>
+                                <p>عدد الشعب الكلي : <span></span></p>
                             </div>
                         </div>
                         <hr />
@@ -576,7 +636,7 @@ console.log(localStorage.userToken);
                         <hr />
                         <table>
                             <tbody>
-                            {renderSection()}
+                            {/* {renderSection()} */}
                             </tbody>
                         </table>
                     </div>
@@ -586,7 +646,7 @@ console.log(localStorage.userToken);
                     <div>
                         <div className="info">
                             <div className="tex">
-                                <Link to={`/CardInfo/${id}`} style={{color:'black'}}><h3>{data.title}</h3></Link>
+                                <Link to={`/CardInfo/${id}`} style={{color:'black'}}><h3>{title}</h3></Link>
                                 <p>عدد الكتب الكلي : <span></span></p>
                             </div>
                             <div className="divs">

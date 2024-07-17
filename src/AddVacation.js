@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const AddBookPublished = () => {
+    const userToken = localStorage.getItem('userToken');
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
         file: '',
@@ -69,20 +70,18 @@ const AddBookPublished = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const data = new FormData();
+        for (const key in formData) {
+        if (key === "file" && formData[key] instanceof File) {
+        data.append(key, formData[key]);
+        } else {
+            data.append(key, formData[key]);
+        }
+        }
+
         try {
-            const response = await axios.post("http://127.0.0.1:4000/outgoing/", {
-                file_path: formData.file,
-                account_id: formData.account_id,
-                type: formData.type,
-                document_number: formData.document_number,
-                document_date: formData.document_date,
-                subject: formData.subject,
-                executing_uthority: formData.executing_uthority,
-                addressed_entity: formData.addressed_entity,
-                note: formData.note,
-                user_id: formData.user_id,
-                last_renewal: formData.last_renewal,
-                leave_status:formData.leave_status,
+            const response = await axios.post("http://127.0.0.1:4000/outgoing/", data, {
+                headers:{ Authorization: `Bearer ${userToken}` }
             }
         );
         console.log(response.data);

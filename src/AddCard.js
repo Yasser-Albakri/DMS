@@ -5,6 +5,7 @@ import axios from "axios";
 
 const MultiStepForm = () => {
   const history = useNavigate();
+  const userToken = localStorage.getItem('userToken')
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     id: "",
@@ -58,10 +59,10 @@ const MultiStepForm = () => {
     }
   };
 
-  const handleCustomSubBranchChange = (e) => {
+  const handleCustomSubBranchChange = (event) => {
     setFormData({
       ...formData,
-      sub_branch: e.target.value,
+      sub_branch: event.target.value
     });
   };
 
@@ -102,6 +103,7 @@ const MultiStepForm = () => {
       const response = await axios.post("http://127.0.0.1:4000/cards", data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`,
         },
       });
 
@@ -251,7 +253,7 @@ const MultiStepForm = () => {
         <select
           name="sub_branch"
           id="Hosp"
-          style={{ display: "none" }}
+          style={{ display: formData.sub_branch === "اهلي اخرى" ? "none" : "block" }}
           value={formData.sub_branch}
           onChange={handleChange}
         >
@@ -265,7 +267,7 @@ const MultiStepForm = () => {
           <input
             type="text"
             name="sub_branch"
-            value={formData.sub_branch}
+            value={formData.custom_sub_branch || ''}
             onChange={handleCustomSubBranchChange}
           />
         )}
@@ -283,8 +285,8 @@ const MultiStepForm = () => {
           <option value="عيادة تخصصية للرنين المغناطيسي">
             عيادة تخصصية للرنين المغناطيسي
           </option>
-          <option value="عيادة تخصصية للشاعة والسونار">
-            عيادة تخصصية للشاعة والسونار
+          <option value="عيادة تخصصية للاشعة والسونار">
+            عيادة تخصصية للاشعة والسونار
           </option>
           <option value="عيادة جراحية يومية">عيادة جراحية يومية</option>
         </select>

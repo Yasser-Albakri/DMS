@@ -14,7 +14,7 @@ function App() {
             <div className="con">
                 <SearchBar setSearchTerm={setSearchTerm} />
                 <div style={{height: '350px' , marginBottom: '20px'}}>
-                  <Contact searchTerm={searchTerm} />
+                  <Contact title="اخر البطاقات" searchTerm={searchTerm} />
                 </div>
                 <div style={{height: '200px'}}>
                   <Statistics />
