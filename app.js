@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const path = require("path");
+
 const AppError = require("./utils/appError");
 const cardsRouter = require("./routes/accountCardRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -12,14 +13,18 @@ const outGoingRoutes = require("./routes/outGoingRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
 const QrCodeRoutes = require("./routes/QrCodeRoutes");
 const generalRoutes = require("./routes/generalRoutes");
+
 const app = express();
 
 app.use(helmet());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
 app.use(cors());
 
 const limiter = rateLimit({
@@ -27,6 +32,7 @@ const limiter = rateLimit({
   max: 100,
   message: "Too many requests from this IP, please try again in an hour!",
 });
+app.use("/api", limiter);
 
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOW-FROM http://127.0.0.1:4000");
@@ -50,6 +56,16 @@ app.use("/general", generalRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
 });
 
 module.exports = app;
