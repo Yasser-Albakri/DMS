@@ -130,11 +130,9 @@ const BookRec = () => {
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
         <div className="book-preview-content">
-          {bookData.map((item) => {
-            const filePath = `http://127.0.0.1:4000/${item.file_path.replace(
-              /\\/g,
-              "/"
-            )}`;
+          {bookData.map((item) => { const filePath = item.file_path === null
+            ? 'لا يوجد فايل'
+            : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (
