@@ -49,22 +49,37 @@ exports.createCard = catchAsync(async (req, res, next) => {
       }
 
       const data = req.body;
+    console.log(data);
 
       if (req.files) {
         if (req.files["unionFile"]) {
           data.union_path = req.files["unionFile"][0].path;
         }
+        else { 
+          delete data['unionFile'];
+        }
         if (req.files["idFile"]) {
           data.id_path = req.files["idFile"][0].path;
         }
+        else {
+          delete data['idFile'];
+        
+        }
+      }
+      if (!req.files) {
+        delete data['unionFile'];
+        delete data['idFile'];
       }
 
+
       const card = await generalModel.addElement("account_card", data);
+      if (card.status === "error")  return next(new AppError("Worng input", 400));
       res.status(201).json({
         status: "success",
         length: card.length,
         data: {
           card,
+          "GG": "GG",
         },
       });
     });

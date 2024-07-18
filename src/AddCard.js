@@ -18,12 +18,12 @@ const MultiStepForm = () => {
     job_position: "",
     governorate: "",
     address: "",
-    idFile: "",
     name_doctor: "",
     doctor_specialty: "",
     place_work: "",
     clinic: false, // Use boolean value here
     unionFile: "",
+        idFile: "",
     type: "",
     technical_manager: "",
     area: "",
@@ -107,11 +107,6 @@ const MultiStepForm = () => {
         },
       });
 
-      // if (!response.ok) {
-      //     throw new Error(`HTTP error! Status: ${response.status}`);
-      // }
-
-      //const responseData = await response.json();
       console.log(response);
       console.log(data);
 

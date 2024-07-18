@@ -35,7 +35,9 @@ exports.addElement = async (table, data) => {
       ") VALUES (" +
       values.join(",") +
       ") RETURNING *";
+    console.log(query);
     const result = await client.query(query);
+    console.log(result.rows);
     return result.rows;
   } catch (err) {
     return new AppError(err.message || "Database error occurred", 500);
