@@ -22,7 +22,7 @@ exports.getCard = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   try {
     const card = await generalModel.viewTable("acc_info", `id = ${id}`);
-    if (!card) {
+    if (card.length === 0) {
       return next(new AppError("No card found with that ID", 404));
     }
     res.status(200).json({
