@@ -3,8 +3,13 @@ import "./Forms.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {Worker} from '@react-pdf-viewer/core';
+import {Viewer} from '@react-pdf-viewer/core';
+import { pdfjs } from 'pdfjs-dist';
 
 const BookRec = () => {
+
+  const pdfjsVersion = "3.11.174";
   const params = useParams();
   const Id = params.id;
   const userToken = localStorage.getItem("userToken");
@@ -136,24 +141,18 @@ const BookRec = () => {
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (
-              <object
-                key={item.id}
-                data={filePath}
-                type="application/pdf"
-                width="100%"
-                height="600px"
-              >
-                <p>
-                  Your browser does not support PDFs.{" "}
-                  <a href={filePath}>Download the PDF</a>.
-                </p>
-              </object>
+              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+                <Viewer fileUrl={filePath} style={{ width: '100%', height: '100%' }} />
+              </Worker>
             ) : (
               <img
+                crossOrigin="anonymous"
                 key={item.id}
                 src={filePath}
                 alt="Book Preview"
                 width="100%"
+                height="100%"
+                borderRadius="40px"
               />
             );
           })}
