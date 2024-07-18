@@ -150,10 +150,12 @@ const BookRec = () => {
               </object>
             ) : (
               <img
+                crossOrigin="anonymous"
                 key={item.id}
                 src={filePath}
                 alt="Book Preview"
                 width="100%"
+                height="100%"
               />
             );
           })}
