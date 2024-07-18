@@ -92,30 +92,34 @@ export default function Contact({ searchTerm, title }) {
 
   useEffect(() => {
     if (loc.pathname === "/Cards" || loc.pathname === "/Home") {
-      const fetchCards = async () => {
-        try {
-          const response = await fetch("http://127.0.0.1:4000/cards", {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          });
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const result = await response.json();
-          setCards(result.data.cards);
-          setLengthCard(result.length);
-          console.log(result);
-          //console.log(result.data.cards);
-        } catch (error) {
-          setError(error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchCards();
+        const fetchCards = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:4000/cards", {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const result = await response.json();
+                if (result.data && result.data.cards) {
+                    setCards(result.data.cards);
+                    setLengthCard(result.length);
+                } else {
+                    throw new Error("Invalid response structure");
+                }
+                console.log(result);
+            } catch (error) {
+                setError(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCards();
     }
-  }, []);
+}, [loc.pathname, userToken]);
+
 
   // useEffect(() => {
   //     const fetchSection = async () => {
@@ -165,32 +169,32 @@ export default function Contact({ searchTerm, title }) {
     }
   }, [id]);
 
-  useEffect(() => {
-    const fetchgeneral = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:4000/general", {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-        const result = await response.json();
-        setAllBook(result.data.cards[0].result);
-        setAllNote(result.data.cards[3].result);
-        setBookIn(result.data.cards[2].result);
-        setBookOut(result.data.cards[1].result);
-        setRequest(result.data.cards[7].result);
-        setNoteIn(result.data.cards[5].result);
-        setNoteOut(result.data.cards[4].result);
-        setVac(result.data.cards[6].result);
-        //console.log(result);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchgeneral();
-  }, []);
+  // useEffect(() => {
+  //   const fetchgeneral = async () => {
+  //     try {
+  //       const response = await fetch("http://127.0.0.1:4000/general", {
+  //         headers: {
+  //           Authorization: `Bearer ${userToken}`,
+  //         },
+  //       });
+  //       const result = await response.json();
+  //       setAllBook(result.data.cards[0].result);
+  //       setAllNote(result.data.cards[3].result);
+  //       setBookIn(result.data.cards[2].result);
+  //       setBookOut(result.data.cards[1].result);
+  //       setRequest(result.data.cards[7].result);
+  //       setNoteIn(result.data.cards[5].result);
+  //       setNoteOut(result.data.cards[4].result);
+  //       setVac(result.data.cards[6].result);
+  //       //console.log(result);
+  //     } catch (error) {
+  //       setError(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchgeneral();
+  // }, []);
 
   //     useEffect (() => {
   //       const fetchgeneralAll = async () => {
@@ -282,31 +286,32 @@ export default function Contact({ searchTerm, title }) {
   };
 
   const renderCards = () => {
-    if (!Array.isArray(cards)) return null;
+    if (!Array.isArray(cards) || cards.length === 0) return <p>No cards available.</p>;
     return cards.map((card) => (
-      <tr key={card.account_id}>
-        <Link
-          to={`/Card/${card.id}`}
-          style={{
-            textDecoration: "none",
-            color: "black",
-            margin: "5px",
-            backgroundColor: "rgb(238 238 238)",
-            padding: "10px",
-            borderRadius: "20px",
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-          }}
-        >
-          <td>{card.id}</td>
-          <td>{card.fullname}</td>
-          <td>{card.company_name}</td>
-          <td>{card.renewal}</td>
-        </Link>
-      </tr>
+        <tr key={card.id}>
+            <Link
+                to={`/Card/${card.id}`}
+                style={{
+                    textDecoration: "none",
+                    color: "black",
+                    margin: "5px",
+                    backgroundColor: "rgb(238 238 238)",
+                    padding: "10px",
+                    borderRadius: "20px",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                }}
+            >
+                <td>{card.id}</td>
+                <td>{card.fullname}</td>
+                <td>{card.company_name}</td>
+                <td>{card.renewal}</td>
+            </Link>
+        </tr>
     ));
-  };
+};
+
 
   // const renderSection = () => {
   //     if (!Array.isArray(section)) return null;
