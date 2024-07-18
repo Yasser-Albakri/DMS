@@ -1,5 +1,5 @@
--- SELECT *
--- from acc_info;
+SELECT *
+from acc_info;
 -- SELECT *
 -- from out_info;
 -- SELECT *
@@ -60,3 +60,5 @@
 --     )
 -- RETURNING *;
 -- INSERT INTO users(name,username,password,role) values ('Developer','admin','admin',0) ;
+SELECT *
+from account_card
