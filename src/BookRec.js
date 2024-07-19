@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {Worker} from '@react-pdf-viewer/core';
 import {Viewer} from '@react-pdf-viewer/core';
-import { pdfjs } from 'pdfjs-dist';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
 const BookRec = () => {
 
@@ -142,7 +142,7 @@ const BookRec = () => {
 
             return fileType === "pdf" ? (
               <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
-                <Viewer fileUrl={filePath} style={{ width: '100%', height: '100%' }} />
+                <Viewer fileUrl={filePath} />
               </Worker>
             ) : (
               <img

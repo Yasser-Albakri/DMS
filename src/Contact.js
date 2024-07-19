@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import FetchCard from "./FetchData/FrtchCard";
+import { useNavigate } from "react-router-dom";
 
 export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
+  const history = useNavigate();
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);
@@ -235,7 +237,7 @@ export default function Contact({ searchTerm, title }) {
           }}
         >
           <td>{Incom.book_number}</td>
-          <td className="td2">{Incom.topic}</td>
+          <td>{Incom.topic}</td>
         </Link>
       </tr>
     ));
@@ -257,7 +259,7 @@ export default function Contact({ searchTerm, title }) {
           }}
         >
           <td>{allDoc.id}</td>
-          <td className="td2">{allDoc.subject}</td>
+          <td>{allDoc.subject}</td>
         </Link>
       </tr>
     ));
@@ -279,7 +281,7 @@ export default function Contact({ searchTerm, title }) {
           }}
         >
           <td>{outgoing.document_number}</td>
-          <td className="td2">{outgoing.subject}</td>
+          <td>{outgoing.subject}</td>
         </Link>
       </tr>
     ));
@@ -288,7 +290,7 @@ export default function Contact({ searchTerm, title }) {
   const renderCards = () => {
     if (!Array.isArray(cards) || cards.length === 0) return <p>No cards available.</p>;
     return cards.map((card) => (
-        <tr key={card.id}>
+        <tr className="card" key={card.id}>
             <Link
                 to={`/Card/${card.id}`}
                 style={{
@@ -298,9 +300,6 @@ export default function Contact({ searchTerm, title }) {
                     backgroundColor: "rgb(238 238 238)",
                     padding: "10px",
                     borderRadius: "20px",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
                 }}
             >
                 <td>{card.id}</td>
@@ -327,7 +326,7 @@ export default function Contact({ searchTerm, title }) {
     const filteredOutVaca = outgoing.filter((outgoing) => outgoing.type === 3);
 
     return filteredOutVaca.map((outgoing) => (
-      <tr key={outgoing.id}>
+      <tr className="rendVac" key={outgoing.id}>
         <Link
           to={`/BookPublish/${outgoing.id}`}
           style={{
@@ -337,9 +336,6 @@ export default function Contact({ searchTerm, title }) {
             backgroundColor: "rgb(238 238 238)",
             padding: "10px",
             borderRadius: "20px",
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
           }}
         >
           <td>{outgoing.document_number}</td>
@@ -366,7 +362,7 @@ export default function Contact({ searchTerm, title }) {
       );
 
       return filteredCards.map((card) => (
-        <tr key={card.id}>
+        <tr className="card" key={card.id}>
           <Link
             to={`/Card/${card.id}`}
             style={{
@@ -376,9 +372,6 @@ export default function Contact({ searchTerm, title }) {
               backgroundColor: "rgb(238 238 238)",
               padding: "10px",
               borderRadius: "20px",
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
             }}
           >
             <td>{card.id}</td>
@@ -420,14 +413,10 @@ export default function Contact({ searchTerm, title }) {
               backgroundColor: "rgb(238 238 238)",
               padding: "10px",
               borderRadius: "20px",
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
             }}
           >
             <td>{Income.book_number}</td>
             <td>{Income.topic}</td>
-            <td>{Income.issuing_authority}</td>
           </Link>
         </tr>
       ));
@@ -467,14 +456,10 @@ export default function Contact({ searchTerm, title }) {
               backgroundColor: "rgb(238 238 238)",
               padding: "10px",
               borderRadius: "20px",
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
             }}
           >
             <td>{outgoing.document_number}</td>
             <td>{outgoing.subject}</td>
-            <td>{outgoing.executing_uthority}</td>
           </Link>
         </tr>
       ));
@@ -508,7 +493,7 @@ export default function Contact({ searchTerm, title }) {
       );
 
       return filteredOutVaca.map((outgoing) => (
-        <tr key={outgoing.id}>
+        <tr className="rendVac" key={outgoing.id}>
           <Link
             to={`/Card/${outgoing.id}`}
             style={{
@@ -518,9 +503,6 @@ export default function Contact({ searchTerm, title }) {
               backgroundColor: "rgb(238 238 238)",
               padding: "10px",
               borderRadius: "20px",
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
             }}
           >
             <td>{outgoing.document_number}</td>
@@ -571,14 +553,11 @@ export default function Contact({ searchTerm, title }) {
             </div>
             <hr />
             <table>
-              <tr
+              <tr className="cardma"
                 style={{
                   textDecoration: "none",
                   color: "black",
                   borderRadius: "20px",
-                  display: "flex",
-                  justifyContent: "space-around",
-                  alignItems: "center",
                 }}
               >
                 <td className="td1">الرقم</td>
@@ -608,14 +587,11 @@ export default function Contact({ searchTerm, title }) {
             </div>
             <hr />
             <table>
-              <tr
+              <tr className="cardma"
                 style={{
                   textDecoration: "none",
                   color: "black",
                   borderRadius: "20px",
-                  display: "flex",
-                  justifyContent: "space-around",
-                  alignItems: "center",
                 }}
               >
                 <td className="td1">التسلسل</td>
@@ -645,8 +621,8 @@ export default function Contact({ searchTerm, title }) {
             </div>
             <hr />
             <table>
-              <tr>
-                <td className="td1">الرقم</td>
+              <tr className="vacat">
+                <td>الرقم</td>
                 <td>الموضوع</td>
                 <td>الحالة</td>
               </tr>
@@ -824,5 +800,9 @@ export default function Contact({ searchTerm, title }) {
     }
   };
 
-  return <div className="contact">{renderContent()}</div>;
+  return (
+    <div className="contact">
+      {renderContent()}
+    </div>
+  );
 }
