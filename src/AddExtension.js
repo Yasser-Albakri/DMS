@@ -22,8 +22,6 @@ const AddExtension = () => {
         number: '',
     });
 
-    const [file, setFile] = useState();
-
     useEffect (() => {
         const fetchAttach = async () => {
             try {

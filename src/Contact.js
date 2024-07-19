@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
-  const history = useNavigate();
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);

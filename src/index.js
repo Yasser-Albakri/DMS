@@ -21,6 +21,7 @@ import CardInfo from './CardInfo';
 import AddMural from './AddMural';
 import AddVacation from './AddVacation';
 import BookPublish from './BookPublish';
+import AttachedBook from './AttachInfo';
 
 
 import {
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
   {
     path: "BookPublish/:id",
     element: <BookPublish />,
+  },
+  {
+    path: "AttachedBook/:id",
+    element: <AttachedBook />,
   },
 ]);
 

@@ -372,3 +372,8 @@ div .btn-secondary {
   padding: 6px 10px;
   outline: none;
 }
+
+.attac span a .attache {
+  width: 500px;
+  display: inline-block;
+}

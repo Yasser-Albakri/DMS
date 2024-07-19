@@ -15,6 +15,7 @@ const BookRec = () => {
   const userToken = localStorage.getItem("userToken");
 
   const [bookData, setBookData] = useState([]);
+  const [attached, setAttached] = useState();
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -29,14 +30,80 @@ const BookRec = () => {
         }
         const result = await response.json();
         setBookData(result.data.incoming);
-        console.log(result);
-        console.log(result.data.incoming);
+        // console.log(result);
+        // console.log(result.data.incoming);
       } catch (error) {
         console.error(error);
       }
     };
     fetchBook();
   }, [Id]);
+
+
+  useEffect (() => {
+    const fetchAttach = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:4000/attached`,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${userToken}`
+                    }
+                }
+            );
+            if (!response.ok) {
+                throw new Error('Failed to fetch book');
+            }
+            const result = await response.json();
+            setAttached(result.data.attachedDocuments);
+            console.log(result);
+            console.log(result.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }; fetchAttach();
+}, []);
+
+
+const renderAtta = () => {
+  if (!Array.isArray(attached)) return null;
+
+  const filteredAtta = attached.filter((item) => item.inc_id === Id);
+
+  return filteredAtta.map((item) => {
+    const filePath = item.file_path === null
+      ? 'لا يوجد فايل'
+      : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+    const fileType = getFileType(filePath);
+
+    return (
+      <span key={item.id}>
+        <Link to={`/AttachedBook/${item.id}`}>
+          {/* <div className="attache">
+            {fileType === "pdf" ? (
+              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+                <Viewer fileUrl={filePath} />
+              </Worker>
+            ) : (
+              <img
+                crossOrigin="anonymous"
+                src={filePath}
+                alt="Book Preview"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: '40px' }}
+              />
+            )}
+          </div> */}
+          <p style={{display:"inline-block", margin:'5px', color:'black'}}>{item.number}</p>
+          <p style={{display:"inline-block", margin:'5px', color:'black'}}>{item.topic},</p>
+        </Link>
+      </span>
+    );
+  });
+};
+
+
+
 
   const getFileType = (filePath) => {
     filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
@@ -108,6 +175,10 @@ const BookRec = () => {
             <span key={item.id}>{item.note}</span>
           ))}
         </p>
+        <div className="attac">
+          <p style={{display:'inline-block'}}><strong>الملحقات : </strong></p>
+          {renderAtta()}
+        </div>
         <form method="POST">
           <label>اضافة ملاحظة :</label>
           <input type="text" name="note" />
