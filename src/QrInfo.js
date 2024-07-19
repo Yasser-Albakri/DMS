@@ -3,7 +3,6 @@ import React from "react";
 import "./Forms.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {Worker} from '@react-pdf-viewer/core';
 import {Viewer} from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
@@ -118,24 +117,6 @@ const BookPublish = ({ book }) => {
           <input type="text" name="note" />
           <input type="submit" value="Submit" className="btn btn-success" />
         </form>
-        <div className="buttons">
-          <button className="btn btn-primary">
-            <Link
-              to={`/AddMural/${Id}`}
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              اضافة جدارية
-            </Link>
-          </button>
-          <button className="btn btn-secondary">
-            <Link
-              to={`//${Id}`}
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              تعديل
-            </Link>
-          </button>
-        </div>
       </div>
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
