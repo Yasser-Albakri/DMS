@@ -53,7 +53,7 @@ export default function Login() {
 
     return (
         <div className="login">
-            <div className="loginDev" style={{backgroundColor:'white', display:'flex', flexDirection:'row', padding:'20px', height:'600px', position:'relative',margin:'30px'}}>
+            <div className="loginDev" style={{backgroundColor:'white', display:'flex', flexDirection:'row', padding:'20px', height:'600px', position:'relative'}}>
                 <div style={{padding:'20px'}}>
                     <h1 style={{margin:'5px', fontFamily:'cursive'}}>وزارة الصحة</h1>
                     <h2 style={{textAlign:'center', fontFamily:'cursive', margin:'2px'}}>قسم القطاع الصحي الخاص</h2>
