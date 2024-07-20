@@ -53,6 +53,7 @@ const AddBookPublished = () => {
 
 
   useEffect(() => {
+    if (Id) {
     const fetchBook = async () => {
       try {
         const response = await fetch(`${fixedUrl}/outgoing/${Id}`, {
@@ -70,6 +71,7 @@ const AddBookPublished = () => {
       }
     };
     fetchBook();
+  }
   }, [Id]);
 
 

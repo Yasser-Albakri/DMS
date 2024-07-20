@@ -33,6 +33,7 @@ const AddBook = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    if (Id) {
     const fetchBook = async () => {
       try {
         const response = await fetch(`${fixedUrl}/income/${Id}`, {
@@ -52,6 +53,7 @@ const AddBook = () => {
       }
     };
     fetchBook();
+  }
   }, [Id]);
 
   const handleChange = (e) => {
@@ -104,6 +106,9 @@ const AddBook = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+  useEffect(() => {
+    console.log("Form Data:", formData);
+  }, [formData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -367,7 +372,7 @@ const AddBook = () => {
       </form>
       <div className="disBook">
         {filePreview &&
-          (formData.file.type === "application/pdf" ? (
+          formData.file && (formData.file.type === "application/pdf" ? (
             <iframe
               src={filePreview}
               title="PDF Preview"
