@@ -7,6 +7,7 @@ export default function FetchCard() {
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem("userToken");
+  const fixedUrl = "http://127.0.0.1:4000";
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchIncom = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:4000/income", {
+        const response = await fetch(`${fixedUrl}/income`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -41,7 +42,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchOutgoing = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:4000/outgoing", {
+        const response = await fetch(`${fixedUrl}/outgoing`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -65,7 +66,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`, {
+        const response = await fetch(`${fixedUrl}/cards/${id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -88,50 +89,39 @@ export default function FetchCard() {
   }, [id]);
 
   const renderOug = () => {
-    return outgoing
-      .filter((outgoing) => outgoing.account_id === id) // Adjust this condition based on your actual requirement
-      .map((outgoing) => (
+    const filteredOutgoing = outgoing.filter((outgoing) => outgoing.account_id === id) // Adjust this condition based on your actual requirement
+    return filteredOutgoing.map((outgoing) => (
         <tr key={outgoing.id}>
-          <td>
-            <Link
+          <Link
               to={`/BookPublish/${outgoing.id}`}
               style={{ textDecoration: "none", color: "black" }}
             >
+          <td>
               {outgoing.document_number}
-            </Link>
           </td>
           <td>
-            <Link
-              to={`/BookPublish/${outgoing.id}`}
-              style={{ textDecoration: "none", color: "black" }}
-            >
               {outgoing.subject}
-            </Link>
           </td>
+          </Link>
         </tr>
       ));
   };
 
   const renderInc = () => {
-    return Income.filter((Income) => Income.account_id === id) // Adjust this condition based on your actual requirement
-      .map((Income) => (
+    const filteredIncome = Income.filter((Income) => Income.account_id === id);  // Adjust this condition based on your actual requirement
+     return filteredIncome.map((Income) => (
         <tr key={Income.id}>
-          <td>
-            <Link
+          <Link
               to={`/BookRec/${Income.id}`}
               style={{ textDecoration: "none", color: "black" }}
-            >
-              {Income.book_number}
-            </Link>
-          </td>
-          <td>
-            <Link
-              to={`/BookRec/${Income.id}`}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              {Income.topic}
-            </Link>
-          </td>
+          >
+            <td>
+                {Income.book_number}
+            </td>
+            <td>
+                {Income.topic}
+            </td>
+          </Link>
         </tr>
       ));
   };

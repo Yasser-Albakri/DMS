@@ -9,6 +9,8 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 
 const BookRec = () => {
 
+  const fixedUrl = "http://127.0.0.1:4000";
+
   const pdfjsVersion = "3.11.174";
   const params = useParams();
   const Id = params.id;
@@ -20,7 +22,7 @@ const BookRec = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`, {
+        const response = await fetch(`${fixedUrl}/income/${Id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -43,7 +45,7 @@ const BookRec = () => {
   useEffect (() => {
     const fetchAttach = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:4000/attached`,
+            const response = await fetch(`${fixedUrl}/attached`,
                 {
                     headers: {
                         "Authorization": `Bearer ${userToken}`
@@ -72,7 +74,7 @@ const renderAtta = () => {
   return filteredAtta.map((item) => {
     const filePath = item.file_path === null
       ? 'لا يوجد فايل'
-      : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+      : `${fixedUrl}/${item.file_path.replace(/\\/g, "/")}`;
     const fileType = getFileType(filePath);
 
     return (
@@ -208,7 +210,7 @@ const renderAtta = () => {
         <div className="book-preview-content">
           {bookData.map((item) => { const filePath = item.file_path === null
             ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+            : `${fixedUrl}/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (

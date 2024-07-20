@@ -6,6 +6,9 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "./Forms.css";
 
 const AttachedBook = () => {
+
+  const fixedUrl = "http://127.0.0.1:4000";
+
   const pdfjsVersion = "3.11.174";
   const { id: Id } = useParams();
   const userToken = localStorage.getItem("userToken");
@@ -15,7 +18,7 @@ const AttachedBook = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/attached/${Id}`, {
+        const response = await fetch(`${fixedUrl}/attached/${Id}`, {
           headers: { Authorization: `Bearer ${userToken}` },
         });
         if (!response.ok) {
@@ -74,7 +77,7 @@ const AttachedBook = () => {
             const filePath =
               item.file_path === null
                 ? "لا يوجد فايل"
-                : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+                : `${fixedUrl}/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (

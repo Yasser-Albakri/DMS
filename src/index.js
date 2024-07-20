@@ -79,6 +79,10 @@ const router = createBrowserRouter([
     element: <AddBookPublished />,
   },
   {
+    path: "AddBookPublished/:id",
+    element: <AddBookPublished />,
+  },
+  {
     path: "Registration",
     element: <Registration />,
   },
@@ -104,6 +108,10 @@ const router = createBrowserRouter([
   },
   {
     path: "AddVacation",
+    element: <AddVacation />,
+  },
+  {
+    path: "AddVacation/:id",
     element: <AddVacation />,
   },
   {

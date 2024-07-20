@@ -10,10 +10,10 @@ const AddExtension = () => {
     const params = useParams();
     const id = params.id;
     const userToken = localStorage.getItem('userToken');
+    const fixedUrl = "http://127.0.0.1:4000";
 
 
     const [currentStep] = useState(0);
-    const [attached, setAttached] = useState();
     const [formData, setFormData] = useState({
         file: "",
         topic: '',
@@ -22,28 +22,28 @@ const AddExtension = () => {
         number: '',
     });
 
-    useEffect (() => {
-        const fetchAttach = async () => {
-            try {
-                const response = await fetch(`http://127.0.0.1:4000/attached`,
-                    {
-                        headers: {
-                            "Authorization": `Bearer ${userToken}`
-                        }
-                    }
-                );
-                if (!response.ok) {
-                    throw new Error('Failed to fetch book');
-                }
-                const result = await response.json();
-                setAttached(result);
-                console.log(result);
-                console.log(result.data);
-            } catch (error) {
-                console.error(error);
-            }
-        }; fetchAttach();
-    }, []);
+    // useEffect (() => {
+    //     const fetchAttach = async () => {
+    //         try {
+    //             const response = await fetch(`${fixedUrl}/attached/${id}`,
+    //                 {
+    //                     headers: {
+    //                         "Authorization": `Bearer ${userToken}`
+    //                     }
+    //                 }
+    //             );
+    //             if (!response.ok) {
+    //                 throw new Error('Failed to fetch book');
+    //             }
+    //             const result = await response.json();
+    //             setFormData(result.data.attachedDocuments[0]);
+    //             console.log(result);
+    //             console.log(result.data);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }; fetchAttach();
+    // }, []);
 
     const [filePreview, setFilePreview] = useState(null);
 
@@ -85,6 +85,9 @@ const AddExtension = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // const url = id ? `${fixedUrl}/attached/${id}` : '${fixedUrl}/attached';
+        // const method = id ? 'PATCH' : 'POST';
+
         const data = new FormData();
         for (const key in formData) {
             if (key === "file" && formData[key] instanceof File) {
@@ -95,7 +98,7 @@ const AddExtension = () => {
           }
 
         try {
-            const response = await axios.post('http://127.0.0.1:4000/attached', data, {
+            const response = await axios.post(`${fixedUrl}/attached`, data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${userToken}`,

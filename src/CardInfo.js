@@ -7,6 +7,7 @@ export default function CardInfo() {
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem('userToken');
+  const fixedUrl = "http://127.0.0.1:4000";
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function CardInfo() {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`,
+        const response = await fetch(`${fixedUrl}/cards/${id}`,
           {
             headers: {
               Authorization: `Bearer ${userToken}`

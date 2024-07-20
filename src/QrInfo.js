@@ -9,6 +9,8 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 
 const BookPublish = ({ book }) => {
   
+  const fixedUrl = "http://127.0.0.1:4000";
+  
   const pdfjsVersion = "3.11.174";
   const params = useParams();
   const Id = params.id;
@@ -19,7 +21,7 @@ const BookPublish = ({ book }) => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
+        const response = await fetch(`${fixedUrl}/outgoing/${Id}`, {
           headers: { Authorization: `Bearer ${userToken}` },
         });
         if (!response.ok) {
@@ -124,7 +126,7 @@ const BookPublish = ({ book }) => {
           {bookData.map((item) => {
             const filePath = item.file_path === null
             ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+            : `${fixedUrl}/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (

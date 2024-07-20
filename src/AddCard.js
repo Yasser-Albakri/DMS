@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const MultiStepForm = () => {
+  const fixedUrl = "http://127.0.0.1:4000";
+
   const history = useNavigate();
   const userToken = localStorage.getItem('userToken')
   const [currentStep, setCurrentStep] = useState(0);
@@ -100,7 +102,7 @@ const MultiStepForm = () => {
   
 
     try {
-      const response = await axios.post("http://127.0.0.1:4000/cards", data, {
+      const response = await axios.post(`${fixedUrl}/cards`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${userToken}`,

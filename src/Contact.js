@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
+  
+  const fixedUrl = "http://127.0.0.1:4000";
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);
@@ -41,7 +43,7 @@ export default function Contact({ searchTerm, title }) {
     if (loc.pathname === "/BookReceived") {
       const fetchIncom = async () => {
         try {
-          const response = await fetch("http://127.0.0.1:4000/income", {
+          const response = await fetch(`${fixedUrl}/income`, {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -68,7 +70,7 @@ export default function Contact({ searchTerm, title }) {
     if (loc.pathname === "/PublishedBook" || loc.pathname === "/Vacations") {
       const fetchOutgoing = async () => {
         try {
-          const response = await fetch("http://127.0.0.1:4000/outgoing", {
+          const response = await fetch(`${fixedUrl}/outgoing`, {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -95,14 +97,22 @@ export default function Contact({ searchTerm, title }) {
     if (loc.pathname === "/Cards" || loc.pathname === "/Home") {
         const fetchCards = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:4000/cards", {
+                const response = await fetch(`${fixedUrl}/cards`, {
                     headers: {
                         Authorization: `Bearer ${userToken}`,
                     },
                 });
+
                 if (!response.ok) {
-                    throw new Error("Network response was not ok");
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
                 }
+
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    const text = await response.text();
+                    throw new Error(`Expected JSON, got ${contentType}. Response: ${text}`);
+                }
+
                 const result = await response.json();
                 if (result.data && result.data.cards) {
                     setCards(result.data.cards);
@@ -110,13 +120,16 @@ export default function Contact({ searchTerm, title }) {
                 } else {
                     throw new Error("Invalid response structure");
                 }
+
                 console.log(result);
             } catch (error) {
+                console.error("Fetch error:", error);
                 setError(error);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchCards();
     }
 }, [loc.pathname, userToken]);
@@ -125,7 +138,7 @@ export default function Contact({ searchTerm, title }) {
   // useEffect(() => {
   //     const fetchSection = async () => {
   //         try {
-  //             const response = await fetch('http://127.0.0.1:4000/sections');
+  //             const response = await fetch('${fixedUrl}/sections');
   //             if (!response.ok) {
   //                 throw new Error('Network response was not ok');
   //             }
@@ -147,7 +160,7 @@ export default function Contact({ searchTerm, title }) {
     if (loc.pathname === `/Card/${id}`) {
       const fetchCard = async () => {
         try {
-          const response = await fetch(`http://127.0.0.1:4000/cards/${id}`, {
+          const response = await fetch(`${fixedUrl}/cards/${id}`, {
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -173,7 +186,7 @@ export default function Contact({ searchTerm, title }) {
   // useEffect(() => {
   //   const fetchgeneral = async () => {
   //     try {
-  //       const response = await fetch("http://127.0.0.1:4000/general", {
+  //       const response = await fetch("${fixedUrl}/general", {
   //         headers: {
   //           Authorization: `Bearer ${userToken}`,
   //         },
@@ -200,7 +213,7 @@ export default function Contact({ searchTerm, title }) {
   //     useEffect (() => {
   //       const fetchgeneralAll = async () => {
   //           try {
-  //               const response = await fetch('http://127.0.0.1:4000/general',
+  //               const response = await fetch('${fixedUrl}/general',
   //                   {method: 'POST',
   //                       headers: {
   //                           'Authorization': `Bearer ${userToken}`

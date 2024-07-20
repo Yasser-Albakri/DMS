@@ -5,7 +5,10 @@ import "./App.css";
 import "./Forms.css";
 
 const AddBook = () => {
-  const { Id } = useParams();
+
+  const fixedUrl = "http://127.0.0.1:4000";
+
+  const { id : Id } = useParams();
   const navigate = useNavigate();
   const userToken = localStorage.getItem('userToken');
 
@@ -30,20 +33,25 @@ const AddBook = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (Id) {
-      const fetchBook = async () => {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:4000/documents/${Id}`
-          );
-          setFormData(response.data.doc);
-          console.log(response.data);
-        } catch (error) {
-          console.error(error);
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`${fixedUrl}/income/${Id}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
         }
-      };
-      fetchBook();
-    }
+        const result = await response.json();
+        setFormData(result.data.incoming[0]);
+        // console.log(result);
+        console.log(result.data.incoming);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
   }, [Id]);
 
   const handleChange = (e) => {
@@ -99,20 +107,23 @@ const AddBook = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const url = Id ? `http://127.0.0.1:4000/income${Id}` : 'http://127.0.0.1:4000/income';
-    // const method = Id ? 'PUT' : 'POST';
-
+    const url = Id ? `${fixedUrl}/income/${Id}` : `${fixedUrl}/income`;
+    const method = Id ? 'PATCH' : 'POST';
+  
     const data = new FormData();
     for (const key in formData) {
       if (key === "file" && formData[key] instanceof File) {
-        data.append(key, formData[key]);
+        data.append(key, formData[key]); // Ensure this line is appending 'file'
       } else {
         data.append(key, formData[key]);
       }
     }
-
+  
     try {
-      const response = await axios.post("http://127.0.0.1:4000/income", data, {
+      const response = await axios({
+        method: method,
+        url: url,
+        data: data,
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${userToken}`,
@@ -120,13 +131,22 @@ const AddBook = () => {
       });
       console.log(response.data);
       console.log(data);
-
+  
       navigate("/BookReceived"); // Adjust the path to where you want to navigate after success
     } catch (error) {
-      console.error("Error:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("Error request:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
       alert(`Error: ${error.message}`);
     }
   };
+  
 
   const steps = [
     <div className="step" key="step1">
@@ -137,7 +157,7 @@ const AddBook = () => {
           className="form-control"
           ref={fileInputRef}
           id="file"
-          name="document"
+          name="file"
           onChange={handleChange}
         />
         {formData.file && (
@@ -156,6 +176,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="account_id"
+          name="account_id"
           value={formData.account_id}
           onChange={handleChange}
         />
@@ -182,6 +203,7 @@ const AddBook = () => {
         <select
           className="form-control"
           id="type"
+          name="type"
           value={formData.type}
           onChange={handleChange}
         >
@@ -197,6 +219,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="book_number"
+          name="book_number"
           value={formData.book_number}
           onChange={handleChange}
         />
@@ -207,6 +230,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="book_date"
+          name="book_date"
           value={formData.book_date}
           onChange={handleChange}
         />
@@ -229,6 +253,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="issuing_authority"
+          name="issuing_authority"
           value={formData.issuing_authority}
           onChange={handleChange}
         />
@@ -239,6 +264,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="topic"
+          name="topic"
           value={formData.topic}
           onChange={handleChange}
         />
@@ -249,6 +275,7 @@ const AddBook = () => {
           type="number"
           className="form-control"
           id="incoming_number"
+          name="incoming_number"
           value={formData.incoming_number}
           onChange={handleChange}
         />
@@ -259,6 +286,7 @@ const AddBook = () => {
           type="text"
           className="form-control"
           id="incoming_date"
+          name="incoming_date"
           value={formData.incoming_date}
           onChange={handleChange}
         />
