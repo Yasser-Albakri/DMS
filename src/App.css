@@ -217,15 +217,15 @@ ul {
 
 .log {
   position: absolute;
-  bottom: -15px;
-  right: 750px;
+  bottom: 10px;
+  align-self: center;
   color: white;
 }
 
 .log1 {
     position: absolute;
-    bottom: -35px;
-    right: 600px;
+    bottom: -8px;
+    align-self: center;
     color: white;
 }
 

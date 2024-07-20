@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Forms.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const MultiStepForm = () => {
   const fixedUrl = "http://127.0.0.1:4000";
+  const { id : Id } = useParams();
 
   const history = useNavigate();
   const userToken = localStorage.getItem('userToken')
@@ -42,6 +43,32 @@ const MultiStepForm = () => {
     ipn: "",
   });
 
+
+  useEffect(() => {
+    if (Id) {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`${fixedUrl}/cards/${Id}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setFormData(result.data.incoming[0]);
+        // console.log(result);
+        console.log(result.data.incoming);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }
+  }, [Id]);
+
+
   const handleChange = (e) => {
     const { id, value, files, name } = e.target;
     if (files && files[0]) {
@@ -75,7 +102,6 @@ const MultiStepForm = () => {
   };
 
   const navigate = useNavigate();
-  const { state } = useLocation();
   const PrevPage = () => {
     navigate(-1);
   };
@@ -88,6 +114,8 @@ const MultiStepForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const url = Id ? `${fixedUrl}/cards/${Id}` : `${fixedUrl}/cards`;
+    const method = Id ? 'PATCH' : 'POST';
 
     const data = new FormData();
     for (const key in formData) {
@@ -102,7 +130,10 @@ const MultiStepForm = () => {
   
 
     try {
-      const response = await axios.post(`${fixedUrl}/cards`, data, {
+      const response = await axios({
+        method: method,
+        url: url,
+        data: data,
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${userToken}`,

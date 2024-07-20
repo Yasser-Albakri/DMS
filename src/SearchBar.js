@@ -31,7 +31,7 @@ export default function SearchBar ({ setSearchTerm }) {
     }else {
     return (
         <div className="searchbar">
-            <div style={{display:'flex'}}>
+            <div style={{display:'flex', alignItems:'center'}}>
                 <img alt="" src="/aa.png" />
                 <p style={{display: 'inline-block', alignSelf:'center'}}><b> وزارة الصحة - قسم القطاع الصحي الخاص</b></p>
             </div>

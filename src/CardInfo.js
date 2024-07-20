@@ -2,8 +2,15 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
+import {Worker} from '@react-pdf-viewer/core';
+import {Viewer} from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
 export default function CardInfo() {
+
+  
+  const pdfjsVersion = "3.11.174";
+
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem('userToken');
@@ -38,6 +45,12 @@ export default function CardInfo() {
     };
     fetchCard();
   }, [id]);
+
+  const getFileType = (filePath) => {
+    filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
+    return filePath.split(".").pop().toLowerCase(); // Extract and return the file extension
+  };
+
 
   return (
     <div className="cardInfo">
@@ -111,7 +124,30 @@ export default function CardInfo() {
             <span key={item.accunt_id}>{item.address}</span>
           ))}
         </p>
-        {/* <p><strong>المستمسكات :</strong>{card.id_card_front}</p> */}
+        <p style={{position:'relative'}}><strong>المستمسكات :</strong>
+        <div className="book-preview-content" style={{width:'400px', height:'280px', position:'absolute', left:'0px', bottom:'0px'}}>
+          {card.map((item) => { const filePath = item.id_path === null
+            ? 'لا يوجد فايل'
+            : `${fixedUrl}/${item.id_path.replace(/\\/g, "/")}`;
+            const fileType = getFileType(filePath);
+
+            return fileType === "pdf" ? (
+              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+                <Viewer fileUrl={filePath} />
+              </Worker>
+            ) : (
+              <img
+                crossOrigin="anonymous"
+                key={item.id}
+                src={filePath}
+                alt="Book Preview"
+                width="100%"
+                height="100%"
+                borderRadius="40px"
+              />
+            );
+          })}
+        </div></p>
       </div>
       <hr />
       <div className="organizInfo">
@@ -198,11 +234,31 @@ export default function CardInfo() {
             <span key={item.accunt_id}>{item.clinic}</span>
           ))}
         </p>
-        <p>
+        <p style={{position:'relative'}}>
           <strong>هوية النقابة :</strong>
-          {card.map((item) => (
-            <span key={item.accunt_id}>{item.union_path}</span>
-          ))}
+          <div className="book-preview-content" style={{width:'300px', height:'180px', position:'absolute', left:'0px', bottom:'0px'}}>
+          {card.map((item) => { const filePath = item.union_path === null
+            ? 'لا يوجد فايل'
+            : `${fixedUrl}/${item.union_path.replace(/\\/g, "/")}`;
+            const fileType = getFileType(filePath);
+
+            return fileType === "pdf" ? (
+              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+                <Viewer fileUrl={filePath} />
+              </Worker>
+            ) : (
+              <img
+                crossOrigin="anonymous"
+                key={item.id}
+                src={filePath}
+                alt="Book Preview"
+                width="100%"
+                height="100%"
+                borderRadius="40px"
+              />
+            );
+          })}
+        </div>
         </p>
       </div>
       <hr />

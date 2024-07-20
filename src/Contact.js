@@ -762,9 +762,7 @@ export default function Contact({ searchTerm, title }) {
           <div>
             <div className="info">
               <div className="tex">
-                <Link to={`/CardInfo/${id}`} style={{ color: "black" }}>
-                  <h3>{title}</h3>
-                </Link>
+                <h3>{title}</h3>
                 <p>
                   عدد الكتب الكلي : <span></span>
                 </p>

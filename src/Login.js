@@ -53,16 +53,22 @@ export default function Login() {
 
     return (
         <div className="login">
-            <div className="loginDev">
-                <h1>تسجيل الدخول</h1>
-                <form>
-                    <label htmlFor='username'>اسم المستخدم</label>
-                    <input type="text" id="username" name="username" value={username} onChange={ (e) => setUsername(e.target.value) } placeholder="اسم المستخدم"></input>
-                    <label htmlFor='password'>كلمة المرور</label>
-                    <input type="password" id="password" name="password" value={password} onChange={ (e) => setPassword(e.target.value) } placeholder="كلمة المرور"></input>
-                    <input type="submit" onClick={handleSubmit} value="Login" />
-                </form>
-                
+            <div className="loginDev" style={{backgroundColor:'white', display:'flex', flexDirection:'row', padding:'20px', height:'600px', position:'relative',margin:'30px'}}>
+                <div style={{padding:'20px'}}>
+                    <h1 style={{margin:'5px', fontFamily:'cursive'}}>وزارة الصحة</h1>
+                    <h2 style={{textAlign:'center', fontFamily:'cursive', margin:'2px'}}>قسم القطاع الصحي الخاص</h2>
+                    <h2 style={{textAlign:'center', fontFamily:'cursive', margin:'2px', marginTop:'80px'}}>تسجيل الدخول</h2>
+                    <form style={{margin:'20px'}}>
+                        <label htmlFor='username'>اسم المستخدم</label>
+                        <input style={{outline:'0.5px solid #0000003d'}} type="text" id="username" name="username" value={username} onChange={ (e) => setUsername(e.target.value) } placeholder="اسم المستخدم"></input>
+                        <label htmlFor='password'>كلمة المرور</label>
+                        <input style={{outline:'0.5px solid #0000003d'}} type="password" id="password" name="password" value={password} onChange={ (e) => setPassword(e.target.value) } placeholder="كلمة المرور"></input>
+                        <input type="submit" onClick={handleSubmit} value="Login" style={{position:'absolute', bottom:'10px'}} />
+                    </form>
+                </div>
+                <div>
+                    <img alt="" src="/aa.png" width='100%' height='100%'></img>
+                </div>
             </div>
             <span className="log">.Firewall Qi co</span>
             <span className='log1'>جميع الحقوق محفوظة لوزارة الصحة قسم القطاع الطبي الخاص</span>

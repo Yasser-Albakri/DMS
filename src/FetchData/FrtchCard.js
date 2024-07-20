@@ -94,7 +94,14 @@ export default function FetchCard() {
         <tr key={outgoing.id}>
           <Link
               to={`/BookPublish/${outgoing.id}`}
-              style={{ textDecoration: "none", color: "black" }}
+              style={{
+                textDecoration: "none",
+                color: "black",
+                margin: "5px",
+                backgroundColor: "rgb(238 238 238)",
+                padding: "10px",
+                borderRadius: "20px",
+              }}
             >
           <td>
               {outgoing.document_number}
@@ -113,7 +120,14 @@ export default function FetchCard() {
         <tr key={Income.id}>
           <Link
               to={`/BookRec/${Income.id}`}
-              style={{ textDecoration: "none", color: "black" }}
+              style={{
+                textDecoration: "none",
+                color: "black",
+                margin: "5px",
+                backgroundColor: "rgb(238 238 238)",
+                padding: "10px",
+                borderRadius: "20px",
+              }}
           >
             <td>
                 {Income.book_number}
