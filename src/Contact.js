@@ -10,13 +10,9 @@ import { useNavigate } from "react-router-dom";
 export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
-<<<<<<< HEAD
-  
   const fixedUrl = "http://13.201.215.14:4000";
-=======
 
-  const fixedUrl = "http://127.0.0.1:4000";
->>>>>>> 7e3e9f9513ae0a58fe96a0b74ed8fd8541018f72
+
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);
