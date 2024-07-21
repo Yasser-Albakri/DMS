@@ -5,7 +5,6 @@ import './App.css'
 
 export default function AddMural () {
     
-    const fixedUrl = "http://13.201.215.14:4000";
 
     const params = useParams();
     const Id = params.id;
@@ -21,7 +20,7 @@ export default function AddMural () {
     useEffect (() => {
         const fetchBook = async () => {
             try {
-                const response = await fetch(`${fixedUrl}/outgoing/${Id}` , 
+                const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}` , 
                     { headers: { Authorization: `Bearer ${userToken}` } }
                 );
                 if (!response.ok) {
@@ -44,7 +43,7 @@ export default function AddMural () {
     useEffect(() => {
         const fetchCard = async () => {
             try {
-                const response = await fetch(`${fixedUrl}/cards/${bookData.map(item => item.account_id)}`,
+                const response = await fetch(`http://127.0.0.1:4000/cards/${bookData.map(item => item.account_id)}`,
             {
                 headers: { Authorization: `Bearer ${userToken}` }
             }
@@ -67,7 +66,7 @@ export default function AddMural () {
     useEffect (() => {
         const fetchBook = async () => {
             try {
-                const response = await fetch(`${fixedUrl}/generateQR/${Id}` , 
+                const response = await fetch(`http://127.0.0.1:4000/generateQR/${Id}` , 
                     {
                         headers: { Authorization: `Bearer ${userToken}` }
                     }

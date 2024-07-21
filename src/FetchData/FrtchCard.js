@@ -7,7 +7,6 @@ export default function FetchCard() {
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem("userToken");
-  const fixedUrl = "http://13.201.215.14:4000";
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchIncom = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/income`, {
+        const response = await fetch(`http://127.0.0.1:4000/income`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -42,7 +41,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchOutgoing = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/outgoing`, {
+        const response = await fetch(`http://127.0.0.1:4000/outgoing`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -66,7 +65,7 @@ export default function FetchCard() {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/cards/${id}`, {
+        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },

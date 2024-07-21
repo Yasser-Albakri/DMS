@@ -7,7 +7,6 @@ import axios from 'axios';
 const AddBookPublished = () => {
     
     const { id : Id } = useParams();
-    const fixedUrl = "http://13.201.215.14:4000";
 
     const userToken = localStorage.getItem('userToken');
     const [currentStep, setCurrentStep] = useState(0);
@@ -35,7 +34,7 @@ const AddBookPublished = () => {
         if (Id){
         const fetchBook = async () => {
           try {
-            const response = await fetch(`${fixedUrl}/outgoing/${Id}`, {
+            const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
               headers: { Authorization: `Bearer ${userToken}` },
             });
             if (!response.ok) {
@@ -99,7 +98,7 @@ const AddBookPublished = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const url = Id ? `${fixedUrl}/outgoing/${Id}` : `${fixedUrl}/outgoing`;
+        const url = Id ? `http://127.0.0.1:4000/outgoing/${Id}` : `http://127.0.0.1:4000/outgoing`;
         const method = Id ? 'PATCH' : 'POST';
 
         const data = new FormData();

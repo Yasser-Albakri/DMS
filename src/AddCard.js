@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const MultiStepForm = () => {
-  const fixedUrl = "http://13.201.215.14:4000";
   const { id : Id } = useParams();
 
   const history = useNavigate();
@@ -25,8 +24,8 @@ const MultiStepForm = () => {
     doctor_specialty: "",
     place_work: "",
     clinic: false, // Use boolean value here
-    unionFile: "",
-        idFile: "",
+    unionFile: null,
+    idFile: null,
     type: "",
     technical_manager: "",
     area: "",
@@ -48,7 +47,7 @@ const MultiStepForm = () => {
     if (Id) {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/cards/${Id}`, {
+        const response = await fetch(`http://127.0.0.1:4000/cards/${Id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -114,7 +113,7 @@ const MultiStepForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const url = Id ? `${fixedUrl}/cards/${Id}` : `${fixedUrl}/cards`;
+    // const url = Id ? `http://127.0.0.1:4000/cards/${Id}` : `http://127.0.0.1:4000/cards`;
     // const method = Id ? 'PATCH' : 'POST';
 
     const data = new FormData();
@@ -130,7 +129,38 @@ const MultiStepForm = () => {
   
 
     try {
-      const response = await axios.post(`${fixedUrl}/cards`, data,
+      const response = await axios.post(`http://127.0.0.1:4000/cards`, {
+        id: formData.id,
+        fullname: formData.fullname,
+        branch: formData.branch,
+        sub_branch: formData.sub_branch,
+        mother_name: formData.mother_name,
+        nationality: formData.nationality,
+        phone: formData.phone,
+        job_position: formData.job_position,
+        governorate: formData.governorate,
+        address: formData.address,
+        name_doctor: formData.name_doctor,
+        doctor_specialty: formData.doctor_specialty,
+        place_work: formData.place_work,
+        clinic: formData.clinic,
+        unionFile: formData.unionFile,
+        idFile: formData.idFile,
+        type: formData.type,
+        technical_manager: formData.technical_manager,
+        area: formData.area,
+        bed_capacity: formData.bed_capacity,
+        number_departments: formData.number_departments,
+        book_number: formData.book_number,
+        book_date: formData.book_date,
+        latest_renewal: formData.latest_renewal,
+        user_id: formData.user_id,
+        administrative_manager: formData.administrative_manager,
+        company_name: formData.company_name,
+        renewal: formData.renewal,
+        note: formData.note,
+        ipn: formData.ipn,
+      },
         {
           headers: {
             "Content-Type": "multipart/form-data",

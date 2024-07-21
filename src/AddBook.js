@@ -6,7 +6,6 @@ import "./Forms.css";
 
 const AddBook = () => {
 
-  const fixedUrl = "http://13.201.215.14:4000";
 
   const { id : Id } = useParams();
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ const AddBook = () => {
     if (Id) {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/income/${Id}`, {
+        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -112,7 +111,7 @@ const AddBook = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = Id ? `${fixedUrl}/income/${Id}` : `${fixedUrl}/income`;
+    const url = Id ? `http://127.0.0.1:4000/income/${Id}` : `http://127.0.0.1:4000/income`;
     const method = Id ? 'PATCH' : 'POST';
   
     const data = new FormData();

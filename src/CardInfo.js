@@ -14,7 +14,6 @@ export default function CardInfo() {
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem('userToken');
-  const fixedUrl = "http://13.201.215.14:4000";
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +22,7 @@ export default function CardInfo() {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await fetch(`${fixedUrl}/cards/${id}`,
+        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`,
           {
             headers: {
               Authorization: `Bearer ${userToken}`
@@ -128,7 +127,7 @@ export default function CardInfo() {
         <div className="book-preview-content" style={{width:'400px', height:'280px', position:'absolute', left:'0px', bottom:'0px'}}>
           {card.map((item) => { const filePath = item.id_path === null
             ? 'لا يوجد فايل'
-            : `${fixedUrl}/${item.id_path.replace(/\\/g, "/")}`;
+            : `http://127.0.0.1:4000/${item.id_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (
@@ -239,7 +238,7 @@ export default function CardInfo() {
           <div className="book-preview-content" style={{width:'300px', height:'180px', position:'absolute', left:'0px', bottom:'0px'}}>
           {card.map((item) => { const filePath = item.union_path === null
             ? 'لا يوجد فايل'
-            : `${fixedUrl}/${item.union_path.replace(/\\/g, "/")}`;
+            : `http://127.0.0.1:4000/${item.union_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (

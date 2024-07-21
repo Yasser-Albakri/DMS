@@ -6,7 +6,6 @@ import "./Forms.css";
 
 export default function Login() {
     
-    const fixedUrl = "http://13.201.215.14:4000";
 
     const history = useNavigate();
 
@@ -26,7 +25,7 @@ export default function Login() {
         } else {
             try {
                 console.log(username, password);
-                const response = await axios.post(`${fixedUrl}/users/login`, {
+                const response = await axios.post(`http://127.0.0.1:4000/users/login`, {
                     username: username,
                     password: password
                 });

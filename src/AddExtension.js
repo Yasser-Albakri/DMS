@@ -10,7 +10,6 @@ const AddExtension = () => {
     const params = useParams();
     const id = params.id;
     const userToken = localStorage.getItem('userToken');
-    const fixedUrl = "http://13.201.215.14:4000";
 
 
     const [currentStep] = useState(0);
@@ -25,7 +24,7 @@ const AddExtension = () => {
     // useEffect (() => {
     //     const fetchAttach = async () => {
     //         try {
-    //             const response = await fetch(`${fixedUrl}/attached/${id}`,
+    //             const response = await fetch(`http://127.0.0.1:4000/attached/${id}`,
     //                 {
     //                     headers: {
     //                         "Authorization": `Bearer ${userToken}`
@@ -85,7 +84,7 @@ const AddExtension = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // const url = id ? `${fixedUrl}/attached/${id}` : '${fixedUrl}/attached';
+        // const url = id ? `http://127.0.0.1:4000/attached/${id}` : 'http://127.0.0.1:4000/attached';
         // const method = id ? 'PATCH' : 'POST';
 
         const data = new FormData();
@@ -98,7 +97,7 @@ const AddExtension = () => {
           }
 
         try {
-            const response = await axios.post(`${fixedUrl}/attached`, data, {
+            const response = await axios.post(`http://127.0.0.1:4000/attached`, data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${userToken}`,
