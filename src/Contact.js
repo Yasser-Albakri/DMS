@@ -11,7 +11,7 @@ export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
   
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);

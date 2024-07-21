@@ -7,7 +7,7 @@ import "./Forms.css";
 
 const AttachedBook = () => {
 
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
 
   const pdfjsVersion = "3.11.174";
   const { id: Id } = useParams();

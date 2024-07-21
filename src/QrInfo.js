@@ -9,7 +9,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 
 const BookPublish = ({ book }) => {
   
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
   
   const pdfjsVersion = "3.11.174";
   const params = useParams();

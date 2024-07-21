@@ -14,7 +14,7 @@ export default function CardInfo() {
   const params = useParams();
   const id = params.id;
   const userToken = localStorage.getItem('userToken');
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);

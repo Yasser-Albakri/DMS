@@ -6,7 +6,7 @@ import axios from "axios";
 
 const AddBookPublished = () => {
 
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
 
   const { id : Id } = useParams();
 

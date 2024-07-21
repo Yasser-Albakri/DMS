@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const MultiStepForm = () => {
-  const fixedUrl = "http://127.0.0.1:4000";
+  const fixedUrl = "http://13.201.215.14:4000";
   const { id : Id } = useParams();
 
   const history = useNavigate();
@@ -114,8 +114,8 @@ const MultiStepForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = Id ? `${fixedUrl}/cards/${Id}` : `${fixedUrl}/cards`;
-    const method = Id ? 'PATCH' : 'POST';
+    // const url = Id ? `${fixedUrl}/cards/${Id}` : `${fixedUrl}/cards`;
+    // const method = Id ? 'PATCH' : 'POST';
 
     const data = new FormData();
     for (const key in formData) {
@@ -130,15 +130,14 @@ const MultiStepForm = () => {
   
 
     try {
-      const response = await axios({
-        method: method,
-        url: url,
-        data: data,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${userToken}`,
+      const response = await axios.post(`${fixedUrl}/cards`, data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userToken}`,
+          }
         },
-      });
+      );
 
       console.log(response);
       console.log(data);

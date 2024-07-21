@@ -14,7 +14,8 @@ export default function Divisions() {
                     <Contact title="الشعب" />
                 </div>
             </div>
-            <span className="log">شركة الجدار الناري لخدمات الامن السيبراني</span>
+            <span className="log">.Firewall Qi co</span>
+            <span className='log1'>جميع الحقوق محفوظة لوزارة الصحة قسم القطاع الطبي الخاص</span>
         </div>
     )
 }
