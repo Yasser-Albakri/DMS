@@ -5,8 +5,7 @@ const QRCode = require("qrcode");
 exports.generateQRCode = catchAsync(async (req, res, next) => {
   try {
     const id = req.params.id;
-    const url = `localhost:3000/BookPublish/${id}`;
-
+    const url = `http://localhost:3000/QrInfo/${id}`;
     const qrCodeDataURL = await QRCode.toDataURL(url);
 
     res.setHeader("Content-Type", "image/png");
