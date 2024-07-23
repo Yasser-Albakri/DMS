@@ -22,6 +22,7 @@ import AddMural from './AddMural';
 import AddVacation from './AddVacation';
 import BookPublish from './BookPublish';
 import AttachedBook from './AttachInfo';
+import QrInfo from './QrInfo';
 
 
 import {
@@ -121,6 +122,10 @@ const router = createBrowserRouter([
   {
     path: "AttachedBook/:id",
     element: <AttachedBook />,
+  },
+  {
+    path: "QrInfo/:id",
+    element: <QrInfo />,
   },
 ]);
 

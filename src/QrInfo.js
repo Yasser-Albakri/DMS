@@ -27,7 +27,7 @@ const BookPublish = ({ book }) => {
           throw new Error("Failed to fetch book");
         }
         const result = await response.json();
-        setBookData(result.data.outgoing);
+        setBookData(result.data.outgoing || []);
         console.log(result);
         console.log(result.data.outgoing);
       } catch (error) {
@@ -37,12 +37,14 @@ const BookPublish = ({ book }) => {
     fetchBook();
   }, [Id]);
 
+  console.log(Id)
+
   const getFileType = (filePath) => {
     filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
     return filePath.split(".").pop().toLowerCase(); // Extract and return the file extension
   };
 
-  const docType = bookData.map((item) => item.type);
+  const docType = Array.isArray(bookData) ? bookData.map((item) => item.type) : [];
   var typeBook = "";
 
   if (docType[0] === 1) {
@@ -140,6 +142,7 @@ const BookPublish = ({ book }) => {
                 alt="Book Preview"
                 width="100%"
                 height="100%"
+                style={{ borderRadius: "40px" }}
               />
             );
           })}

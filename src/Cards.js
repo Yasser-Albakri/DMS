@@ -5,6 +5,7 @@ import './App.css';
 import Contact from "./Contact"
 import AddCardButton from "./AddCardButton";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Cards() {
     const [searchTerm, setSearchTerm] = useState("");
