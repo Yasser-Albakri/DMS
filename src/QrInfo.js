@@ -115,11 +115,6 @@ const BookPublish = ({ book }) => {
             <span key={item.id}>{item.note}</span>
           ))}
         </p>
-        <form method="POST">
-          <label>اضافة ملاحظة :</label>
-          <input type="text" name="note" />
-          <input type="submit" value="Submit" className="btn btn-success" />
-        </form>
       </div>
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
