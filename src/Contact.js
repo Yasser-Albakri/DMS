@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 export default function Contact({ searchTerm, title }) {
   const params = useParams();
   const id = params.id;
-  
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);
@@ -94,45 +93,48 @@ export default function Contact({ searchTerm, title }) {
 
   useEffect(() => {
     if (loc.pathname === "/Cards" || loc.pathname === "/Home") {
-        const fetchCards = async () => {
-            try {
-                const response = await fetch(`http://127.0.0.1:4000/cards`, {
-                    headers: {
-                        Authorization: `Bearer ${userToken}`,
-                    },
-                });
+      const fetchCards = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:4000/cards`, {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
 
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.statusText}`);
-                }
+          if (!response.ok) {
+            throw new Error(
+              `Network response was not ok: ${response.statusText}`
+            );
+          }
 
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    const text = await response.text();
-                    throw new Error(`Expected JSON, got ${contentType}. Response: ${text}`);
-                }
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            throw new Error(
+              `Expected JSON, got ${contentType}. Response: ${text}`
+            );
+          }
 
-                const result = await response.json();
-                if (result.data && result.data.cards) {
-                    setCards(result.data.cards);
-                    setLengthCard(result.length);
-                } else {
-                    throw new Error("Invalid response structure");
-                }
+          const result = await response.json();
+          if (result.data && result.data.cards) {
+            setCards(result.data.cards);
+            setLengthCard(result.length);
+          } else {
+            throw new Error("Invalid response structure");
+          }
 
-                console.log(result);
-            } catch (error) {
-                console.error("Fetch error:", error);
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+          console.log(result);
+        } catch (error) {
+          console.error("Fetch error:", error);
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-        fetchCards();
+      fetchCards();
     }
-}, [loc.pathname, userToken]);
-
+  }, [loc.pathname, userToken]);
 
   // useEffect(() => {
   //     const fetchSection = async () => {
@@ -240,11 +242,8 @@ export default function Contact({ searchTerm, title }) {
           to={`/BookRec/${Incom.id}`}
           style={{
             textDecoration: "none",
-            color: "black",
             margin: "5px",
-            backgroundColor: "rgb(238 238 238)",
             padding: "10px",
-            borderRadius: "20px",
           }}
         >
           <td>{Incom.book_number}</td>
@@ -284,11 +283,8 @@ export default function Contact({ searchTerm, title }) {
           to={`/BookPublish/${outgoing.id}`}
           style={{
             textDecoration: "none",
-            color: "black",
             margin: "5px",
-            backgroundColor: "rgb(238 238 238)",
             padding: "10px",
-            borderRadius: "20px",
           }}
         >
           <td>{outgoing.document_number}</td>
@@ -299,29 +295,26 @@ export default function Contact({ searchTerm, title }) {
   };
 
   const renderCards = () => {
-    if (!Array.isArray(cards) || cards.length === 0) return <p>No cards available.</p>;
+    if (!Array.isArray(cards) || cards.length === 0)
+      return <p>No cards available.</p>;
     return cards.map((card) => (
-        <tr className="card" key={card.id}>
-            <Link
-                to={`/Card/${card.id}`}
-                style={{
-                    textDecoration: "none",
-                    color: "black",
-                    margin: "5px",
-                    backgroundColor: "rgb(238 238 238)",
-                    padding: "10px",
-                    borderRadius: "20px",
-                }}
-            >
-                <td>{card.id}</td>
-                <td>{card.fullname}</td>
-                <td>{card.company_name}</td>
-                <td>{card.renewal}</td>
-            </Link>
-        </tr>
+      <tr className="card" key={card.id}>
+        <Link
+          to={`/Card/${card.id}`}
+          style={{
+            textDecoration: "none",
+            margin: "5px",
+            padding: "10px",
+          }}
+        >
+          <td>{card.id}</td>
+          <td>{card.fullname}</td>
+          <td>{card.company_name}</td>
+          <td>{card.renewal}</td>
+        </Link>
+      </tr>
     ));
-};
-
+  };
 
   // const renderSection = () => {
   //     if (!Array.isArray(section)) return null;
@@ -342,11 +335,8 @@ export default function Contact({ searchTerm, title }) {
           to={`/BookPublish/${outgoing.id}`}
           style={{
             textDecoration: "none",
-            color: "black",
             margin: "5px",
-            backgroundColor: "rgb(238 238 238)",
             padding: "10px",
-            borderRadius: "20px",
           }}
         >
           <td>{outgoing.document_number}</td>
@@ -378,11 +368,8 @@ export default function Contact({ searchTerm, title }) {
             to={`/Card/${card.id}`}
             style={{
               textDecoration: "none",
-              color: "black",
               margin: "5px",
-              backgroundColor: "rgb(238 238 238)",
               padding: "10px",
-              borderRadius: "20px",
             }}
           >
             <td>{card.id}</td>
@@ -416,14 +403,11 @@ export default function Contact({ searchTerm, title }) {
       return filteredIncom.map((Income) => (
         <tr key={Income.id}>
           <Link
-            to={`/Card/${Income.id}`}
+            to={`/BookRec/${Income.id}`}
             style={{
               textDecoration: "none",
-              color: "black",
               margin: "5px",
-              backgroundColor: "rgb(238 238 238)",
               padding: "10px",
-              borderRadius: "20px",
             }}
           >
             <td>{Income.book_number}</td>
@@ -459,14 +443,11 @@ export default function Contact({ searchTerm, title }) {
       return filteredOutgoing.map((outgoing) => (
         <tr key={outgoing.id}>
           <Link
-            to={`/Card/${outgoing.id}`}
+            to={`/BookPublish/${outgoing.id}`}
             style={{
               textDecoration: "none",
-              color: "black",
               margin: "5px",
-              backgroundColor: "rgb(238 238 238)",
               padding: "10px",
-              borderRadius: "20px",
             }}
           >
             <td>{outgoing.document_number}</td>
@@ -506,14 +487,11 @@ export default function Contact({ searchTerm, title }) {
       return filteredOutVaca.map((outgoing) => (
         <tr className="rendVac" key={outgoing.id}>
           <Link
-            to={`/Card/${outgoing.id}`}
+            to={`/BookPublish/${outgoing.id}`}
             style={{
               textDecoration: "none",
-              color: "black",
               margin: "5px",
-              backgroundColor: "rgb(238 238 238)",
               padding: "10px",
-              borderRadius: "20px",
             }}
           >
             <td>{outgoing.document_number}</td>
@@ -564,7 +542,8 @@ export default function Contact({ searchTerm, title }) {
             </div>
             <hr />
             <table>
-              <tr className="cardma"
+              <tr
+                className="cardma"
                 style={{
                   textDecoration: "none",
                   color: "black",
@@ -598,7 +577,8 @@ export default function Contact({ searchTerm, title }) {
             </div>
             <hr />
             <table>
-              <tr className="cardma"
+              <tr
+                className="cardma"
                 style={{
                   textDecoration: "none",
                   color: "black",
@@ -809,9 +789,5 @@ export default function Contact({ searchTerm, title }) {
     }
   };
 
-  return (
-    <div className="contact">
-      {renderContent()}
-    </div>
-  );
+  return <div className="contact">{renderContent()}</div>;
 }

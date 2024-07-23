@@ -1,15 +1,15 @@
 body:has(.step) {
-    background-color: white;
+  background-color: white;
 }
 
 .container {
-    width: 96%;
-    margin: 20px auto;
-    background-color: #CCD4D9;
-    border-radius: 40px;
-    padding: 10px;
-    height: 680px;
-    position: relative;
+  width: 96%;
+  margin: 20px auto;
+  background-color: #ccd4d9;
+  border-radius: 40px;
+  padding: 10px;
+  height: 680px;
+  position: relative;
 }
 
 .container:has(.step) {
@@ -17,11 +17,11 @@ body:has(.step) {
 }
 
 .text-center {
-    text-align: center;
+  text-align: center;
 }
-  
+
 .step label {
-    margin: 5px 20px;
+  margin: 5px 20px;
 }
 
 .step .four input {
@@ -68,10 +68,10 @@ body:has(.step) {
   margin: 10px 20px;
   padding: 10px;
   border-radius: 40px;
-  outline: none ;
+  outline: none;
   border: none;
   width: 300px;
-  background-color: #1072E4;
+  background-color: #1072e4;
   color: white;
   font-size: 15px;
   position: absolute;
@@ -90,7 +90,7 @@ body:has(.step) {
   border-radius: 50%;
   margin: 10px 10px;
   padding: 10px 15px;
-  background-color: #CCD4D9;
+  background-color: #ccd4d9;
   position: relative;
 }
 
@@ -108,16 +108,17 @@ body:has(.step) {
   bottom: 20px;
 }
 
-.btn-primary, .btn-success {
+.btn-primary,
+.btn-success {
   left: 60px;
 }
 
-.step input[type='radio'] {
+.step input[type="radio"] {
   display: inline-block;
   width: 20px;
 }
 
-.step label[for='manag'] {
+.step label[for="manag"] {
   display: block;
   margin-bottom: 10px;
 }
@@ -132,13 +133,13 @@ body:has(.step) {
   width: 50%;
 }
 
-.disBook img, iframe {
+.disBook img,
+iframe {
   background-color: white;
   width: 500px;
   height: 600px;
   border-radius: 40px;
 }
-
 
 /* BookDisplay.css */
 .book-container {
@@ -210,7 +211,6 @@ div .btn-secondary {
   background-color: #6c757d;
 }
 
-
 /* BookChart.css */
 .containerChar {
   width: 96%;
@@ -266,7 +266,7 @@ div .btn-secondary {
 
 .loginDev {
   display: inline-block;
-  background-color: #CCD4D9;
+  background-color: #ccd4d9;
   margin: 50px auto;
   padding: 20px;
   border-radius: 40px;
@@ -284,7 +284,7 @@ div .btn-secondary {
   height: 30px;
 }
 
-.loginDev input[type='submit'] {
+.loginDev input[type="submit"] {
   background-color: #007bff;
   margin: 20px 10px;
   color: white;
@@ -300,8 +300,8 @@ div .btn-secondary {
   bottom: 10px;
 }
 
-.book-container {
-  height: 680px;
+.book-preview {
+  height: 640px;
 }
 
 .book-details {
@@ -376,4 +376,20 @@ div .btn-secondary {
 .attac span a .attache {
   width: 500px;
   display: inline-block;
+}
+
+input[type="submit"]:active {
+  background-color: #0e315d;
+}
+
+@media (max-width: 767px) {
+  .book-container {
+    flex-direction: column;
+  }
+  .book-preview-content {
+    height: 450px;
+  }
+  .book-preview {
+    margin: auto;
+  }
 }

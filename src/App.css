@@ -5,8 +5,23 @@
   direction: rtl;
 }
 
+.card a:hover {
+  background-color: #5d717a;
+  color: white;
+}
+
+.rendVac a:hover {
+  background-color: #5d717a;
+  color: white;
+}
+
+tr a:hover {
+  background-color: #5d717a;
+  color: white;
+}
+
 body {
-  background-color: #CCD4D9;
+  background-color: #ccd4d9;
 }
 
 .container {
@@ -26,7 +41,7 @@ ul {
 
 .ul {
   display: inline-block;
-  background-color: #FAF9F6;
+  background-color: #faf9f6;
   margin: 10px;
   padding: 10px;
   border-radius: 40px;
@@ -75,7 +90,7 @@ ul {
 }
 
 .searchbar img {
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -85,18 +100,18 @@ ul {
 .searchbar form {
   display: grid;
   grid-template-columns: calc(40% / 2) calc(100% / 2);
-  
+
   margin: 5px;
   padding: 5px;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   border-radius: 40px;
 }
 
-.searchbar form:has(input[type='date']) {
+.searchbar form:has(input[type="date"]) {
   width: 90%;
 }
 
-.searchbar form:has(input[type='date']) input {
+.searchbar form:has(input[type="date"]) input {
   flex-grow: 1;
 }
 
@@ -117,16 +132,16 @@ ul {
   display: flex;
 }
 
-.searchbar form input[type='submit'] {
+.searchbar form input[type="submit"] {
   width: 300px;
   margin-right: 20px;
 }
 
-.searchbar form input[name='from'] {
+.searchbar form input[name="from"] {
   margin-right: 11%;
 }
 
-.searchbar form input[name='to'] {
+.searchbar form input[name="to"] {
   margin-right: 16%;
 }
 
@@ -156,7 +171,7 @@ ul {
 } */
 
 .contact::-webkit-scrollbar-thumb {
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   border-radius: 40px;
   margin-left: 100px;
 }
@@ -194,7 +209,8 @@ ul {
   margin: 5px;
 }
 
-.contact .info .tex h3, p {
+.contact .info .tex h3,
+p {
   margin: 5px;
 }
 
@@ -210,27 +226,32 @@ ul {
   margin: 5px 20px;
   padding: 10px;
   border-radius: 40px;
-  outline: none ;
+  outline: none;
   border: none;
   width: 300px;
+  background-color: #6b818c;
+  color: white;
+}
+
+.add-card-button:hover {
+  background-color: #46555e;
 }
 
 .log {
   position: absolute;
-  bottom: 0px;
+  bottom: -10px;
   align-self: center;
-  right: 50%;
+  right: 30%;
   color: white;
 }
 
 .log1 {
-    position: absolute;
-    bottom: -20px;
-    align-self: center;
-    right: 40%;
-    color: white;
+  position: absolute;
+  bottom: -30px;
+  align-self: center;
+  right: 40%;
+  color: white;
 }
-
 
 table {
   margin: 5px 10px;
@@ -262,21 +283,25 @@ body:has(.cardInfo) {
 .left {
   position: absolute;
   left: 10px;
-  top: 30px
+  top: 30px;
 }
 
 .center {
   text-align: center;
 }
 
-.personalInformation, .organizInfo, .doctorInfo, .vacation, .infor {
+.personalInformation,
+.organizInfo,
+.doctorInfo,
+.vacation,
+.infor {
   margin: 10px 20px;
 }
 
 .leftB {
   position: absolute;
   left: -5px;
-  top: 55px
+  top: 55px;
 }
 
 .Qr {
@@ -295,12 +320,20 @@ table .rendVac a {
   display: grid;
   grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
   text-align: center;
+  background-color: rgb(238 238 238);
+  border-radius: 20px;
+  color: black;
 }
 
 table .card a {
   display: grid;
-  grid-template-columns: calc(100% / 4) calc(100% / 4) calc(100% / 4) calc(100% / 4);
+  grid-template-columns: calc(100% / 4) calc(100% / 4) calc(100% / 4) calc(
+      100% / 4
+    );
   text-align: center;
+  background-color: rgb(238 238 238);
+  border-radius: 20px;
+  color: black;
 }
 
 table tr:has(a) {
@@ -310,7 +343,9 @@ table tr:has(a) {
 
 table .cardma {
   display: grid;
-  grid-template-columns: calc(100% / 4) calc(100% / 4) calc(100% / 4) calc(100% / 4);
+  grid-template-columns: calc(100% / 4) calc(100% / 4) calc(100% / 4) calc(
+      100% / 4
+    );
   text-align: center;
 }
 
@@ -325,4 +360,7 @@ table tr a {
   display: grid;
   grid-template-columns: calc(100% / 2) calc(100% / 2);
   text-align: center;
+  background-color: rgb(238 238 238);
+  color: black;
+  border-radius: 20px;
 }
