@@ -4,13 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const MultiStepForm = () => {
-  const { id : Id } = useParams();
+  const { id: Id } = useParams();
 
   const history = useNavigate();
-  const userToken = localStorage.getItem('userToken')
+  const userToken = localStorage.getItem("userToken");
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    id: "",
     fullname: "",
     branch: "",
     sub_branch: "",
@@ -40,33 +39,32 @@ const MultiStepForm = () => {
     renewal: "",
     note: "",
     ipn: "",
+    section: "",
   });
-
 
   useEffect(() => {
     if (Id) {
-    const fetchBook = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:4000/cards/${Id}`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch book");
+      const fetchBook = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:4000/cards/${Id}`, {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch book");
+          }
+          const result = await response.json();
+          setFormData(result.data.incoming[0]);
+          // console.log(result);
+          console.log(result.data.incoming);
+        } catch (error) {
+          console.error(error);
         }
-        const result = await response.json();
-        setFormData(result.data.incoming[0]);
-        // console.log(result);
-        console.log(result.data.incoming);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBook();
-  }
+      };
+      fetchBook();
+    }
   }, [Id]);
-
 
   const handleChange = (e) => {
     const { id, value, files, name } = e.target;
@@ -90,7 +88,7 @@ const MultiStepForm = () => {
   const handleCustomSubBranchChange = (event) => {
     setFormData({
       ...formData,
-      sub_branch: event.target.value
+      sub_branch: event.target.value,
     });
   };
 
@@ -126,47 +124,48 @@ const MultiStepForm = () => {
     }
 
     // Debug: Log formDataToSend to check if all fields are correctly appended
-  
 
     try {
-      const response = await axios.post(`http://127.0.0.1:4000/cards`, {
-        id: formData.id,
-        fullname: formData.fullname,
-        branch: formData.branch,
-        sub_branch: formData.sub_branch,
-        mother_name: formData.mother_name,
-        nationality: formData.nationality,
-        phone: formData.phone,
-        job_position: formData.job_position,
-        governorate: formData.governorate,
-        address: formData.address,
-        name_doctor: formData.name_doctor,
-        doctor_specialty: formData.doctor_specialty,
-        place_work: formData.place_work,
-        clinic: formData.clinic,
-        unionFile: formData.unionFile,
-        idFile: formData.idFile,
-        type: formData.type,
-        technical_manager: formData.technical_manager,
-        area: formData.area,
-        bed_capacity: formData.bed_capacity,
-        number_departments: formData.number_departments,
-        book_number: formData.book_number,
-        book_date: formData.book_date,
-        latest_renewal: formData.latest_renewal,
-        user_id: formData.user_id,
-        administrative_manager: formData.administrative_manager,
-        company_name: formData.company_name,
-        renewal: formData.renewal,
-        note: formData.note,
-        ipn: formData.ipn,
-      },
+      const response = await axios.post(
+        `http://127.0.0.1:4000/cards`,
+        {
+          fullname: formData.fullname,
+          branch: formData.branch,
+          sub_branch: formData.sub_branch,
+          mother_name: formData.mother_name,
+          nationality: formData.nationality,
+          phone: formData.phone,
+          job_position: formData.job_position,
+          governorate: formData.governorate,
+          address: formData.address,
+          name_doctor: formData.name_doctor,
+          doctor_specialty: formData.doctor_specialty,
+          place_work: formData.place_work,
+          clinic: formData.clinic,
+          unionFile: formData.unionFile,
+          idFile: formData.idFile,
+          type: formData.type,
+          technical_manager: formData.technical_manager,
+          area: formData.area,
+          bed_capacity: formData.bed_capacity,
+          number_departments: formData.number_departments,
+          book_number: formData.book_number,
+          book_date: formData.book_date,
+          latest_renewal: formData.latest_renewal,
+          user_id: formData.user_id,
+          administrative_manager: formData.administrative_manager,
+          company_name: formData.company_name,
+          renewal: formData.renewal,
+          note: formData.note,
+          ipn: formData.ipn,
+          section: formData.section,
+        },
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${userToken}`,
-          }
-        },
+          },
+        }
       );
 
       console.log(response);
@@ -216,15 +215,21 @@ const MultiStepForm = () => {
   const steps = [
     <div className="step">
       <div className="form-group four">
-        <label htmlFor="id">التسلسل:</label>
-        <input
-          type="number"
+        <label htmlFor="section">الشعبة:</label>
+        <select
           className="form-control"
-          name="id"
-          id="id"
-          value={formData.id}
+          id="section"
+          name="section"
+          value={formData.section}
           onChange={handleChange}
-        />
+        >
+          <option value=""></option>
+          <option value="الاجازات">الاجازات</option>
+          <option value="النفقة الخاصة">النفقة الخاصة</option>
+          <option value="الاستثمار الصحي الخاص">الاستثمار الصحي الخاص</option>
+          <option value="الهندسية">الهندسية</option>
+          <option value="الاوراق">الاوراق</option>
+        </select>
       </div>
       <div className="form-group four">
         <label htmlFor="branch">التصنيف:</label>
@@ -291,8 +296,8 @@ const MultiStepForm = () => {
           <option value="مركز قسطرة وجراحة القلب">
             مركز قسطرة وجراحة القلب
           </option>
-          <option value="مكز علاج العقم واطفال الانابيب">
-            مكز علاج العقم واطفال الانابيب
+          <option value="مركز علاج العقم واطفال الانابيب">
+            مركز علاج العقم واطفال الانابيب
           </option>
           <option value="مركز خيري">مركز خيري</option>
           <option value="مركز صحي اولي">مركز صحي اولي</option>
@@ -310,7 +315,7 @@ const MultiStepForm = () => {
         <select
           name="sub_branch"
           id="Hosp"
-          style={{ display: "none"  }}
+          style={{ display: "none" }}
           value={formData.sub_branch}
           onChange={handleChange}
         >
@@ -324,7 +329,7 @@ const MultiStepForm = () => {
           <input
             type="text"
             name="sub_branch"
-            value={formData.custom_sub_branch || ''}
+            value={formData.custom_sub_branch || ""}
             onChange={handleCustomSubBranchChange}
           />
         )}

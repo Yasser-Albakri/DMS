@@ -3,13 +3,11 @@ import "./Forms.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {Worker} from '@react-pdf-viewer/core';
-import {Viewer} from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
+import { Worker } from "@react-pdf-viewer/core";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 const BookRec = () => {
-
-
   const pdfjsVersion = "3.11.174";
   const params = useParams();
   const Id = params.id;
@@ -40,46 +38,44 @@ const BookRec = () => {
     fetchBook();
   }, [Id]);
 
-
-  useEffect (() => {
+  useEffect(() => {
     const fetchAttach = async () => {
-        try {
-            const response = await fetch(`http://127.0.0.1:4000/attached`,
-                {
-                    headers: {
-                        "Authorization": `Bearer ${userToken}`
-                    }
-                }
-            );
-            if (!response.ok) {
-                throw new Error('Failed to fetch book');
-            }
-            const result = await response.json();
-            setAttached(result.data.attachedDocuments);
-            console.log(result);
-            console.log(result.data);
-        } catch (error) {
-            console.error(error);
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/attached`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
         }
-    }; fetchAttach();
-}, []);
+        const result = await response.json();
+        setAttached(result.data.attachedDocuments);
+        console.log(result);
+        console.log(result.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchAttach();
+  }, []);
 
+  const renderAtta = () => {
+    if (!Array.isArray(attached)) return null;
 
-const renderAtta = () => {
-  if (!Array.isArray(attached)) return null;
+    const filteredAtta = attached.filter((item) => item.inc_id === Id);
 
-  const filteredAtta = attached.filter((item) => item.inc_id === Id);
+    return filteredAtta.map((item) => {
+      const filePath =
+        item.file_path === null
+          ? "لا يوجد فايل"
+          : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+      const fileType = getFileType(filePath);
 
-  return filteredAtta.map((item) => {
-    const filePath = item.file_path === null
-      ? 'لا يوجد فايل'
-      : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
-    const fileType = getFileType(filePath);
-
-    return (
-      <span key={item.id}>
-        <Link to={`/AttachedBook/${item.id}`}>
-          {/* <div className="attache">
+      return (
+        <span key={item.id}>
+          <Link to={`/AttachedBook/${item.id}`}>
+            {/* <div className="attache">
             {fileType === "pdf" ? (
               <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
                 <Viewer fileUrl={filePath} />
@@ -95,16 +91,21 @@ const renderAtta = () => {
               />
             )}
           </div> */}
-          <p style={{display:"inline-block", margin:'5px', color:'black'}}>{item.number}</p>
-          <p style={{display:"inline-block", margin:'5px', color:'black'}}>{item.topic},</p>
-        </Link>
-      </span>
-    );
-  });
-};
-
-
-
+            <p
+              style={{ display: "inline-block", margin: "5px", color: "black" }}
+            >
+              {item.number}
+            </p>
+            <p
+              style={{ display: "inline-block", margin: "5px", color: "black" }}
+            >
+              {item.topic},
+            </p>
+          </Link>
+        </span>
+      );
+    });
+  };
 
   const getFileType = (filePath) => {
     filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
@@ -177,7 +178,9 @@ const renderAtta = () => {
           ))}
         </p>
         <div className="attac">
-          <p style={{display:'inline-block'}}><strong>الملحقات : </strong></p>
+          <p style={{ display: "inline-block" }}>
+            <strong>الملحقات : </strong>
+          </p>
           {renderAtta()}
         </div>
         <form method="POST">
@@ -207,13 +210,17 @@ const renderAtta = () => {
       <div className="book-preview" style={{ borderRadius: "40px" }}>
         {/* Book preview area, e.g., image or PDF */}
         <div className="book-preview-content">
-          {bookData.map((item) => { const filePath = item.file_path === null
-            ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+          {bookData.map((item) => {
+            const filePath =
+              item.file_path === null
+                ? "لا يوجد فايل"
+                : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (
-              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+              <Worker
+                workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}
+              >
                 <Viewer fileUrl={filePath} />
               </Worker>
             ) : (
@@ -224,7 +231,7 @@ const renderAtta = () => {
                 alt="Book Preview"
                 width="100%"
                 height="100%"
-                style={{borderRadius:'40px'}}
+                style={{ borderRadius: "40px" }}
               />
             );
           })}

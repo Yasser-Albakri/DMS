@@ -5,11 +5,9 @@ import "./App.css";
 import "./Forms.css";
 
 const AddBook = () => {
-
-
-  const { id : Id } = useParams();
+  const { id: Id } = useParams();
   const navigate = useNavigate();
-  const userToken = localStorage.getItem('userToken');
+  const userToken = localStorage.getItem("userToken");
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -22,7 +20,6 @@ const AddBook = () => {
     topic: "",
     incoming_number: "",
     referral: "",
-    section: "",
     user_id: 0,
     note: "",
     incoming_date: "",
@@ -33,26 +30,26 @@ const AddBook = () => {
 
   useEffect(() => {
     if (Id) {
-    const fetchBook = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:4000/income/${Id}`, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch book");
+      const fetchBook = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:4000/income/${Id}`, {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch book");
+          }
+          const result = await response.json();
+          setFormData(result.data.incoming[0]);
+          // console.log(result);
+          console.log(result.data.incoming);
+        } catch (error) {
+          console.error(error);
         }
-        const result = await response.json();
-        setFormData(result.data.incoming[0]);
-        // console.log(result);
-        console.log(result.data.incoming);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBook();
-  }
+      };
+      fetchBook();
+    }
   }, [Id]);
 
   const handleChange = (e) => {
@@ -111,9 +108,11 @@ const AddBook = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = Id ? `http://127.0.0.1:4000/income/${Id}` : `http://127.0.0.1:4000/income`;
-    const method = Id ? 'PATCH' : 'POST';
-  
+    const url = Id
+      ? `http://127.0.0.1:4000/income/${Id}`
+      : `http://127.0.0.1:4000/income`;
+    const method = Id ? "PATCH" : "POST";
+
     const data = new FormData();
     for (const key in formData) {
       if (key === "file" && formData[key] instanceof File) {
@@ -122,7 +121,7 @@ const AddBook = () => {
         data.append(key, formData[key]);
       }
     }
-  
+
     try {
       const response = await axios({
         method: method,
@@ -135,7 +134,7 @@ const AddBook = () => {
       });
       console.log(response.data);
       console.log(data);
-  
+
       navigate("/BookReceived"); // Adjust the path to where you want to navigate after success
     } catch (error) {
       if (error.response) {
@@ -150,11 +149,10 @@ const AddBook = () => {
       alert(`Error: ${error.message}`);
     }
   };
-  
 
   const steps = [
     <div className="step" key="step1">
-      <div className="form-group one">
+      <div className="form-group">
         <label htmlFor="file">الكتاب:</label>
         <input
           type="file"
@@ -174,7 +172,7 @@ const AddBook = () => {
           </button>
         )}
       </div>
-      <div className="form-group one">
+      <div className="form-group">
         <label htmlFor="account_id">تسلسل بطاقة:</label>
         <input
           type="text"
@@ -185,24 +183,7 @@ const AddBook = () => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-group one">
-        <label htmlFor="section">الشعبة:</label>
-        <select
-          className="form-control"
-          id="section"
-          name="section"
-          value={formData.section}
-          onChange={handleChange}
-        >
-          <option value=""></option>
-          <option value="الاجازات">الاجازات</option>
-          <option value="النفقة الخاصة">النفقة الخاصة</option>
-          <option value="الاستثمار الصحي الخاص">الاستثمار الصحي الخاص</option>
-          <option value="الهندسية">الهندسية</option>
-          <option value="الاوراق">الاوراق</option>
-        </select>
-      </div>
-      <div className="form-group one">
+      <div className="form-group">
         <label htmlFor="type">نوع الكتاب:</label>
         <select
           className="form-control"
@@ -217,7 +198,7 @@ const AddBook = () => {
           <option value={3}>طلب</option>
         </select>
       </div>
-      <div className="form-group one">
+      <div className="form-group">
         <label htmlFor="book_number">رقم الكتاب:</label>
         <input
           type="text"
@@ -228,7 +209,7 @@ const AddBook = () => {
           onChange={handleChange}
         />
       </div>
-      <div className="form-group one">
+      <div className="form-group">
         <label htmlFor="book_date">تاريخ الكتاب:</label>
         <input
           type="text"
@@ -371,7 +352,8 @@ const AddBook = () => {
       </form>
       <div className="disBook">
         {filePreview &&
-          formData.file && (formData.file.type === "application/pdf" ? (
+          formData.file &&
+          (formData.file.type === "application/pdf" ? (
             <iframe
               src={filePreview}
               title="PDF Preview"

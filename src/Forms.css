@@ -134,11 +134,14 @@ body:has(.step) {
 }
 
 .disBook img,
-iframe {
+iframe,
+.divBook {
   background-color: white;
   width: 500px;
   height: 600px;
   border-radius: 40px;
+  overflow: scroll;
+  padding: 10px;
 }
 
 /* BookDisplay.css */
