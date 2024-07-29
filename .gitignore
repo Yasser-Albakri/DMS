@@ -1,12 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 /uploads
 
-Queries.session.sql
-package.json
+
 package-lock.json
 
 # dependencies
 /node_modules
+Queries.session.sql
 config.env
 /.pnp
 .pnp.js

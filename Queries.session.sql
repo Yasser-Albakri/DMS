@@ -1,5 +1,5 @@
-SELECT *
-from acc_info;
+-- SELECT *
+-- from acc_info;
 -- SELECT *
 -- from out_info;
 -- SELECT *
@@ -10,10 +10,10 @@ from acc_info;
 -- from fout;
 -- SELECT *
 -- from permits;
--- SELECT table_name
--- FROM information_schema.tables
--- WHERE table_schema = 'public'
--- AND table_type = 'BASE TABLE';
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+AND table_type = 'BASE TABLE';
 -- SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = 'IBA';
 -- SELECT * FROM "IBA";
 -- SELECT * FROM incoming
@@ -60,5 +60,5 @@ from acc_info;
 --     )
 -- RETURNING *;
 -- INSERT INTO users(name,username,password,role) values ('Developer','admin','admin',0) ;
-SELECT *
-from account_card
+-- SELECT *
+-- from account_card
