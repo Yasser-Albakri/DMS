@@ -36,7 +36,6 @@ exports.addElement = async (table, data) => {
       values.join(",") +
       ") RETURNING *";
     const result = await client.query(query);
-    console.log(result);
     return result.rows;
   } catch (err) {
     console.log(err);
