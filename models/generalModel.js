@@ -35,11 +35,11 @@ exports.addElement = async (table, data) => {
       ") VALUES (" +
       values.join(",") +
       ") RETURNING *";
-    console.log(query);
     const result = await client.query(query);
-    console.log(result.rows);
+    console.log(result);
     return result.rows;
   } catch (err) {
+    console.log(err);
     return new AppError(err.message || "Database error occurred", 500);
   }
 };
@@ -56,6 +56,7 @@ exports.updateElement = async (table, id, data) => {
     const result = await client.query(query);
     return result.rows[0];
   } catch (err) {
+    console.log(err);
     return new AppError(err.message || "Database error occurred", 500);
   }
 };

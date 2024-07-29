@@ -9,6 +9,16 @@
       "database": "irhkhcgz",
       "username": "irhkhcgz",
       "password": "VFFnZURgQ7rBBZ6aDfpBg4co6RCEpl1v"
+    },
+    {
+      "previewLimit": 50,
+      "server": "65.0.10.139",
+      "port": 5432,
+      "askForPassword": true,
+      "driver": "PostgreSQL",
+      "database": "DMS",
+      "username": "BackEnd",
+      "name": "ServerDataBase"
     }
   ]
 }
