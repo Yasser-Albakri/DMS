@@ -6,7 +6,7 @@ exports.getAllParams = catchAsync(async (req, res, next) => {
     try {
         const params = await paramsModel.getPermits();
         if (params.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Error 1 !", 404));
         }
         res.status(200).json({
             status: "success",
@@ -24,8 +24,12 @@ exports.getAllParams = catchAsync(async (req, res, next) => {
 exports.getParamById = catchAsync(async (req, res, next) => {
     try {
         const param = await paramsModel.getPermitById(req.params.id);
+        
         if (param.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Error 2 !", 404));
+        }
+        if (param.length === 0) {
+            return next(new AppError("No data found", 404));
         }
         res.status(200).json({
         status: "success",
@@ -44,7 +48,7 @@ exports.getParamByCard = catchAsync(async (req, res, next) => {
     try {
         const param = await paramsModel.getPermitByCard(req.params.id);
         if (param.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Error 3!", 404));
         }
         res.status(200).json({
         status: "success",
@@ -58,10 +62,12 @@ exports.getParamByCard = catchAsync(async (req, res, next) => {
 });
 
 exports.getRenewals = catchAsync(async (req, res, next) => {
+    console.log("Starting to fetch data");
     try {
         const renewals = await paramsModel.getRenwal();
+        console.log(renewals);
         if (renewals.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("waht  4!", 404));
         }
         res.status(200).json({
         status: "success",
@@ -81,7 +87,7 @@ exports.getRenewalById = catchAsync(async (req, res, next) => {
     try {
         const renewal = await paramsModel.getRenwalById(req.params.id);
         if (renewal.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Error 5!", 404));
         }
         res.status(200).json({
         status: "success",
@@ -99,7 +105,7 @@ exports.getRenewalByPermit = catchAsync(async (req, res, next) => {
     try {
         const renewal = await paramsModel.getRenwalByPermit(req.params.id);
         if (renewal.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Error 6!", 404));
         }
         res.status(200).json({
         status: "success",
@@ -122,7 +128,7 @@ exports.createRenewal = catchAsync(async (req, res, next) => {
     try {
         const renewal = await paramsModel.createRenewal(req.body);
         if (renewal.status === "error") {
-            return next(new AppError("Error !", 404));
+            return next(new AppError("Worng id !", 404));
         }
         res.status(200).json({
         status: "success",
