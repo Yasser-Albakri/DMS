@@ -12,6 +12,7 @@ router
   .route("/:id")
   .get(authController.protect, accountCardController.getCard)
   .patch(authController.protect, accountCardController.updateCard)
-  .delete(authController.protect, accountCardController.deleteCard);
+  .delete(authController.protect, accountCardController.deleteCard)
+  .post(authController.protect, accountCardController.getCardByUser);
 
 module.exports = router;

@@ -15,6 +15,7 @@ const QrCodeRoutes = require("./routes/QrCodeRoutes");
 const generalRoutes = require("./routes/generalRoutes");
 const branchRoutes = require("./routes/branchRoutes");
 const subBranchRoutes = require("./routes/subBranchRoutes");
+const permitsRoutes = require("./routes/permitsRoutes");
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use("/generateQR", QrCodeRoutes);
 app.use("/general", generalRoutes);
 app.use("/branch", branchRoutes);
 app.use("/subBranch", subBranchRoutes);
+app.use("/permits", permitsRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

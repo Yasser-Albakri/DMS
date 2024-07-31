@@ -3,7 +3,7 @@ const AppError = require("./../utils/appError");
 
 exports.getAllUsers = async () => {
   try {
-    const result = await client.query("SELECT * FROM users");
+    const result = await client.query("SELECT * FROM get_user");
     const users = result.rows;
     return users;
   } catch (err) {
@@ -13,7 +13,7 @@ exports.getAllUsers = async () => {
 
 exports.getUserById = async (id) => {
   try {
-    const result = await client.query("SELECT * FROM users WHERE id = $1", [
+    const result = await client.query("SELECT * FROM get_user WHERE id = $1", [
       id,
     ]);
     const user = result.rows[0];
@@ -26,14 +26,14 @@ exports.getUserById = async (id) => {
 exports.getUserByName = async (username) => {
   try {
     const result = await client.query(
-      "SELECT * FROM users WHERE username = $1",
+      "SELECT * FROM get_user WHERE username LIKE $1",
       [username]
     );
     const user = result.rows[0];
     return user;
   } catch (err) {
     return new AppError(
-      "Database error: Unable to fetch user by username",
+      "Database error: Unable to fetch user by name",
       500
     );
   }
