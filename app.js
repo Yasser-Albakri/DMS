@@ -36,13 +36,20 @@ const limiter = rateLimit({
   max: 100,
   message: "Too many requests from this IP, please try again in an hour!",
 });
-app.use("/api", limiter);
+app.use("/", limiter);
+app.use((req, res, next) => {
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
 
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOW-FROM http://127.0.0.1:4000");
   next();
 });
-
+app.use((req, res, next) => {
+  console.log("The Header : ", res.header());
+  next();
+});
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
