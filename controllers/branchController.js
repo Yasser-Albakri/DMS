@@ -38,7 +38,6 @@ exports.getBranch = catchAsync(async (req, res, next) => {
 exports.createBranch = catchAsync(async (req, res, next) => {
   try {
     const data = req.body;
-    console.log(data);
     const newBranch = await generalModel.addElement("branch", data);
     res.status(201).json({
       status: "success",
