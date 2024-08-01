@@ -2,8 +2,11 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import axios from "axios";
 
-export default function AddMural() {
+export default function RenewalMural() {
   const params = useParams();
   const Id = params.id;
   const userToken = localStorage.getItem("userToken");
@@ -77,9 +80,53 @@ export default function AddMural() {
     };
     fetchBook();
   }, [Id]);
+  console.log(Id);
+
+  const generatePDF = () => {
+    const content = document.getElementById("content");
+
+    html2canvas(content).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "PNG", 0, 0);
+      const pdfBlob = pdf.output("blob");
+
+      // Send the PDF to the server
+      const formData = new FormData();
+      formData.append("file", pdfBlob, "document.pdf");
+
+      axios
+        .post(
+          "http://127.0.0.1:4000/renewal",
+          {
+            topic: "تجديد جدارية",
+            number: "20",
+            user_id: "13",
+            inc_id: "9",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${userToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.ok) {
+            alert("PDF sent to the server successfully!");
+          } // else {
+          //   alert("Failed to send PDF to the server.");
+          // }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while sending the PDF to the server.");
+        });
+    });
+  };
 
   return (
-    <div className="Mural step">
+    <div className="Mural step" id="content">
       <div className="MurInf">
         <h4>جمهورية العراق</h4>
         <h4> وزارة الصحة</h4>
@@ -98,7 +145,7 @@ export default function AddMural() {
         <h4>بة شي كة رتي ندورسى نايبة ت</h4>
       </div>
       <img className="Qr" alt="Qr Code" src={qr}></img>
-      <h3 className="center">منح اجازة</h3>
+      <h3 className="center">تجديد اجازة</h3>
       <h3 className="center">رخصة عمل مؤقتة</h3>
       <h4 className="center">
         استنادا الى الصلاحية المخولة لنا بموجب احكام قانون تأسيس المؤسسات الصحية
@@ -112,15 +159,13 @@ export default function AddMural() {
             : { display: "none" }
         }
       >
-        {console.log(card.map((item) => item.section))}
-        {console.log("الاجازات")}
         <span>واشارة الى موافقة اللجان الاستشارية المركزية تقرر:-</span>
       </h4>
       <h4
         className="center"
         style={{ maxWidth: "800px", textWrap: "wrap", margin: "auto" }}
       >
-        منح رخصة مؤقتة للدكتور (
+        تجديد رخصة مؤقتة للدكتور (
         {card.map((item) => (
           <span key={item.id}>{item.fullname}</span>
         ))}
@@ -158,6 +203,7 @@ export default function AddMural() {
           <span></span>
         </h4>
       </div>
+      {/* <button onClick={generatePDF}>Generate PDF</button> */}
     </div>
   );
 }

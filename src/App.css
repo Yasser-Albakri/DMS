@@ -97,6 +97,16 @@ ul {
   margin: 3px 10px;
 }
 
+.searchbar .search-form {
+  display: grid;
+  grid-template-columns: calc(100% / 2) calc(100% / 2);
+
+  margin: 5px;
+  padding: 5px;
+  background-color: #ebebeb;
+  border-radius: 40px;
+}
+
 .searchbar form {
   display: grid;
   grid-template-columns: calc(40% / 2) calc(100% / 2);
@@ -130,6 +140,7 @@ ul {
 
 .searchbar p {
   display: flex;
+  align-items: center;
 }
 
 .searchbar form input[type="submit"] {
@@ -302,12 +313,6 @@ body:has(.cardInfo) {
   position: absolute;
   left: -5px;
   top: 55px;
-}
-
-.Qr {
-  position: absolute;
-  left: 10%;
-  top: 20%;
 }
 
 table .vacat {

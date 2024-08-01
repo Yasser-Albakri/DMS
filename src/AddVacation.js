@@ -1,232 +1,380 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import './Forms.css';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import "./Forms.css";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 
 const AddBookPublished = () => {
-    
-    const { id : Id } = useParams();
+  const { id: Id } = useParams();
 
-    const userToken = localStorage.getItem('userToken');
-    const [currentStep, setCurrentStep] = useState(0);
-    const [formData, setFormData] = useState({
-        file: '',
-        account_id: '',
-        type: 3,
-        document_number: '',
-        document_date: '',
-        subject: '',
-        executing_uthority: '',
-        addressed_entity: '',
-        note:"",
-        user_id: "0",
-        last_renewal:"",
-        leave_status:"",
-    });
-    const history = useNavigate();
-    
+  const userToken = localStorage.getItem("userToken");
+  const [cards, setCards] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({
+    file: "",
+    account_id: 0,
+    type: 3,
+    document_number: "",
+    document_date: "",
+    subject: "",
+    executing_uthority: "",
+    addressed_entity: "",
+    note: "",
+    user_id: "0",
+    last_renewal: "",
+    leave_status: "",
+  });
+  const history = useNavigate();
 
-    const [filePreview, setFilePreview] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
 
-
-    useEffect(() => {
-        if (Id){
-        const fetchBook = async () => {
-          try {
-            const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
-              headers: { Authorization: `Bearer ${userToken}` },
-            });
-            if (!response.ok) {
-              throw new Error("Failed to fetch book");
-            }
-            const result = await response.json();
-            setFormData(result.data.outgoing[0]);
-            console.log(result);
-            console.log(result.data.outgoing);
-          } catch (error) {
-            console.error(error);
-          }
-        };
-        fetchBook();
-    }
-      }, [Id]);
-
-
-
-
-    const handleChange = (e) => {
-        const { id, value, files } = e.target;
-        if (files) {
-            const file = files[0];
-            setFormData({
-                ...formData,
-                [id]: file
-            });
-
-            const fileURL = URL.createObjectURL(file);
-            if (file.type === 'application/pdf' || file.type.startsWith('image/')) {
-                setFilePreview(fileURL);
-            } else {
-                setFilePreview(null);
-            }
-        } else {
-            setFormData({
-                ...formData,
-                [id]: value
-            });
-        }
-    };
-
-    const nextStep = () => {
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
-
-    const navigate = useNavigate();
-    const { state } = useLocation();
-    const PrevPage = () => {
-        navigate(-1);
-    };
-
-    const prevStep = () => {
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const url = Id ? `http://127.0.0.1:4000/outgoing/${Id}` : `http://127.0.0.1:4000/outgoing`;
-        const method = Id ? 'PATCH' : 'POST';
-
-        const data = new FormData();
-        for (const key in formData) {
-        if (key === "file" && formData[key] instanceof File) {
-        data.append(key, formData[key]);
-        } else {
-            data.append(key, formData[key]);
-        }
-        }
-
+  useEffect(() => {
+    if (Id) {
+      const fetchBook = async () => {
         try {
-            const response = await axios({
-              method: method,
-              url: url,
-              data: data,
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${userToken}`,
-              },
-            });
-        console.log(response.data);
-        console.log(response);
-        console.log(formData)
-        alert("Book added successfully");
-        
-        history('/PublishedBook');
+          const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
+            headers: { Authorization: `Bearer ${userToken}` },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch book");
+          }
+          const result = await response.json();
+          setFormData(result.data.outgoing[0]);
+          console.log(result);
+          console.log(result.data.outgoing);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchBook();
     }
-    catch (error) {
-        console.error("Error:", error);
-        alert(`Error: ${error.message}`);
+  }, [Id]);
+
+  const handleChange = (e) => {
+    const { id, value, files } = e.target;
+    if (files) {
+      const file = files[0];
+      setFormData({
+        ...formData,
+        [id]: file,
+      });
+
+      const fileURL = URL.createObjectURL(file);
+      if (file.type === "application/pdf" || file.type.startsWith("image/")) {
+        setFilePreview(fileURL);
+      } else {
+        setFilePreview(null);
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [id]: value,
+      });
     }
-        // alert('Form submitted!');
-        // console.log(formData);
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const PrevPage = () => {
+    navigate(-1);
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/cards`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.statusText}`
+          );
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(
+            `Expected JSON, got ${contentType}. Response: ${text}`
+          );
+        }
+
+        const result = await response.json();
+        if (result.data && result.data.cards) {
+          setCards(result.data.cards);
+          console.log(result.data.cards);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+
+        console.log(result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
     };
+    fetchCards();
+  }, []);
 
-    const steps = [
-        <div className="step" key="step1">
-            <div className="form-group">
-                <label htmlFor="file">الكتاب:</label>
-                <input type="file" className="form-control" id="file" onChange={handleChange}  />
-            </div>
-            <div className="form-group">
-                <label htmlFor="account_id">تسلسل بطاقة:</label>
-                <input type="text" className="form-control" id="account_id" value={formData.account_id} onChange={handleChange}  />
-            </div>
-            <div className="form-group">
-                <label htmlFor="type">نوع الكتاب:</label>
-                <select className="form-control" id="type" value={formData.type} onChange={handleChange} >
-                    <option value={3}>اجازة</option>
-                </select>
-            </div>
-            <div className="form-group">
-                <label htmlFor="document_number">رقم الكتاب:</label>
-                <input type="number" className="form-control" id="document_number" value={formData.document_number} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="document_date">تاريخ الكتاب:</label>
-                <input type="date" className="form-control" id="document_date" value={formData.document_date} onChange={handleChange} />
-            </div>
-            <button type="button" className="btn btn-secondary" onClick={PrevPage}>رجوع</button>
-            <button type="button" className="btn btn-primary" onClick={nextStep}>التالي</button>
-        </div>,
-        <div className="step" key="step2">
-            <div className="form-group one">
-                <label htmlFor="subject one">موضوع الكتاب:</label>
-                <input type="text" className="form-control" id="subject" value={formData.subject} onChange={handleChange} />
-            </div>
-            <div className="form-group one">
-                <label htmlFor="executing_uthority">الجهة المنفذة:</label>
-                <input type="text" className="form-control" id="executing_uthority" value={formData.executing_uthority} onChange={handleChange} />
-            </div>
-            <div className="form-group one">
-                <label htmlFor="addressed_entity">الجهة الموجه لها:</label>
-                <input type="text" className="form-control" id="addressed_entity" value={formData.addressed_entity} onChange={handleChange} />
-            </div>
-            <div className="form-group one">
-                <label htmlFor="last_renewal">اخر تجديد:</label>
-                <input type="text" className="form-control" id="last_renewal" value={formData.last_renewal} onChange={handleChange} />
-            </div>
-            <div className="form-group one">
-                <label htmlFor="leave_status"> التجديد:</label>
-                <select name='leave_status' id='leave_status' value={formData.leave_status} onChange={handleChange}>
-                    <option value=""></option>
-                    <option value='فتح جديد' >فتح جديد</option>
-                    <option value='غير مجدد'>غير مجدد</option>
-                    <option value='مجدد لغاية'>مجدد لغاية</option>
-                </select>
-            </div>
-            <div className="form-group one">
-                <label htmlFor="note">ملاحظة:</label>
-                <input type="text" className="form-control" id="note" value={formData.note} onChange={handleChange} />
-            </div>
-            <button type="button" className="btn btn-secondary" onClick={prevStep}>رجوع</button>
-            <button type="submit" className="btn btn-success">حفظ</button>
-        </div>
-    ];
+  const renderCards = () => {
+    if (!Array.isArray(cards) || cards.length === 0)
+      return <p>No cards available.</p>;
+    return cards.map((card) => (
+      <option key={card.id} value={card.id}>
+        ${card.id} ${card.fullname}
+      </option>
+    ));
+  };
 
-    return (
-        <div className="container">
-            <form onSubmit={handleSubmit}>
-                <h2 className='text-center'>اضافة كتاب صادر جديد</h2>
-                <div style={{ direction: 'ltr', textAlign: 'center' }}>
-                    {steps.map((_, index) => (
-                        <div className='NumSt' key={index}>
-                            <div className={`Num ${index <= 0 ? 'aft' : ''}`} style={index === currentStep ? { backgroundColor: '#1072E4', fontWeight: 'bold' } : {}}>
-                                {index + 1}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className='inf' style={{ textAlign: 'center' }}>
-                    <span style={currentStep === 1 ? { fontWeight: 'bold', marginLeft: '50px' } : {}}>معلومات اخرى</span>
-                    <span style={currentStep === 0 ? { fontWeight: 'bold', marginRight: '60px' } : {}}>معلومات الكتاب</span>
-                </div>
-                {steps[currentStep]}
-            </form>
-            <div className='disBook'>
-                {filePreview && (
-                    formData.file.type === 'application/pdf' ? (
-                        <iframe src={filePreview} title="PDF Preview" width="100%" height="600px"></iframe>
-                    ) : (
-                        <img src={filePreview} alt="File Preview" />
-                    )
-                )}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = Id
+      ? `http://127.0.0.1:4000/outgoing/${Id}`
+      : `http://127.0.0.1:4000/outgoing`;
+    const method = Id ? "PATCH" : "POST";
+
+    const data = new FormData();
+    for (const key in formData) {
+      if (key === "file" && formData[key] instanceof File) {
+        data.append(key, formData[key]);
+      } else {
+        data.append(key, formData[key]);
+      }
+    }
+
+    try {
+      const response = await axios({
+        method: method,
+        url: url,
+        data: data,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      console.log(response.data);
+      console.log(response);
+      console.log(formData);
+      alert("Book added successfully");
+
+      history("/PublishedBook");
+    } catch (error) {
+      console.error("Error:", error);
+      alert(`Error: ${error.message}`);
+    }
+    // alert('Form submitted!');
+    // console.log(formData);
+  };
+
+  const steps = [
+    <div className="step" key="step1">
+      <div className="form-group">
+        <label htmlFor="file">الكتاب:</label>
+        <input
+          type="file"
+          className="form-control"
+          id="file"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="account_id">تسلسل بطاقة:</label>
+        <select
+          id="account_id"
+          className="form-control"
+          name="account_id"
+          value={formData.account_id}
+          onChange={handleChange}
+        >
+          <option value=""></option>
+          {renderCards()}
+        </select>
+      </div>
+      <div className="form-group">
+        <label htmlFor="type">نوع الكتاب:</label>
+        <select
+          className="form-control"
+          id="type"
+          value={formData.type}
+          onChange={handleChange}
+        >
+          <option value={3}>اجازة</option>
+        </select>
+      </div>
+      <div className="form-group">
+        <label htmlFor="document_number">رقم الكتاب:</label>
+        <input
+          type="number"
+          className="form-control"
+          id="document_number"
+          value={formData.document_number}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="document_date">تاريخ الكتاب:</label>
+        <input
+          type="date"
+          className="form-control"
+          id="document_date"
+          value={formData.document_date}
+          onChange={handleChange}
+        />
+      </div>
+      <button type="button" className="btn btn-secondary" onClick={PrevPage}>
+        رجوع
+      </button>
+      <button type="button" className="btn btn-primary" onClick={nextStep}>
+        التالي
+      </button>
+    </div>,
+    <div className="step" key="step2">
+      <div className="form-group one">
+        <label htmlFor="subject one">موضوع الكتاب:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="subject"
+          value={formData.subject}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group one">
+        <label htmlFor="executing_uthority">الجهة المنفذة:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="executing_uthority"
+          value={formData.executing_uthority}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group one">
+        <label htmlFor="addressed_entity">الجهة الموجه لها:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="addressed_entity"
+          value={formData.addressed_entity}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group one">
+        <label htmlFor="last_renewal">اخر تجديد:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="last_renewal"
+          value={formData.last_renewal}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group one">
+        <label htmlFor="leave_status"> التجديد:</label>
+        <select
+          name="leave_status"
+          id="leave_status"
+          value={formData.leave_status}
+          onChange={handleChange}
+        >
+          <option value=""></option>
+          <option value="فتح جديد">فتح جديد</option>
+          <option value="غير مجدد">غير مجدد</option>
+          <option value="مجدد لغاية">مجدد لغاية</option>
+        </select>
+      </div>
+      <div className="form-group one">
+        <label htmlFor="note">ملاحظة:</label>
+        <input
+          type="text"
+          className="form-control"
+          id="note"
+          value={formData.note}
+          onChange={handleChange}
+        />
+      </div>
+      <button type="button" className="btn btn-secondary" onClick={prevStep}>
+        رجوع
+      </button>
+      <button type="submit" className="btn btn-success">
+        حفظ
+      </button>
+    </div>,
+  ];
+
+  return (
+    <div className="container">
+      <form onSubmit={handleSubmit}>
+        <h2 className="text-center">
+          {Id ? "تعديل الكتاب" : "اضافة كتاب صادر جديد"}
+        </h2>
+        <div style={{ direction: "ltr", textAlign: "center" }}>
+          {steps.map((_, index) => (
+            <div className="NumSt" key={index}>
+              <div
+                className={`Num ${index <= 0 ? "aft" : ""}`}
+                style={
+                  index === currentStep
+                    ? { backgroundColor: "#1072E4", fontWeight: "bold" }
+                    : {}
+                }
+              >
+                {index + 1}
+              </div>
             </div>
+          ))}
         </div>
-    );
-}
+        <div className="inf" style={{ textAlign: "center" }}>
+          <span
+            style={
+              currentStep === 1
+                ? { fontWeight: "bold", marginLeft: "50px" }
+                : {}
+            }
+          >
+            معلومات اخرى
+          </span>
+          <span
+            style={
+              currentStep === 0
+                ? { fontWeight: "bold", marginRight: "60px" }
+                : {}
+            }
+          >
+            معلومات الكتاب
+          </span>
+        </div>
+        {steps[currentStep]}
+      </form>
+      <div className="disBook">
+        {filePreview &&
+          (formData.file.type === "application/pdf" ? (
+            <iframe
+              src={filePreview}
+              title="PDF Preview"
+              width="100%"
+              height="600px"
+            ></iframe>
+          ) : (
+            <img src={filePreview} alt="File Preview" />
+          ))}
+      </div>
+    </div>
+  );
+};
 
 export default AddBookPublished;

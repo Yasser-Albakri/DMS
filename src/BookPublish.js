@@ -4,12 +4,11 @@ import "./Forms.css";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {Worker} from '@react-pdf-viewer/core';
-import {Viewer} from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
+import { Worker } from "@react-pdf-viewer/core";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 const BookPublish = ({ book }) => {
-  
   const pdfjsVersion = "3.11.174";
   const params = useParams();
   const Id = params.id;
@@ -129,9 +128,21 @@ const BookPublish = ({ book }) => {
               اضافة جدارية
             </Link>
           </button>
+          <button className="btn btn-renewal">
+            <Link
+              to={`/RenewalMural/${Id}`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              تجديد جدارية
+            </Link>
+          </button>
           <button className="btn btn-secondary">
             <Link
-              to={docType[0] === 3 ? `/AddVacation/${Id}` : `/AddBookPublished/${Id}`}
+              to={
+                docType[0] === 3
+                  ? `/AddVacation/${Id}`
+                  : `/AddBookPublished/${Id}`
+              }
               style={{ textDecoration: "none", color: "white" }}
             >
               تعديل
@@ -143,15 +154,18 @@ const BookPublish = ({ book }) => {
         {/* Book preview area, e.g., image or PDF */}
         <div className="book-preview-content">
           {bookData.map((item) => {
-            const filePath = item.file_path === null
-            ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+            const filePath =
+              item.file_path === null
+                ? "لا يوجد فايل"
+                : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
             const fileType = getFileType(filePath);
 
             return fileType === "pdf" ? (
-              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
-              <Viewer fileUrl={filePath} />
-            </Worker>
+              <Worker
+                workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}
+              >
+                <Viewer fileUrl={filePath} />
+              </Worker>
             ) : (
               <img
                 crossOrigin="anonymous"
@@ -160,7 +174,7 @@ const BookPublish = ({ book }) => {
                 alt="Book Preview"
                 width="100%"
                 height="100%"
-                style={{borderRadius:'40px'}}
+                style={{ borderRadius: "40px" }}
               />
             );
           })}

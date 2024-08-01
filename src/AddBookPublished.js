@@ -5,15 +5,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const AddBookPublished = () => {
-
-
-  const { id : Id } = useParams();
+  const { id: Id } = useParams();
 
   const [currentStep, setCurrentStep] = useState(0);
-  const userToken = localStorage.getItem('userToken');
+  const [cards, setCards] = useState([]);
+  const userToken = localStorage.getItem("userToken");
   const [formData, setFormData] = useState({
     file: "",
-    account_id: "",
+    account_id: 0,
     type: null,
     document_number: "",
     document_date: "",
@@ -50,30 +49,27 @@ const AddBookPublished = () => {
     }
   };
 
-
   useEffect(() => {
     if (Id) {
-    const fetchBook = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
-          headers: { Authorization: `Bearer ${userToken}` },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch book");
+      const fetchBook = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:4000/outgoing/${Id}`, {
+            headers: { Authorization: `Bearer ${userToken}` },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch book");
+          }
+          const result = await response.json();
+          setFormData(result.data.outgoing[0]);
+          console.log(result);
+          console.log(result.data.outgoing);
+        } catch (error) {
+          console.error(error);
         }
-        const result = await response.json();
-        setFormData(result.data.outgoing[0]);
-        console.log(result);
-        console.log(result.data.outgoing);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBook();
-  }
+      };
+      fetchBook();
+    }
   }, [Id]);
-
-
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -92,10 +88,61 @@ const AddBookPublished = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/cards`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.statusText}`
+          );
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(
+            `Expected JSON, got ${contentType}. Response: ${text}`
+          );
+        }
+
+        const result = await response.json();
+        if (result.data && result.data.cards) {
+          setCards(result.data.cards);
+          console.log(result.data.cards);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+
+        console.log(result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+    fetchCards();
+  }, []);
+
+  const renderCards = () => {
+    if (!Array.isArray(cards) || cards.length === 0)
+      return <p>No cards available.</p>;
+    return cards.map((card) => (
+      <option key={card.id} value={card.id}>
+        ${card.id} ${card.fullname}
+      </option>
+    ));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = Id ? `http://127.0.0.1:4000/outgoing/${Id}` : `http://127.0.0.1:4000/outgoing`;
-    const method = Id ? 'PATCH' : 'POST';
+    const url = Id
+      ? `http://127.0.0.1:4000/outgoing/${Id}`
+      : `http://127.0.0.1:4000/outgoing`;
+    const method = Id ? "PATCH" : "POST";
 
     const data = new FormData();
     for (const key in formData) {
@@ -141,13 +188,16 @@ const AddBookPublished = () => {
       </div>
       <div className="form-group">
         <label htmlFor="account_id">تسلسل بطاقة:</label>
-        <input
-          type="text"
-          className="form-control"
+        <select
           id="account_id"
+          className="form-control"
+          name="account_id"
           value={formData.account_id}
           onChange={handleChange}
-        />
+        >
+          <option value=""></option>
+          {renderCards()}
+        </select>
       </div>
       <div className="form-group">
         <label htmlFor="type">نوع الكتاب:</label>
@@ -242,7 +292,9 @@ const AddBookPublished = () => {
   return (
     <div className="container">
       <form onSubmit={handleSubmit}>
-        <h2 className="text-center">اضافة كتاب صادر جديد</h2>
+        <h2 className="text-center">
+          {Id ? "تعديل الكتاب" : "اضافة كتاب صادر جديد"}
+        </h2>
         <div style={{ direction: "ltr", textAlign: "center" }}>
           {steps.map((_, index) => (
             <div className="NumSt" key={index}>

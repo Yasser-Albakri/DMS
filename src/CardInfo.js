@@ -2,18 +2,16 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
-import {Worker} from '@react-pdf-viewer/core';
-import {Viewer} from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
+import { Worker } from "@react-pdf-viewer/core";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 export default function CardInfo() {
-
-  
   const pdfjsVersion = "3.11.174";
 
   const params = useParams();
   const id = params.id;
-  const userToken = localStorage.getItem('userToken');
+  const userToken = localStorage.getItem("userToken");
 
   const [card, setCard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,13 +20,11 @@ export default function CardInfo() {
   useEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`
-            }
-          }
-        );
+        const response = await fetch(`http://127.0.0.1:4000/cards/${id}`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -49,7 +45,6 @@ export default function CardInfo() {
     filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
     return filePath.split(".").pop().toLowerCase(); // Extract and return the file extension
   };
-
 
   return (
     <div className="cardInfo">
@@ -123,30 +118,45 @@ export default function CardInfo() {
             <span key={item.accunt_id}>{item.address}</span>
           ))}
         </p>
-        <p style={{position:'relative'}}><strong>المستمسكات :</strong>
-        <div className="book-preview-content" style={{width:'400px', height:'280px', position:'absolute', left:'0px', bottom:'0px'}}>
-          {card.map((item) => { const filePath = item.id_path === null
-            ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.id_path.replace(/\\/g, "/")}`;
-            const fileType = getFileType(filePath);
+        <p style={{ position: "relative" }}>
+          <strong>المستمسكات :</strong>
+          <div
+            className="book-preview-content"
+            style={{
+              width: "400px",
+              height: "280px",
+              position: "absolute",
+              left: "0px",
+              bottom: "0px",
+            }}
+          >
+            {card.map((item) => {
+              const filePath =
+                item.id_path === null
+                  ? "لا يوجد فايل"
+                  : `http://127.0.0.1:4000/${item.id_path.replace(/\\/g, "/")}`;
+              const fileType = getFileType(filePath);
 
-            return fileType === "pdf" ? (
-              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
-                <Viewer fileUrl={filePath} />
-              </Worker>
-            ) : (
-              <img
-                crossOrigin="anonymous"
-                key={item.id}
-                src={filePath}
-                alt="Book Preview"
-                width="100%"
-                height="100%"
-                borderRadius="40px"
-              />
-            );
-          })}
-        </div></p>
+              return fileType === "pdf" ? (
+                <Worker
+                  workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}
+                >
+                  <Viewer fileUrl={filePath} />
+                </Worker>
+              ) : (
+                <img
+                  crossOrigin="anonymous"
+                  key={item.id}
+                  src={filePath}
+                  alt="Book Preview"
+                  width="100%"
+                  height="100%"
+                  borderRadius="40px"
+                />
+              );
+            })}
+          </div>
+        </p>
       </div>
       <hr />
       <div className="organizInfo">
@@ -194,15 +204,21 @@ export default function CardInfo() {
           ))}
         </p>
         <p>
+          <strong>الشعبة :</strong>
+          {card.map((item) => (
+            <span key={item.accunt_id}>{item.section}</span>
+          ))}
+        </p>
+        <p>
           <strong>التصنيف :</strong>
           {card.map((item) => (
-            <span key={item.accunt_id}>{item.branch}</span>
+            <span key={item.accunt_id}>{item.branch_name}</span>
           ))}
         </p>
         <p>
           <strong>التصنيف الفرعي :</strong>
           {card.map((item) => (
-            <span key={item.accunt_id}>{item.sub_branch}</span>
+            <span key={item.accunt_id}>{item.sub_name}</span>
           ))}
         </p>
       </div>
@@ -233,31 +249,47 @@ export default function CardInfo() {
             <span key={item.accunt_id}>{item.clinic}</span>
           ))}
         </p>
-        <p style={{position:'relative'}}>
+        <p style={{ position: "relative" }}>
           <strong>هوية النقابة :</strong>
-          <div className="book-preview-content" style={{width:'300px', height:'180px', position:'absolute', left:'0px', bottom:'0px'}}>
-          {card.map((item) => { const filePath = item.union_path === null
-            ? 'لا يوجد فايل'
-            : `http://127.0.0.1:4000/${item.union_path.replace(/\\/g, "/")}`;
-            const fileType = getFileType(filePath);
+          <div
+            className="book-preview-content"
+            style={{
+              width: "300px",
+              height: "180px",
+              position: "absolute",
+              left: "0px",
+              bottom: "0px",
+            }}
+          >
+            {card.map((item) => {
+              const filePath =
+                item.union_path === null
+                  ? "لا يوجد فايل"
+                  : `http://127.0.0.1:4000/${item.union_path.replace(
+                      /\\/g,
+                      "/"
+                    )}`;
+              const fileType = getFileType(filePath);
 
-            return fileType === "pdf" ? (
-              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
-                <Viewer fileUrl={filePath} />
-              </Worker>
-            ) : (
-              <img
-                crossOrigin="anonymous"
-                key={item.id}
-                src={filePath}
-                alt="Book Preview"
-                width="100%"
-                height="100%"
-                borderRadius="40px"
-              />
-            );
-          })}
-        </div>
+              return fileType === "pdf" ? (
+                <Worker
+                  workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}
+                >
+                  <Viewer fileUrl={filePath} />
+                </Worker>
+              ) : (
+                <img
+                  crossOrigin="anonymous"
+                  key={item.id}
+                  src={filePath}
+                  alt="Book Preview"
+                  width="100%"
+                  height="100%"
+                  borderRadius="40px"
+                />
+              );
+            })}
+          </div>
         </p>
       </div>
       <hr />

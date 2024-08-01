@@ -8,11 +8,13 @@ const MultiStepForm = () => {
 
   const history = useNavigate();
   const userToken = localStorage.getItem("userToken");
+  const [branch, setBranch] = useState([]);
+  const [subBranch, setSubBranch] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     fullname: "",
-    branch: "",
-    sub_branch: "",
+    branch: 0,
+    sub_branch: 0,
     mother_name: "",
     nationality: "",
     phone: "",
@@ -39,7 +41,7 @@ const MultiStepForm = () => {
     renewal: "",
     note: "",
     ipn: "",
-    section: "",
+    section: 0,
   });
 
   useEffect(() => {
@@ -78,18 +80,7 @@ const MultiStepForm = () => {
         ...formData,
         [name]: value,
       });
-
-      if (name === "branch") {
-        workShops(value);
-      }
     }
-  };
-
-  const handleCustomSubBranchChange = (event) => {
-    setFormData({
-      ...formData,
-      sub_branch: event.target.value,
-    });
   };
 
   const nextStep = () => {
@@ -107,6 +98,74 @@ const MultiStepForm = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  useEffect(() => {
+    const fetchBranch = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/branch`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setBranch(result.data.branches);
+        // console.log(result.data.branches);
+        // console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBranch();
+  }, []);
+
+  const renderBranch = () => {
+    if (!Array.isArray(branch)) return null;
+
+    const renderBran = branch.filter(
+      (branch) => branch.sction === Number(formData.section)
+    );
+
+    return renderBran.map((Branch) => (
+      <option key={Branch.id} value={Branch.id}>
+        {Branch.name}
+      </option>
+    ));
+  };
+
+  useEffect(() => {
+    const fetchSubBranch = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/subBranch`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setSubBranch(result.data.subBranch);
+        // console.log(result.data.subBranch);
+        // console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchSubBranch();
+  }, []);
+
+  const renderSubBranch = () => {
+    if (!Array.isArray(subBranch)) return null;
+
+    const renderSubBran = subBranch.filter(
+      (subBranch) => subBranch.branch === Number(formData.branch)
+    );
+
+    return renderSubBran.map((subBranch) => (
+      <option key={subBranch.id} value={subBranch.id}>
+        {subBranch.name}
+      </option>
+    ));
   };
 
   const handleSubmit = async (e) => {
@@ -130,7 +189,6 @@ const MultiStepForm = () => {
         `http://127.0.0.1:4000/cards`,
         {
           fullname: formData.fullname,
-          branch: formData.branch,
           sub_branch: formData.sub_branch,
           mother_name: formData.mother_name,
           nationality: formData.nationality,
@@ -158,7 +216,6 @@ const MultiStepForm = () => {
           renewal: formData.renewal,
           note: formData.note,
           ipn: formData.ipn,
-          section: formData.section,
         },
         {
           headers: {
@@ -180,38 +237,6 @@ const MultiStepForm = () => {
     }
   };
 
-  const workShops = (value) => {
-    const wSh = document.getElementById("workSh");
-    const Shop = document.getElementById("Shops");
-    const cen = document.getElementById("cen");
-    const Hosp = document.getElementById("Hosp");
-    const clin = document.getElementById("clin");
-    const mas = document.getElementById("masn");
-
-    // Hide all dropdowns initially
-    wSh.style.display = "none";
-    Shop.style.display = "none";
-    cen.style.display = "none";
-    Hosp.style.display = "none";
-    clin.style.display = "none";
-    mas.style.display = "none";
-
-    // Show the relevant dropdown based on the selected value
-    if (value === "ورش") {
-      wSh.style.display = "block";
-    } else if (value === "محل") {
-      Shop.style.display = "block";
-    } else if (value === "مراكز") {
-      cen.style.display = "block";
-    } else if (value === "مستشفيات") {
-      Hosp.style.display = "block";
-    } else if (value === "عيادة تخصصية") {
-      clin.style.display = "block";
-    } else if (value === "مصانع" || value === "مكاتب السياحة العلاجية") {
-      mas.style.display = "block";
-    }
-  };
-
   const steps = [
     <div className="step">
       <div className="form-group four">
@@ -224,142 +249,31 @@ const MultiStepForm = () => {
           onChange={handleChange}
         >
           <option value=""></option>
-          <option value="الاجازات">الاجازات</option>
-          <option value="النفقة الخاصة">النفقة الخاصة</option>
-          <option value="الاستثمار الصحي الخاص">الاستثمار الصحي الخاص</option>
-          <option value="الهندسية">الهندسية</option>
-          <option value="الاوراق">الاوراق</option>
+          <option value={1}>الاجازات</option>
+          <option value={2}>النفقة الخاصة</option>
+          <option value={3}>الاستثمار الصحي الخاص</option>
+          <option value={4}>الهندسية</option>
+          <option value={5}>الاوراق</option>
         </select>
       </div>
       <div className="form-group four">
         <label htmlFor="branch">التصنيف:</label>
         <select name="branch" value={formData.branch} onChange={handleChange}>
           <option value=""></option>
-          <option value="محل">محل</option>
-          <option value="ورش">ورش</option>
-          <option value="مراكز">مراكز</option>
-          <option value="مستشفيات">مستشفيات</option>
-          <option value="عيادة تخصصية">عيادة تخصصية</option>
-          <option value="مكاتب السياحة العلاجية">مكاتب السياحة العلاجية</option>
-          <option value="مصانع">مصانع</option>
+          {renderBranch()}
         </select>
       </div>
       <div className="form-group four">
         <label htmlFor="sub_branch">التصنيف الفرعي:</label>
         <select
-          id="Shops"
+          id="sub_branch"
           name="sub_branch"
           value={formData.sub_branch}
           onChange={handleChange}
         >
           <option value=""></option>
-          <option value="محل بيع الاجهزة والمستلزمات الطبية">
-            محل بيع الاجهزة والمستلزمات الطبية
-          </option>
-          <option value="محل بيع الاجهزة والمستلزمات المختبرية">
-            محل بيع الاجهزة والمستلزمات المختبرية
-          </option>
-          <option value="محل بيع الاجهزة ومستلزمات طب الاسنان">
-            محل بيع الاجهزة ومستلزمات طب الاسنان
-          </option>
-          <option value="محل بيع واستيراد الاجهزة والمستلزمات الطبية والمختبرية وطب الاسنان">
-            محل بيع واستيراد الاجهزة والمستلزمات الطبية والمختبرية وطب الاسنان
-          </option>
+          {renderSubBranch()}
         </select>
-        <select
-          name="sub_branch"
-          id="workSh"
-          style={{ display: "none" }}
-          value={formData.sub_branch}
-          onChange={handleChange}
-        >
-          <option value=""></option>
-          <option value="محل بيع واستيراد الاجهزة والمستلزمات الطبية والمختبرية وطب الاسنان وادوات صيانتها">
-            محل بيع واستيراد الاجهزة والمستلزمات الطبية والمختبرية وطب الاسنان
-            وادوات صيانتها
-          </option>
-          <option value="اطراف صناعية">اطراف صناعية</option>
-          <option value="عيون صناعية">عيون صناعية</option>
-          <option value="اطراف ذكية">اطراف ذكية</option>
-        </select>
-        <select
-          name="sub_branch"
-          id="cen"
-          style={{ display: "none" }}
-          value={formData.sub_branch}
-          onChange={handleChange}
-        >
-          <option value=""></option>
-          <option value="مركز طب وجراحة الفم والاسنان">
-            مركز طب وجراحة الفم والاسنان
-          </option>
-          <option value="مركز قسطرة وجراحة القلب">
-            مركز قسطرة وجراحة القلب
-          </option>
-          <option value="مركز علاج العقم واطفال الانابيب">
-            مركز علاج العقم واطفال الانابيب
-          </option>
-          <option value="مركز خيري">مركز خيري</option>
-          <option value="مركز صحي اولي">مركز صحي اولي</option>
-          <option value="مركز اشعة تشخيصية">مركز اشعة تشخيصية</option>
-          <option value="مركز جراحة العظام والكسور">
-            مركز جراحة العظام والكسور
-          </option>
-          <option value="مركز تنظير الجهاز الهعضمي">
-            مركز تنظير الجهاز الهعضمي
-          </option>
-          <option value="مركز امراض السكري">مركز امراض السكري</option>
-          <option value="مركز طب وجراحة العيون">مركز طب وجراحة العيون</option>
-          <option value="مركز ليزك العيون">مركز ليزك العيون</option>
-        </select>
-        <select
-          name="sub_branch"
-          id="Hosp"
-          style={{ display: "none" }}
-          value={formData.sub_branch}
-          onChange={handleChange}
-        >
-          <option value=""></option>
-          <option value="اهلي عام">اهلي عام</option>
-          <option value="اهلي تخصصي">اهلي تخصصي</option>
-          <option value="استثماري">استثماري</option>
-          <option value="اهلي اخرى">اهلي اخرى</option>
-        </select>
-        {formData.sub_branch === "اهلي اخرى" && (
-          <input
-            type="text"
-            name="sub_branch"
-            value={formData.custom_sub_branch || ""}
-            onChange={handleCustomSubBranchChange}
-          />
-        )}
-        <select
-          name="sub_branch"
-          id="clin"
-          style={{ display: "none" }}
-          value={formData.sub_branch}
-          onChange={handleChange}
-        >
-          <option value=""></option>
-          <option value="عيادة تخصصية للمفراس الحلزوني">
-            عيادة تخصصية للمفراس الحلزوني
-          </option>
-          <option value="عيادة تخصصية للرنين المغناطيسي">
-            عيادة تخصصية للرنين المغناطيسي
-          </option>
-          <option value="عيادة تخصصية للاشعة والسونار">
-            عيادة تخصصية للاشعة والسونار
-          </option>
-          <option value="عيادة جراحية يومية">عيادة جراحية يومية</option>
-        </select>
-        <input
-          type="text"
-          name="sub_branch"
-          id="masn"
-          style={{ display: "none" }}
-          value={formData.sub_branch}
-          onChange={handleChange}
-        />
       </div>
       <div className="form-group four">
         <label htmlFor="fullname">الاسم الرباعي و اللقب:</label>

@@ -211,28 +211,27 @@ export default function Contact({ searchTerm, title }) {
   //   fetchgeneral();
   // }, []);
 
-  //     useEffect (() => {
-  //       const fetchgeneralAll = async () => {
-  //           try {
-  //               const response = await fetch('http://127.0.0.1:4000/general',
-  //                   {method: 'POST',
-  //                       headers: {
-  //                           'Authorization': `Bearer ${userToken}`
-  //                       }
-  //                   }
-  //               );
-  //               const result = await response.json();
-  //               setAllDoc(result.data.cards);
-  //               console.log(result.data.cards);
-  //               console.log(result);
-  //           } catch (error) {
-  //               setError(error);
-  //           } finally {
-  //               setLoading(false);
-  //           }
-
-  //   };fetchgeneralAll();
-  // }, [])
+  // useEffect(() => {
+  //   const fetchgeneralAll = async () => {
+  //     try {
+  //       const response = await fetch("http://127.0.0.1:4000/general", {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${userToken}`,
+  //         },
+  //       });
+  //       const result = await response.json();
+  //       setAllDoc(result.data.cards);
+  //       console.log(result.data.cards);
+  //       console.log(result);
+  //     } catch (error) {
+  //       setError(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchgeneralAll();
+  // }, []);
 
   const renderIncom = () => {
     if (!Array.isArray(Income)) return null;
