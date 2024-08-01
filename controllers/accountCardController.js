@@ -49,7 +49,6 @@ exports.createCard = catchAsync(async (req, res, next) => {
       }
 
       const data = req.body;
-      console.log(data);
 
       if (req.files) {
         if (req.files["unionFile"]) {
@@ -129,15 +128,18 @@ exports.deleteCard = catchAsync(async (req, res, next) => {
   }
 });
 
-
 exports.getCardByUser = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   try {
-    const card = await generalModel.viewTable("acc_info", `sub_id = (select sub_branch from users where id=${id})`);
+    const card = await generalModel.viewTable(
+      "acc_info",
+      `sub_id = (select sub_branch from users where id=${id})`
+    );
     if (card.length === 0) {
       return next(new AppError("No card found with that ID", 404));
     }
-    if (card.status === "error") return next(new AppError("Error retrieving card", 500));
+    if (card.status === "error")
+      return next(new AppError("Error retrieving card", 500));
     res.status(200).json({
       status: "success",
       length: card.length,

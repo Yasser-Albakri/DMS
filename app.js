@@ -17,6 +17,7 @@ const branchRoutes = require("./routes/branchRoutes");
 const subBranchRoutes = require("./routes/subBranchRoutes");
 const permitsRoutes = require("./routes/permitsRoutes");
 const renewalRoutes = require("./routes/renewalRoutes");
+const statisticsRoutes = require("./routes/statisticsRoutes");
 
 const app = express();
 
@@ -36,7 +37,11 @@ const limiter = rateLimit({
   max: 100,
   message: "Too many requests from this IP, please try again in an hour!",
 });
-app.use("/api", limiter);
+app.use("/", limiter);
+app.use((req, res, next) => {
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
 
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOW-FROM http://127.0.0.1:4000");
@@ -61,7 +66,7 @@ app.use("/branch", branchRoutes);
 app.use("/subBranch", subBranchRoutes);
 app.use("/permits", permitsRoutes);
 app.use("/renewal", renewalRoutes);
-
+app.use("/statistics", statisticsRoutes);
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
