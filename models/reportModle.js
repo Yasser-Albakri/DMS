@@ -14,7 +14,7 @@ exports.getReports = async () => {
 
 exports.getReportByName = async (name) => {
     try {
-        const result = await client.query("SELECT * FROM reports  WHERE name = $1", [
+        const result = await client.query("SELECT * FROM reports  WHERE name LIKE $1", [
             name,
         ]);
         const user = result.rows;
@@ -26,7 +26,7 @@ exports.getReportByName = async (name) => {
 
 exports.getReportByNumber = async (num) => {
     try {
-        const result = await client.query("SELECT * FROM reports WHERE num = $1", [
+        const result = await client.query("SELECT * FROM reports WHERE num LIKE $1", [
             num,
         ]);
         const user = result.rows;
@@ -38,7 +38,7 @@ exports.getReportByNumber = async (num) => {
 
 exports.getReportByDate = async (date) => {
     try {
-        const result = await client.query("SELECT * FROM reports WHERE dat = $1", [
+        const result = await client.query("SELECT * FROM reports WHERE dat LIKE $1", [
             date,
         ]);
         const user = result.rows;
@@ -51,7 +51,7 @@ exports.getReportByDate = async (date) => {
 
 exports.getReportByTopic = async (topic) => {
     try {
-        const result = await client.query("SELECT * FROM reports WHERE top = $1", [
+        const result = await client.query("SELECT * FROM reports WHERE top LIKE $1", [
             topic,
         ]);
         const user = result.rows;
