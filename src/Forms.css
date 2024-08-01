@@ -396,3 +396,23 @@ input[type="submit"]:active {
     margin: auto;
   }
 }
+
+.btn-renewal {
+  right: 42%;
+  background-color: #1fabff;
+}
+
+.btn-renewal:hover {
+  background-color: #0175f4;
+}
+
+.Mural {
+  position: relative;
+  margin-top: 40px;
+}
+
+.Qr {
+  position: absolute;
+  left: 10%;
+  top: 25%;
+}

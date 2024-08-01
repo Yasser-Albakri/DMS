@@ -28,7 +28,7 @@ export default function SearchBar({ setSearchTerm }) {
             <b>قسم القطاع الصحي الخاص</b>
           </p>
         </div>
-        <form action="" method="post">
+        <form className="search-form" action="" method="post">
           <p>
             من : <input type="date" name="from" />
           </p>
@@ -42,12 +42,12 @@ export default function SearchBar({ setSearchTerm }) {
             موضوع الكتاب : <input type="text" />
           </p>
           <p>
-            رقم الوارد : <input type="text" />
+            رقم الكتاب : <input type="text" />
           </p>
           <p>
-            تاريخ الوارد : <input type="text" />
+            تاريخ الكتاب : <input type="date" />
           </p>
-          <img alt="" src="/search.png"></img>
+          <input type="submit" value="بحث" style={{ marginRight: "100px" }} />
         </form>
       </div>
     );

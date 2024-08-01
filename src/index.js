@@ -1,34 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import Cards from './Cards';
-import BookReceived from './BookReceived';
-import Reports from './Reports';
-import PublishedBook from './PublishedBook';
-import AddCard from './AddCard';
-import Card from './Card';
-import Vacations from './Vacations';
-import AddBook from './AddBook';
-import AddBookPublished from './AddBookPublished';
-import Login from './Login';
-import Registration from './Registration';
-import BookRec from './BookRec';
-import Divisions from './Divisions';
-import AddExtension from './AddExtension';
-import CardInfo from './CardInfo';
-import AddMural from './AddMural';
-import AddVacation from './AddVacation';
-import BookPublish from './BookPublish';
-import AttachedBook from './AttachInfo';
-import QrInfo from './QrInfo';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import Cards from "./Cards";
+import BookReceived from "./BookReceived";
+import Reports from "./Reports";
+import PublishedBook from "./PublishedBook";
+import AddCard from "./AddCard";
+import Card from "./Card";
+import Vacations from "./Vacations";
+import AddBook from "./AddBook";
+import AddBookPublished from "./AddBookPublished";
+import Login from "./Login";
+import Registration from "./Registration";
+import BookRec from "./BookRec";
+import Divisions from "./Divisions";
+import AddExtension from "./AddExtension";
+import CardInfo from "./CardInfo";
+import AddMural from "./AddMural";
+import AddVacation from "./AddVacation";
+import BookPublish from "./BookPublish";
+import AttachedBook from "./AttachInfo";
+import QrInfo from "./QrInfo";
+import RenewalMural from "./RenewalMural";
+import AddBranch from "./AddBranch";
+import AddSubBranch from "./AddSubBranch";
 
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
@@ -127,10 +126,21 @@ const router = createBrowserRouter([
     path: "QrInfo/:id",
     element: <QrInfo />,
   },
+  {
+    path: "RenewalMural/:id",
+    element: <RenewalMural />,
+  },
+  {
+    path: "AddBranch",
+    element: <AddBranch />,
+  },
+  {
+    path: "AddSubBranch",
+    element: <AddSubBranch />,
+  },
 ]);
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <RouterProvider router={router} />

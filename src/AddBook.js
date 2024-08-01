@@ -10,10 +10,11 @@ const AddBook = () => {
   const userToken = localStorage.getItem("userToken");
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [cards, setCards] = useState([]);
   const [formData, setFormData] = useState({
     file: null,
-    account_id: null,
-    type: 1,
+    account_id: 0,
+    type: 0,
     book_number: "",
     book_date: "",
     issuing_authority: "",
@@ -102,6 +103,56 @@ const AddBook = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/cards`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.statusText}`
+          );
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(
+            `Expected JSON, got ${contentType}. Response: ${text}`
+          );
+        }
+
+        const result = await response.json();
+        if (result.data && result.data.cards) {
+          setCards(result.data.cards);
+          console.log(result.data.cards);
+        } else {
+          throw new Error("Invalid response structure");
+        }
+
+        console.log(result);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+    fetchCards();
+  }, []);
+
+  const renderCards = () => {
+    if (!Array.isArray(cards) || cards.length === 0)
+      return <p>No cards available.</p>;
+    return cards.map((card) => (
+      <option key={card.id} value={card.id}>
+        ${card.id} ${card.fullname}
+      </option>
+    ));
+  };
+
   useEffect(() => {
     console.log("Form Data:", formData);
   }, [formData]);
@@ -174,14 +225,16 @@ const AddBook = () => {
       </div>
       <div className="form-group">
         <label htmlFor="account_id">تسلسل بطاقة:</label>
-        <input
-          type="text"
-          className="form-control"
+        <select
           id="account_id"
+          className="form-control"
           name="account_id"
           value={formData.account_id}
           onChange={handleChange}
-        />
+        >
+          <option value=""></option>
+          {renderCards()}
+        </select>
       </div>
       <div className="form-group">
         <label htmlFor="type">نوع الكتاب:</label>
