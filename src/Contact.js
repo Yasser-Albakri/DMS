@@ -149,26 +149,28 @@ export default function Contact({
     }
   }, [loc.pathname, userToken]);
 
-  // useEffect(() => {
-  //   const fetchSection = async () => {
-  //     try {
-  //       const response = await fetch("http://127.0.0.1:4000/SBs/1");
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const result = await response.json();
-  //       // setSection(result.data.sections);
-  //       // setSectionLength(result.length);
-  //       console.log(result);
-  //       console.log(result.data);
-  //     } catch (error) {
-  //       setError(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchSection();
-  // }, []);
+  useEffect(() => {
+    const fetchSection = async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:4000/reports?name=صادر&num=11&topic=تذكير&date=2024-07-31&start=2023-07-30&end=2024-07-31"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        // setSection(result.data.sections);
+        // setSectionLength(result.length);
+        console.log(result);
+        console.log(result.data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSection();
+  }, []);
 
   useEffect(() => {
     if (loc.pathname === `/Card/${id}`) {
@@ -644,11 +646,11 @@ export default function Contact({
 
       if (numberBook !== "") {
         filteredOutgoing = filteredOutgoing.filter((outgoing) => {
-          console.log(
-            "Comparing numbers:",
-            outgoing.document_number,
-            numberBook
-          );
+          // console.log(
+          //   "Comparing numbers:",
+          //   outgoing.document_number,
+          //   numberBook
+          // );
           return (
             outgoing.document_number &&
             outgoing.document_number.toString().includes(numberBook)
