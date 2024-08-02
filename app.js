@@ -18,6 +18,7 @@ const subBranchRoutes = require("./routes/subBranchRoutes");
 const permitsRoutes = require("./routes/permitsRoutes");
 const renewalRoutes = require("./routes/renewalRoutes");
 const statisticsRoutes = require("./routes/statisticsRoutes");
+const SBsRoutes = require("./routes/SBsRoutes");
 
 const app = express();
 
@@ -67,6 +68,8 @@ app.use("/subBranch", subBranchRoutes);
 app.use("/permits", permitsRoutes);
 app.use("/renewal", renewalRoutes);
 // app.use("/statistics", statisticsRoutes);
+app.use("/SBs", SBsRoutes);
+
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

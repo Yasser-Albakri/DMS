@@ -21,21 +21,21 @@ exports.addElement = async (table, data) => {
   try {
     let fields = [];
     let values = [];
-    Object.keys(data).forEach((key) => {
-      fields.push(`${key}`);
-      values.push("'" + data[key] + "'");
-    });
+    let placeholders = [];
+    let index = 1;
+
+    for (const key in data) {
+      fields.push(key);
+      values.push(data[key]);
+      placeholders.push(`$${index++}`);
+    }
+
     if (fields.length === 0) return new AppError("Invalid data", 400);
 
-    const query =
-      "INSERT INTO " +
-      table +
-      " (" +
-      fields.join(",") +
-      ") VALUES (" +
-      values.join(",") +
-      ") RETURNING *";
-    const result = await client.query(query);
+    const query = `INSERT INTO ${table} (${fields.join(
+      ","
+    )}) VALUES (${placeholders.join(",")}) RETURNING *`;
+    const result = await client.query(query, values);
     return result.rows;
   } catch (err) {
     console.log(err);
@@ -46,13 +46,19 @@ exports.addElement = async (table, data) => {
 exports.updateElement = async (table, id, data) => {
   try {
     let sub = [];
-    let query = "UPDATE " + table + " SET ";
-    Object.keys(data).forEach((key, index) => {
-      sub.push(`${key}='${data[key]}'`);
-    });
-    sub.join(",");
-    query += sub + " WHERE id = " + id + " RETURNING *";
-    const result = await client.query(query);
+    let values = [];
+    let index = 1;
+
+    for (const key in data) {
+      sub.push(`${key} = $${index++}`);
+      values.push(data[key]);
+    }
+
+    values.push(id); // Add the id as the last parameter
+    const query = `UPDATE ${table} SET ${sub.join(
+      ", "
+    )} WHERE id = $${index} RETURNING *`;
+    const result = await client.query(query, values);
     return result.rows[0];
   } catch (err) {
     console.log(err);
@@ -62,9 +68,8 @@ exports.updateElement = async (table, id, data) => {
 
 exports.deleteElement = async (table, id) => {
   try {
-    const result = await client.query(
-      `UPDATE ${table} SET is_deleted = true WHERE id = ${id} RETURNING *`
-    );
+    const query = `UPDATE ${table} SET is_deleted = true WHERE id = $1 RETURNING *`;
+    const result = await client.query(query, [id]);
     return result.rowCount;
   } catch (err) {
     return new AppError(err.message || "Database error occurred", 500);

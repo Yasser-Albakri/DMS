@@ -23,19 +23,20 @@ exports.getDataBySub = async (id) => {
   }
 };
 exports.getAllBranch = async () => {
-    try {
-        const result = await client.query("select distinct section, branch_name from sbs");
-        const users = result.rows;
-        return users;
-    } catch (err) {
-        return new AppError("Database error: Unable to fetch data", 500);
-    }
+  try {
+    const result = await client.query(
+      "select distinct section, branch_name from sbs"
+    );
+    const users = result.rows;
+    return users;
+  } catch (err) {
+    return new AppError("Database error: Unable to fetch data", 500);
+  }
 };
-
 
 exports.createBranch = async (user) => {
   try {
-    const { name,section } = user;
+    const { name, section } = user;
     const result = await client.query(
       "INSERT INTO branch (name, sction) VALUES ($1, $2) RETURNING *",
       [name, section]
@@ -47,11 +48,9 @@ exports.createBranch = async (user) => {
   }
 };
 
-
-
 exports.createSub = async (user) => {
   try {
-    const { name,branch } = user;
+    const { name, branch } = user;
     const result = await client.query(
       "INSERT INTO sub_branch (name, branch) VALUES ($1, $2) RETURNING *",
       [name, branch]
@@ -62,8 +61,3 @@ exports.createSub = async (user) => {
     return new AppError("Database error: Unable to create user", 500);
   }
 };
-
-
-
-
-
