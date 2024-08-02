@@ -7,7 +7,16 @@ import { useParams } from "react-router-dom";
 import FetchCard from "./FetchData/FrtchCard";
 import { useNavigate } from "react-router-dom";
 
-export default function Contact({ searchTerm, title }) {
+export default function Contact({
+  searchTerm,
+  title,
+  from,
+  to,
+  topicBook,
+  numberBook,
+  dateBook,
+  sourceBook,
+}) {
   const params = useParams();
   const id = params.id;
 
@@ -38,7 +47,7 @@ export default function Contact({ searchTerm, title }) {
   // console.log(userRole);
 
   useEffect(() => {
-    if (loc.pathname === "/BookReceived") {
+    if (loc.pathname === "/BookReceived" || loc.pathname === "/Reports") {
       const fetchIncom = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:4000/income`, {
@@ -52,7 +61,7 @@ export default function Contact({ searchTerm, title }) {
           const result = await response.json();
           setIncome(result.data.incomes);
           setLenBoIn(result.length);
-          console.log(result.data.incomes);
+          // console.log(result.data.incomes);
           // console.log(result.data.docs);
         } catch (error) {
           setError(error);
@@ -65,7 +74,11 @@ export default function Contact({ searchTerm, title }) {
   }, []);
 
   useEffect(() => {
-    if (loc.pathname === "/PublishedBook" || loc.pathname === "/Vacations") {
+    if (
+      loc.pathname === "/PublishedBook" ||
+      loc.pathname === "/Vacations" ||
+      loc.pathname === "/Reports"
+    ) {
       const fetchOutgoing = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:4000/outgoing`, {
@@ -79,8 +92,8 @@ export default function Contact({ searchTerm, title }) {
           const result = await response.json();
           setOutgoing(result.data.outgoing);
           setLenBoUt(result.length);
-          console.log(result);
-          console.log(result.data.outgoing);
+          // console.log(result);
+          // console.log(result.data.outgoing);
         } catch (error) {
           setError(error);
         } finally {
@@ -502,13 +515,182 @@ export default function Contact({ searchTerm, title }) {
     }
   };
 
+  const renderSearchIncomReports = () => {
+    if (
+      from === "" &&
+      to === "" &&
+      topicBook === "" &&
+      numberBook === "" &&
+      dateBook === "" &&
+      sourceBook === ""
+    ) {
+      return <h3>{"الرجاء البحث اولا"}</h3>;
+    } else {
+      let filteredIncom = Income;
+
+      if (topicBook !== "") {
+        filteredIncom = filteredIncom.filter(
+          (income) =>
+            income.topic &&
+            income.topic.toLowerCase().includes(topicBook.toLowerCase())
+        );
+      }
+
+      if (dateBook !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          // console.log("Comparing dates:", income.book_date, dateBook);
+          return (
+            income.book_date &&
+            income.book_date
+              .toLowerCase()
+              .replace(/-/g, "/")
+              .includes(dateBook.toLowerCase().replace(/-/g, "/"))
+          );
+        });
+      }
+
+      if (sourceBook !== "") {
+        filteredIncom = filteredIncom.filter(
+          (income) =>
+            income.issuing_authority &&
+            income.issuing_authority
+              .toLowerCase()
+              .includes(sourceBook.toLowerCase())
+        );
+      }
+
+      if (numberBook !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          // console.log("Comparing numbers:", income.book_number, numberBook);
+          return (
+            income.book_number &&
+            income.book_number.toString().includes(numberBook)
+          );
+        });
+      }
+      if (from !== "" && to !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          const incomeDate = new Date(income.create_at);
+          const fromData = new Date(from);
+          const toData = new Date(to);
+          // console.log("Checking date range:", incomeDate, fromData, toData);
+          return incomeDate >= fromData && incomeDate <= toData;
+        });
+      }
+
+      // console.log("Filtered Income: ", filteredIncom);
+
+      return filteredIncom.map((income) => (
+        <tr key={income.id}>
+          <Link
+            to={`/BookRec/${income.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{income.book_number}</td>
+            <td>{income.topic}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
+  const renderSearchOutgoingReports = () => {
+    if (
+      from === "" &&
+      to === "" &&
+      topicBook === "" &&
+      numberBook === "" &&
+      dateBook === "" &&
+      sourceBook === ""
+    ) {
+      return;
+    } else {
+      let filteredOutgoing = outgoing;
+
+      if (topicBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter(
+          (outgoing) =>
+            outgoing.subject &&
+            outgoing.subject.toLowerCase().includes(topicBook.toLowerCase())
+        );
+      }
+
+      if (dateBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          // console.log("Comparing dates:", outgoing.document_date, dateBook);
+          return (
+            outgoing.document_date &&
+            outgoing.document_date
+              .toLowerCase()
+              .replace(/-/g, "/")
+              .includes(dateBook.toLowerCase().replace(/-/g, "/"))
+          );
+        });
+      }
+
+      if (sourceBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter(
+          (outgoing) =>
+            outgoing.addressed_entity &&
+            outgoing.addressed_entity
+              .toLowerCase()
+              .includes(sourceBook.toLowerCase())
+        );
+      }
+
+      if (numberBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          console.log(
+            "Comparing numbers:",
+            outgoing.document_number,
+            numberBook
+          );
+          return (
+            outgoing.document_number &&
+            outgoing.document_number.toString().includes(numberBook)
+          );
+        });
+      }
+      if (from !== "" && to !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          const outgoingDate = new Date(outgoing.create_at);
+          const fromData = new Date(from);
+          const toData = new Date(to);
+          // console.log("Checking date range:", outgoingDate, fromData, toData);
+          return outgoingDate >= fromData && outgoingDate <= toData;
+        });
+      }
+
+      // console.log("Filtered outgoing: ", filteredOutgoing);
+
+      return filteredOutgoing.map((outgoing) => (
+        <tr key={outgoing.id}>
+          <Link
+            to={`/BookRec/${outgoing.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{outgoing.document_number}</td>
+            <td>{outgoing.subject}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
   const renderContent = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
     switch (loca.pathname) {
       case "/Home":
-      case "/Reports":
         return (
           <div>
             <div className="info">
@@ -559,6 +741,59 @@ export default function Contact({ searchTerm, title }) {
             <table>
               <tbody>
                 {searchTerm === "" ? renderCards() : renderSearch()}
+              </tbody>
+            </table>
+          </div>
+        );
+      case "/Reports":
+        return (
+          <div>
+            <div className="info">
+              <div className="tex">
+                <h3>{title}</h3>
+                {/* <p>عدد الكتب الكلي : <span>{DocLen}</span></p> */}
+              </div>
+              <div className="divs">
+                <div>
+                  <p>{allNote}</p>
+                  <hr />
+                  <p>مذكرة</p>
+                </div>
+                <div>
+                  <p>{request}</p>
+                  <hr />
+                  <p>طلب</p>
+                </div>
+                <div>
+                  <p>{allBook}</p>
+                  <hr />
+                  <p>كتاب</p>
+                </div>
+                <div>
+                  <p>{vac}</p>
+                  <hr />
+                  <p>اجازة</p>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <table>
+              <tr
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  borderRadius: "20px",
+                }}
+              >
+                <td className="td1">الرقم</td>
+                <td>الموضوع</td>
+              </tr>
+            </table>
+            <hr />
+            <table>
+              <tbody>
+                {renderSearchIncomReports()}
+                {renderSearchOutgoingReports()}
               </tbody>
             </table>
           </div>

@@ -2,7 +2,15 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import "./App.css";
 
-export default function SearchBar({ setSearchTerm }) {
+export default function SearchBar({
+  setSearchTerm,
+  setFrom,
+  setTo,
+  setTopicBook,
+  setNumberBook,
+  setDateBook,
+  setSourceBook,
+}) {
   const loca = useLocation();
 
   const handleSearchChange = (event) => {
@@ -30,24 +38,33 @@ export default function SearchBar({ setSearchTerm }) {
         </div>
         <form className="search-form" action="" method="post">
           <p>
-            من : <input type="date" name="from" />
+            من : <input type="date" onChange={(e) => setFrom(e.target.value)} />
           </p>
           <p>
-            الى : <input type="date" name="to" />
+            الى : <input type="date" onChange={(e) => setTo(e.target.value)} />
           </p>
           <p>
-            جهة الكتاب : <input type="text" />
+            جهة الكتاب :{" "}
+            <input
+              type="text"
+              onChange={(e) => setSourceBook(e.target.value)}
+            />
           </p>
           <p>
-            موضوع الكتاب : <input type="text" />
+            موضوع الكتاب :{" "}
+            <input type="text" onChange={(e) => setTopicBook(e.target.value)} />
           </p>
           <p>
-            رقم الكتاب : <input type="text" />
+            رقم الكتاب :{" "}
+            <input
+              type="text"
+              onChange={(e) => setNumberBook(e.target.value)}
+            />
           </p>
           <p>
-            تاريخ الكتاب : <input type="date" />
+            تاريخ الكتاب :{" "}
+            <input type="date" onChange={(e) => setDateBook(e.target.value)} />
           </p>
-          <input type="submit" value="بحث" style={{ marginRight: "100px" }} />
         </form>
       </div>
     );
