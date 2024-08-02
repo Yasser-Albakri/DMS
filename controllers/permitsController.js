@@ -8,6 +8,7 @@ exports.getAllParams = catchAsync(async (req, res, next) => {
     if (params.status === "error") {
       return next(new AppError("Error 1 !", 404));
     }
+    console.log(params.length);
     res.status(200).json({
       status: "success",
       length: params.length,
@@ -62,11 +63,10 @@ exports.getParamByCard = catchAsync(async (req, res, next) => {
 });
 
 exports.getRenewals = catchAsync(async (req, res, next) => {
-  console.log("Starting to fetch data");
   try {
     const renewals = await paramsModel.getRenwal();
     if (renewals.status === "error") {
-      return next(new AppError("waht  4!", 404));
+      return next(new AppError("what  4!", 404));
     }
     res.status(200).json({
       status: "success",
@@ -116,7 +116,8 @@ exports.getRenewalByPermit = catchAsync(async (req, res, next) => {
 
 exports.createRenewal = catchAsync(async (req, res, next) => {
   try {
-    const renewal = await paramsModel.createRenewal(req.body);
+    const data = req.body;
+    const renewal = await paramsModel.createRenewal(data);
     if (renewal.status === "error") {
       return next(new AppError("Worng id !", 404));
     }
