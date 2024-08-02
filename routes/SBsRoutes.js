@@ -4,5 +4,6 @@ const router = express.Router();
 
 router.route("/").get(SBsController.getAllSBs);
 router.route("/:id").get(SBsController.getSbs);
+router.route("/all/:id").get(SBsController.getSectionWithBranch);
 
 module.exports = router;

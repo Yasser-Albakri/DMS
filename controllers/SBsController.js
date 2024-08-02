@@ -38,3 +38,22 @@ exports.getSbs = catchAsync(async (req, res, next) => {
     next(new AppError("Failed to get data", 500));
   }
 });
+
+exports.getSectionWithBranch = catchAsync(async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const SBs = await SBsModel.getAllBranch(id);
+    if (!SBs) {
+      return next(new AppError("There is no data", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        SBs,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(new AppError("Failed to get data", 500));
+  }
+});

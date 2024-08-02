@@ -22,10 +22,11 @@ exports.getDataBySub = async (id) => {
     return new AppError("Database error: Unable to fetch data by sub_id", 500);
   }
 };
-exports.getAllBranch = async () => {
+exports.getAllBranch = async (id) => {
   try {
     const result = await client.query(
-      "select distinct section, branch_name from sbs"
+      "select distinct section, branch_name from sbs WHERE branch_id = $1",
+      [id]
     );
     const users = result.rows;
     return users;
