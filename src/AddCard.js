@@ -42,11 +42,12 @@ const MultiStepForm = () => {
     note: "",
     ipn: "",
     section: 0,
+    sub_id: 0,
   });
 
   useEffect(() => {
     if (Id) {
-      const fetchBook = async () => {
+      const fetchCards = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:4000/cards/${Id}`, {
             headers: {
@@ -57,14 +58,14 @@ const MultiStepForm = () => {
             throw new Error("Failed to fetch book");
           }
           const result = await response.json();
-          setFormData(result.data.incoming[0]);
+          setFormData(result.data.card[0]);
           // console.log(result);
-          console.log(result.data.incoming);
+          console.log(result.data.card);
         } catch (error) {
           console.error(error);
         }
       };
-      fetchBook();
+      fetchCards();
     }
   }, [Id]);
 
@@ -170,8 +171,10 @@ const MultiStepForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const url = Id ? `http://127.0.0.1:4000/cards/${Id}` : `http://127.0.0.1:4000/cards`;
-    // const method = Id ? 'PATCH' : 'POST';
+    const url = Id
+      ? `http://127.0.0.1:4000/cards/${Id}`
+      : `http://127.0.0.1:4000/cards`;
+    const method = Id ? "PATCH" : "POST";
 
     const data = new FormData();
     for (const key in formData) {
@@ -185,9 +188,10 @@ const MultiStepForm = () => {
     // Debug: Log formDataToSend to check if all fields are correctly appended
 
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:4000/cards`,
-        {
+      const response = await axios({
+        method: method,
+        url: url,
+        data: {
           fullname: formData.fullname,
           sub_branch: formData.sub_branch,
           mother_name: formData.mother_name,
@@ -217,17 +221,16 @@ const MultiStepForm = () => {
           note: formData.note,
           ipn: formData.ipn,
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
 
       console.log(response);
       console.log(data);
-
+      console.log(url);
+      console.log(response.data);
       alert("Card added successfully");
       history("/Cards");
     } catch (error) {

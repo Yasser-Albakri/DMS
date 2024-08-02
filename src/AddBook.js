@@ -148,7 +148,7 @@ const AddBook = () => {
       return <p>No cards available.</p>;
     return cards.map((card) => (
       <option key={card.id} value={card.id}>
-        ${card.id} ${card.fullname}
+        {card.id} {card.fullname}
       </option>
     ));
   };

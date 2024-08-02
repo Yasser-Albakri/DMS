@@ -27,7 +27,7 @@ export default function FetchCard() {
         }
         const result = await response.json();
         setIncome(result.data.incomes);
-        console.log(result.data.incomes);
+        // console.log(result.data.incomes);
         // console.log(result.data.docs);
       } catch (error) {
         setError(error);
@@ -51,8 +51,8 @@ export default function FetchCard() {
         }
         const result = await response.json();
         setOutgoing(result.data.outgoing);
-        console.log(result);
-        console.log(result.data.outgoing);
+        // console.log(result);
+        // console.log(result.data.outgoing);
       } catch (error) {
         setError(error);
       } finally {
@@ -76,8 +76,8 @@ export default function FetchCard() {
         // const result = await response.json();
         // setCard(result);
         // console.log(result);
-        console.log(response);
-        console.log(id);
+        // console.log(response);
+        // console.log(id);
       } catch (error) {
         setError(error);
       } finally {
