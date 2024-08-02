@@ -48,7 +48,7 @@ const AddBookPublished = () => {
       };
       fetchBook();
     }
-  }, [Id]);
+  }, [Id, userToken]);
 
   const handleChange = (e) => {
     const { id, value, files } = e.target;
@@ -117,25 +117,25 @@ const AddBookPublished = () => {
         const result = await response.json();
         if (result.data && result.data.cards) {
           setCards(result.data.cards);
-          console.log(result.data.cards);
+          // console.log(result.data.cards);
         } else {
           throw new Error("Invalid response structure");
         }
 
-        console.log(result);
+        // console.log(result);
       } catch (error) {
         console.error("Fetch error:", error);
       }
     };
     fetchCards();
-  }, []);
+  }, [userToken]);
 
   const renderCards = () => {
     if (!Array.isArray(cards) || cards.length === 0)
       return <p>No cards available.</p>;
     return cards.map((card) => (
       <option key={card.id} value={card.id}>
-        ${card.id} ${card.fullname}
+        {card.id} {card.fullname}
       </option>
     ));
   };

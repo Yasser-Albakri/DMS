@@ -51,7 +51,7 @@ const AddBook = () => {
       };
       fetchBook();
     }
-  }, [Id]);
+  }, [Id, userToken]);
 
   const handleChange = (e) => {
     const { id, value, files, name } = e.target;
@@ -141,7 +141,7 @@ const AddBook = () => {
       }
     };
     fetchCards();
-  }, []);
+  }, [userToken]);
 
   const renderCards = () => {
     if (!Array.isArray(cards) || cards.length === 0)

@@ -67,7 +67,7 @@ const MultiStepForm = () => {
       };
       fetchCards();
     }
-  }, [Id]);
+  }, [Id, userToken]);
 
   const handleChange = (e) => {
     const { id, value, files, name } = e.target;
@@ -119,7 +119,7 @@ const MultiStepForm = () => {
       }
     };
     fetchBranch();
-  }, []);
+  }, [userToken]);
 
   const renderBranch = () => {
     if (!Array.isArray(branch)) return null;
@@ -153,7 +153,7 @@ const MultiStepForm = () => {
       }
     };
     fetchSubBranch();
-  }, []);
+  }, [userToken]);
 
   const renderSubBranch = () => {
     if (!Array.isArray(subBranch)) return null;

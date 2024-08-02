@@ -33,7 +33,7 @@ export default function RenewalMural() {
       }
     };
     fetchBook();
-  }, [Id]);
+  }, [Id, userToken]);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -58,7 +58,7 @@ export default function RenewalMural() {
     if (bookData.length > 0) {
       fetchCard();
     }
-  }, [bookData]);
+  }, [bookData, userToken]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -72,15 +72,15 @@ export default function RenewalMural() {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setQr(url);
-        console.log(response);
-        console.log(response.url);
+        // console.log(response);
+        // console.log(response.url);
       } catch (error) {
         console.error(error);
       }
     };
     fetchBook();
-  }, [Id]);
-  console.log(Id);
+  }, [Id, userToken]);
+  // console.log(Id);
 
   const generatePDF = () => {
     const content = document.getElementById("content");
