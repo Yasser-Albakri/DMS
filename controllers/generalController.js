@@ -1,10 +1,11 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const generalModel = require("./../models/generalModel");
+const general = require("./../config/db");
 
 exports.getAllCount = catchAsync(async (req, res, next) => {
   try {
-    const cards = await generalModel.view("select * from count_type");
+    const result = await general.query("select * from count_type");
+    const cards = result.rows;
     res.status(200).json({
       status: "success",
       length: cards.length,
@@ -13,6 +14,7 @@ exports.getAllCount = catchAsync(async (req, res, next) => {
       },
     });
   } catch (err) {
+    console.log(err);
     return next(new AppError("Error retrieving cards", 500));
   }
 });
@@ -20,12 +22,14 @@ exports.getAllCount = catchAsync(async (req, res, next) => {
 exports.getCount = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   try {
-    const card = await generalModel.view(
+    const result = await general.query(
       `select * from count_type where name='${id}'`
     );
-    if (!card) {
+    if (!result) {
       return next(new AppError("No card found with that ID", 404));
     }
+    const card = result.rows;
+
     res.status(200).json({
       status: "success",
       length: card.length,
@@ -41,7 +45,7 @@ exports.getCount = catchAsync(async (req, res, next) => {
 
 exports.homePage = catchAsync(async (req, res, next) => {
   try {
-    const cards = await generalModel.view(
+    const result = await general.query(
       `SELECT id,
     subject,TRUE AS "OI"
     FROM outgoing
@@ -50,6 +54,7 @@ exports.homePage = catchAsync(async (req, res, next) => {
     topic,FALSE
     FROM incoming`
     );
+    const cards = result.rows;
     res.status(200).json({
       status: "success",
       length: cards.length,
@@ -58,6 +63,7 @@ exports.homePage = catchAsync(async (req, res, next) => {
       },
     });
   } catch (err) {
+    console.log(err);
     return next(new AppError("Error retrieving cards", 500));
   }
 });

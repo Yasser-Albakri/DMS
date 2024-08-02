@@ -69,7 +69,7 @@ exports.createCard = catchAsync(async (req, res, next) => {
 
       const card = await generalModel.addElement("account_card", data);
       if (card.status === "error")
-        return next(new AppError("Worng input", 400));
+        return next(new AppError("Wrong input", 400));
       res.status(201).json({
         status: "success",
         length: card.length,

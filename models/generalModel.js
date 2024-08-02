@@ -13,6 +13,7 @@ exports.viewTable = async (
     const types = result.rows;
     return types;
   } catch (err) {
+    console.log(err);
     return new AppError("Database error occurred while fetching data", 500);
   }
 };
