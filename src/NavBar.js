@@ -202,7 +202,7 @@ export default function NavBar() {
               to="/Vacations"
               style={loca.pathname === "/Vacations" ? { color: "white" } : {}}
             >
-              الاجازات
+              اجازات شعبة الاجازات
             </Link>
           </p>
           <ul
@@ -238,7 +238,7 @@ export default function NavBar() {
             to="/Divisions"
             style={loca.pathname === "/Divisions" ? { color: "white" } : {}}
           >
-            الشعب
+            اجازات النفقة الخاصة
           </Link>
         </li>
         <li className="flex">

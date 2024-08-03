@@ -105,7 +105,11 @@ export default function Contact({
   }, [loc.pathname, userToken]);
 
   useEffect(() => {
-    if (loc.pathname === "/Cards" || loc.pathname === "/Home") {
+    if (
+      loc.pathname === "/Cards" ||
+      loc.pathname === "/Home" ||
+      loc.pathname === "/Vacations"
+    ) {
       const fetchCards = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:4000/cards`, {
@@ -136,7 +140,7 @@ export default function Contact({
             throw new Error("Invalid response structure");
           }
 
-          // console.log(result);
+          console.log(result);
         } catch (error) {
           console.error("Fetch error:", error);
           setError(error);
@@ -216,7 +220,7 @@ export default function Contact({
         setNoteIn(result.data.cards[5].result);
         setNoteOut(result.data.cards[4].result);
         setVac(result.data.cards[6].result);
-        //console.log(result);
+        // console.log(result);
       } catch (error) {
         setError(error);
       } finally {
@@ -341,7 +345,15 @@ export default function Contact({
   // };
 
   const renderVaca = () => {
+    const filterCard = cards.filter((card) => card.section === "الاجازات");
+    const filteredOutgoing = outgoing.filter((outgoingItem) =>
+      filterCard.some((card) => outgoingItem.account_id === card.id)
+    );
+    console.log(filterCard);
+    console.log(filteredOutgoing);
+
     const filteredOutVaca = outgoing.filter((outgoing) => outgoing.type === 3);
+    console.log(filteredOutVaca);
 
     return filteredOutVaca.map((outgoing) => (
       <tr className="rendVac" key={outgoing.id}>

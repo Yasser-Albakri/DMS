@@ -36,7 +36,7 @@ const BookRec = () => {
       }
     };
     fetchBook();
-  }, [Id]);
+  }, [Id, userToken]);
 
   useEffect(() => {
     const fetchAttach = async () => {
@@ -58,7 +58,7 @@ const BookRec = () => {
       }
     };
     fetchAttach();
-  }, []);
+  }, [userToken]);
 
   const renderAtta = () => {
     if (!Array.isArray(attached)) return null;
@@ -183,11 +183,11 @@ const BookRec = () => {
           </p>
           {renderAtta()}
         </div>
-        <form method="POST">
+        {/* <form method="POST">
           <label>اضافة ملاحظة :</label>
           <input type="text" name="note" />
           <input type="submit" value="Submit" />
-        </form>
+        </form> */}
         <div className="buttons">
           <button className="btn btn-primary">
             <Link

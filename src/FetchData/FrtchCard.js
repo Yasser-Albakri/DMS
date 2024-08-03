@@ -36,7 +36,7 @@ export default function FetchCard() {
       }
     };
     fetchIncom();
-  }, []);
+  }, [userToken]);
 
   useEffect(() => {
     const fetchOutgoing = async () => {
@@ -60,7 +60,7 @@ export default function FetchCard() {
       }
     };
     fetchOutgoing();
-  }, []);
+  }, [userToken]);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -85,7 +85,7 @@ export default function FetchCard() {
       }
     };
     fetchCard();
-  }, [id]);
+  }, [id, userToken]);
 
   const renderOug = () => {
     const filteredOutgoing = outgoing.filter(

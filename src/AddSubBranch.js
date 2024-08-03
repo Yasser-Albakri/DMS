@@ -8,6 +8,7 @@ const AddSubBranch = () => {
   const userToken = localStorage.getItem("userToken");
 
   const [branch, setBranch] = useState([]);
+  const history = useNavigate();
 
   const [currentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -46,13 +47,13 @@ const AddSubBranch = () => {
       }
     };
     fetchBook();
-  }, []);
+  }, [userToken]);
 
   const renderBranch = () => {
     if (!Array.isArray(branch)) return null;
     return branch.map((Branch) => (
       <option key={Branch.id} value={Branch.id}>
-        {Branch.name}
+        {Branch.sction} {Branch.name}
       </option>
     ));
   };
@@ -105,7 +106,7 @@ const AddSubBranch = () => {
       console.log(response);
       console.log(formData);
       alert("تمت اضافة التصنيف الفرعي");
-      //history(`/Home`);
+      history(`/Home`);
     } catch (error) {
       console.error("Error:", error);
       alert(`Error: ${error.message}`);

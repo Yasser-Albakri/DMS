@@ -114,11 +114,11 @@ const BookPublish = ({ book }) => {
             <span key={item.id}>{item.note}</span>
           ))}
         </p>
-        <form method="POST">
+        {/* <form method="POST">
           <label>اضافة ملاحظة :</label>
           <input type="text" name="note" />
           <input type="submit" value="Submit" className="btn btn-success" />
-        </form>
+        </form> */}
         <div className="buttons">
           <button className="btn btn-primary">
             <Link

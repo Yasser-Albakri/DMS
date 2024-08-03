@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import "./App.css";
+import "./Forms.css";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import axios from "axios";
@@ -10,10 +10,13 @@ export default function RenewalMural() {
   const params = useParams();
   const Id = params.id;
   const userToken = localStorage.getItem("userToken");
+  const userId = localStorage.getItem("userId");
 
   const [bookData, setBookData] = useState([]);
   const [card, setCard] = useState([]);
   const [qr, setQr] = useState([]);
+  const [date, setDate] = useState("");
+  const [number, setNumber] = useState("");
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -80,7 +83,8 @@ export default function RenewalMural() {
     };
     fetchBook();
   }, [Id, userToken]);
-  // console.log(Id);
+  console.log(Number(Id));
+  console.log(+userId);
 
   const generatePDF = () => {
     const content = document.getElementById("content");
@@ -100,9 +104,8 @@ export default function RenewalMural() {
           "http://127.0.0.1:4000/renewal",
           {
             topic: "تجديد جدارية",
-            number: "20",
-            user_id: "13",
-            inc_id: "9",
+            number: Number(number),
+            permit_id: Number(Id),
           },
           {
             headers: {
@@ -131,12 +134,32 @@ export default function RenewalMural() {
         <h4>جمهورية العراق</h4>
         <h4> وزارة الصحة</h4>
         <h4>قسم القطاع الصحي الخاص</h4>
-        <h4>
-          العدد : <span></span>
-        </h4>
-        <h4>
-          التاريخ : <span></span>
-        </h4>
+        <form>
+          <h4>
+            العدد :
+            <span>
+              <input
+                type="text"
+                name="number"
+                id="number"
+                onChange={(e) => setNumber(e.target.value)}
+                style={{ display: "inline-block", backgroundColor: "#869dce" }}
+              />
+            </span>
+          </h4>
+          <h4>
+            التاريخ :
+            <span>
+              <input
+                type="date"
+                name="date"
+                id="date"
+                onChange={(e) => setDate(e.target.value)}
+                style={{ display: "inline-block", backgroundColor: "#869dce" }}
+              />
+            </span>
+          </h4>
+        </form>
       </div>
       <div className="MurInf1">
         <h4>كوماري عيراق</h4>
@@ -203,7 +226,9 @@ export default function RenewalMural() {
           <span></span>
         </h4>
       </div>
-      {/* <button onClick={generatePDF}>Generate PDF</button> */}
+      <button onClick={generatePDF} className="generatePDF">
+        Generate PDF
+      </button>
     </div>
   );
 }

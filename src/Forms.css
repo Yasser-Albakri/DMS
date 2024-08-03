@@ -12,6 +12,11 @@ body:has(.step) {
   position: relative;
 }
 
+.generatePDF {
+  position: absolute;
+  bottom: -100px;
+}
+
 .container:has(.step) {
   padding: 10px 60px;
 }
