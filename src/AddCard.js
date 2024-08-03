@@ -184,6 +184,7 @@ const MultiStepForm = () => {
         data.append(key, formData[key]);
       }
     }
+    console.log(url);
 
     // Debug: Log formDataToSend to check if all fields are correctly appended
 
@@ -203,7 +204,12 @@ const MultiStepForm = () => {
           name_doctor: formData.name_doctor,
           doctor_specialty: formData.doctor_specialty,
           place_work: formData.place_work,
-          clinic: formData.clinic,
+          clinic:
+            formData.clinic === "لا"
+              ? formData.clinic === false
+              : formData.clinic === "نعم"
+              ? formData.clinic === true
+              : formData.clinic,
           unionFile: formData.unionFile,
           idFile: formData.idFile,
           type: formData.type,
@@ -239,6 +245,7 @@ const MultiStepForm = () => {
       console.log(formData);
     }
   };
+  console.log(formData.clinic);
 
   const steps = [
     <div className="step">

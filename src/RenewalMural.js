@@ -17,6 +17,7 @@ export default function RenewalMural() {
   const [qr, setQr] = useState([]);
   const [date, setDate] = useState("");
   const [number, setNumber] = useState("");
+  const [user_id, setUser_id] = useState([]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -37,6 +38,26 @@ export default function RenewalMural() {
     };
     fetchBook();
   }, [Id, userToken]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        // console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -83,10 +104,11 @@ export default function RenewalMural() {
     };
     fetchBook();
   }, [Id, userToken]);
-  console.log(Number(Id));
-  console.log(+userId);
+  // console.log(Number(Id));
+  // console.log(+userId);
+  // console.log(user_id.id);
 
-  const generatePDF = () => {
+  const submit = () => {
     const content = document.getElementById("content");
 
     html2canvas(content).then((canvas) => {
@@ -97,29 +119,24 @@ export default function RenewalMural() {
 
       // Send the PDF to the server
       const formData = new FormData();
-      formData.append("file", pdfBlob, "document.pdf");
+      formData.append("topic", "تجديد جدارية");
+      formData.append("number", Number(number));
+      formData.append("permit_id", Number(Id));
+      formData.append("user_id", Number(user_id.id));
+      formData.append("date", date);
 
       axios
-        .post(
-          "http://127.0.0.1:4000/renewal",
-          {
-            topic: "تجديد جدارية",
-            number: Number(number),
-            permit_id: Number(Id),
+        .post("http://127.0.0.1:4000/renewal", formData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        )
+        })
         .then((response) => {
-          if (response.ok) {
-            alert("PDF sent to the server successfully!");
-          } // else {
-          //   alert("Failed to send PDF to the server.");
-          // }
+          alert("PDF sent to the server successfully!");
+          // console.log(number);
+          // console.log(formData);
+          // console.log(response);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -226,8 +243,12 @@ export default function RenewalMural() {
           <span></span>
         </h4>
       </div>
-      <button onClick={generatePDF} className="generatePDF">
-        Generate PDF
+      <button
+        onClick={submit}
+        className="generatePDF"
+        style={{ bottom: "-100px", right: "100px" }}
+      >
+        حفظ الجدارية
       </button>
     </div>
   );

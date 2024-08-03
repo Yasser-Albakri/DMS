@@ -46,6 +46,10 @@ exports.addElement = async (table, data) => {
 
 exports.updateElement = async (table, id, data) => {
   try {
+    if (Object.keys(data).length === 0) {
+      throw new Error("No data provided for update");
+    }
+
     let sub = [];
     let values = [];
     let index = 1;
@@ -59,6 +63,11 @@ exports.updateElement = async (table, id, data) => {
     const query = `UPDATE ${table} SET ${sub.join(
       ", "
     )} WHERE id = $${index} RETURNING *`;
+
+    // Debug: Log the constructed query and values
+    console.log("Constructed Query:", query);
+    console.log("Values:", values);
+
     const result = await client.query(query, values);
     return result.rows[0];
   } catch (err) {
