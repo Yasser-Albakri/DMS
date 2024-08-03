@@ -86,26 +86,52 @@ exports.createCard = catchAsync(async (req, res, next) => {
 });
 
 exports.updateCard = catchAsync(async (req, res, next) => {
-  const id = req.params.id;
-  const data = req.body;
   try {
-    const card = await generalModel.viewTable("account_card", `id=${id}`);
-    if (!card) {
-      return next(new AppError("No card found with that ID", 404));
-    }
+    upload.fields([
+      { name: "unionFile", maxCount: 1 },
+      { name: "idFile", maxCount: 1 },
+    ])(req, res, async (err) => {
+      if (err) {
+        return next(new AppError(err, 400));
+      }
+      const id = req.params.id;
+      const data = req.body;
 
-    const newCard = await generalModel.updateElement("account_card", id, data);
+      if (req.files) {
+        if (req.files["unionFile"]) {
+          data.union_path = req.files["unionFile"][0].path;
+        } else {
+          delete data["unionFile"];
+        }
+        if (req.files["idFile"]) {
+          data.id_path = req.files["idFile"][0].path;
+        } else {
+          delete data["idFile"];
+        }
+      }
+      if (!req.files) {
+        delete data["unionFile"];
+        delete data["idFile"];
+      }
 
-    res.status(200).json({
-      status: "success",
-      length: card.length,
-      data: {
-        newCard,
-      },
+      const newCard = await generalModel.updateElement(
+        "account_card",
+        id,
+        data
+      );
+      if (newCard.status === "error")
+        return next(new AppError("Wrong input", 400));
+      res.status(201).json({
+        status: "success",
+        length: newCard.length,
+        data: {
+          newCard,
+        },
+      });
     });
   } catch (err) {
-    console.log(err);
-    return next(new AppError("Error retrieving card", 500));
+    console.error(err);
+    return next(new AppError("Error creating card", 500));
   }
 });
 
