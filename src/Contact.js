@@ -212,11 +212,11 @@ export default function Contact({
         setAllNote(result.data.cards[3].result);
         setBookIn(result.data.cards[2].result);
         setBookOut(result.data.cards[1].result);
-        setRequest(result.data.cards[7].result);
+        setRequest(result.data.cards[6].result);
         setNoteIn(result.data.cards[5].result);
         setNoteOut(result.data.cards[4].result);
-        setVac(result.data.cards[6].result);
-        //console.log(result);
+        setVac(result.data.cards[7].result);
+        // console.log(result);
       } catch (error) {
         setError(error);
       } finally {
