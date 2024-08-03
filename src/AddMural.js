@@ -2,6 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 export default function AddMural() {
   const params = useParams();
@@ -11,6 +14,9 @@ export default function AddMural() {
   const [bookData, setBookData] = useState([]);
   const [card, setCard] = useState([]);
   const [qr, setQr] = useState([]);
+  const [date, setDate] = useState("");
+  const [number, setNumber] = useState("");
+  const [user_id, setUser_id] = useState([]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -30,7 +36,27 @@ export default function AddMural() {
       }
     };
     fetchBook();
-  }, [Id]);
+  }, [Id, userToken]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        // console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -55,7 +81,7 @@ export default function AddMural() {
     if (bookData.length > 0) {
       fetchCard();
     }
-  }, [bookData]);
+  }, [bookData, userToken]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -69,27 +95,87 @@ export default function AddMural() {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setQr(url);
-        console.log(response);
-        console.log(response.url);
+        // console.log(response);
+        // console.log(response.url);
       } catch (error) {
         console.error(error);
       }
     };
     fetchBook();
-  }, [Id]);
+  }, [Id, userToken]);
+  // console.log(Number(Id));
+  // console.log(+userId);
+  // console.log(user_id.id);
+
+  const submit = () => {
+    const content = document.getElementById("content");
+
+    html2canvas(content).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "PNG", 0, 0);
+      const pdfBlob = pdf.output("blob");
+
+      // Send the PDF to the server
+      const formData = new FormData();
+      formData.append("topic", "منح جدارية");
+      formData.append("number", Number(number));
+      formData.append("permit_id", Number(Id));
+      formData.append("user_id", Number(user_id.id));
+      formData.append("date", date);
+
+      axios
+        .post("http://127.0.0.1:4000/renewal", formData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then((response) => {
+          alert("PDF sent to the server successfully!");
+          // console.log(number);
+          // console.log(formData);
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while sending the PDF to the server.");
+        });
+    });
+  };
 
   return (
-    <div className="Mural step">
+    <div className="Mural step" id="content">
       <div className="MurInf">
         <h4>جمهورية العراق</h4>
         <h4> وزارة الصحة</h4>
         <h4>قسم القطاع الصحي الخاص</h4>
-        <h4>
-          العدد : <span></span>
-        </h4>
-        <h4>
-          التاريخ : <span></span>
-        </h4>
+        <form>
+          <h4>
+            العدد :
+            <span>
+              <input
+                type="text"
+                name="number"
+                id="number"
+                onChange={(e) => setNumber(e.target.value)}
+                style={{ display: "inline-block", backgroundColor: "#869dce" }}
+              />
+            </span>
+          </h4>
+          <h4>
+            التاريخ :
+            <span>
+              <input
+                type="date"
+                name="date"
+                id="date"
+                onChange={(e) => setDate(e.target.value)}
+                style={{ display: "inline-block", backgroundColor: "#869dce" }}
+              />
+            </span>
+          </h4>
+        </form>
       </div>
       <div className="MurInf1">
         <h4>كوماري عيراق</h4>
@@ -158,6 +244,13 @@ export default function AddMural() {
           <span></span>
         </h4>
       </div>
+      <button
+        onClick={submit}
+        className="generatePDF"
+        style={{ bottom: "-100px", right: "100px" }}
+      >
+        حفظ الجدارية
+      </button>
     </div>
   );
 }

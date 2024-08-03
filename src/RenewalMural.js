@@ -10,7 +10,6 @@ export default function RenewalMural() {
   const params = useParams();
   const Id = params.id;
   const userToken = localStorage.getItem("userToken");
-  const userId = localStorage.getItem("userId");
 
   const [bookData, setBookData] = useState([]);
   const [card, setCard] = useState([]);
