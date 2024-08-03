@@ -119,7 +119,8 @@ exports.createRenewal = catchAsync(async (req, res, next) => {
     const data = req.body;
     const renewal = await paramsModel.createRenewal(data);
     if (renewal.status === "error") {
-      return next(new AppError("Worng id !", 404));
+      console.log();
+      return next(new AppError("Wrong id !", 404));
     }
     res.status(200).json({
       status: "success",
@@ -128,6 +129,7 @@ exports.createRenewal = catchAsync(async (req, res, next) => {
       },
     });
   } catch (err) {
+    console.log(err);
     return next(new AppError(`Error retrieving params ${err.message}`, 500));
   }
 });
