@@ -140,7 +140,7 @@ export default function Contact({
             throw new Error("Invalid response structure");
           }
 
-          console.log(result);
+          // console.log(result);
         } catch (error) {
           console.error("Fetch error:", error);
           setError(error);

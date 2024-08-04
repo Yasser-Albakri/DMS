@@ -9,7 +9,30 @@ const AddBookPublished = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [cards, setCards] = useState([]);
+  const [errors, setErrors] = useState({});
   const userToken = localStorage.getItem("userToken");
+  const [user_id, setUser_id] = useState([]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
+
   const [formData, setFormData] = useState({
     file: "",
     account_id: 0,
@@ -20,8 +43,9 @@ const AddBookPublished = () => {
     executing_uthority: "",
     addressed_entity: "",
     note: "",
-    user_id: "0",
+    user_id: null,
   });
+
   const history = useNavigate();
 
   const [filePreview, setFilePreview] = useState(null);
@@ -50,6 +74,13 @@ const AddBookPublished = () => {
   };
 
   useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      user_id: user_id.id || null,
+    }));
+  }, [user_id]);
+
+  useEffect(() => {
     if (Id) {
       const fetchBook = async () => {
         try {
@@ -72,8 +103,16 @@ const AddBookPublished = () => {
   }, [Id, userToken]);
 
   const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    const newErrors = {};
+
+    if (!formData.account_id) {
+      newErrors.account_id = "اسم او تسلسل البطاقة مطلوب";
+    }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
@@ -198,6 +237,11 @@ const AddBookPublished = () => {
           <option value=""></option>
           {renderCards()}
         </select>
+        {errors.account_id && (
+          <p style={{ color: "red", fontSize: "10px", margin: "0px" }}>
+            {errors.account_id}
+          </p>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="type">نوع الكتاب:</label>

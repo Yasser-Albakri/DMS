@@ -9,6 +9,29 @@ const AddBookPublished = () => {
 
   const userToken = localStorage.getItem("userToken");
   const [cards, setCards] = useState([]);
+
+  const [user_id, setUser_id] = useState([]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     file: "",
@@ -20,7 +43,7 @@ const AddBookPublished = () => {
     executing_uthority: "",
     addressed_entity: "",
     note: "",
-    user_id: "0",
+    user_id: null,
     last_renewal: "",
     leave_status: "",
   });
@@ -72,6 +95,13 @@ const AddBookPublished = () => {
       });
     }
   };
+
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      user_id: user_id.id || null,
+    }));
+  }, [user_id]);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -166,9 +196,9 @@ const AddBookPublished = () => {
           Authorization: `Bearer ${userToken}`,
         },
       });
-      console.log(response.data);
-      console.log(response);
-      console.log(formData);
+      // console.log(response.data);
+      // console.log(response);
+      // console.log(formData);
       alert("Book added successfully");
 
       history("/PublishedBook");

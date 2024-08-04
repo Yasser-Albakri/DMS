@@ -12,6 +12,7 @@ const AddSubBranch = () => {
 
   const [currentStep] = useState(0);
   const [formData, setFormData] = useState({
+    section: 0,
     branch: 0,
     name: "",
   });
@@ -51,9 +52,14 @@ const AddSubBranch = () => {
 
   const renderBranch = () => {
     if (!Array.isArray(branch)) return null;
-    return branch.map((Branch) => (
+
+    const renderBran = branch.filter(
+      (branch) => branch.sction === Number(formData.section)
+    );
+
+    return renderBran.map((Branch) => (
       <option key={Branch.id} value={Branch.id}>
-        {Branch.sction} {Branch.name}
+        {Branch.name}
       </option>
     ));
   };
@@ -95,7 +101,10 @@ const AddSubBranch = () => {
     try {
       const response = await axios.post(
         `http://127.0.0.1:4000/subBranch`,
-        data,
+        {
+          branch: formData.branch,
+          name: formData.name,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -115,6 +124,23 @@ const AddSubBranch = () => {
 
   const steps = [
     <div className="step" key="step1">
+      <div className="form-group">
+        <label htmlFor="section">الشعبة:</label>
+        <select
+          className="form-control"
+          id="section"
+          name="section"
+          value={formData.section}
+          onChange={handleChange}
+        >
+          <option value=""></option>
+          <option value={1}>الاجازات</option>
+          <option value={2}>النفقة الخاصة</option>
+          <option value={3}>الاستثمار الصحي الخاص</option>
+          <option value={4}>الهندسية</option>
+          <option value={5}>الاوراق</option>
+        </select>
+      </div>
       <div className="form-group">
         <label htmlFor="branch">التصنيف:</label>
         <select
