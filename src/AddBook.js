@@ -7,7 +7,29 @@ import "./Forms.css";
 const AddBook = () => {
   const { id: Id } = useParams();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
   const userToken = localStorage.getItem("userToken");
+  const [user_id, setUser_id] = useState([]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [cards, setCards] = useState([]);
@@ -21,7 +43,7 @@ const AddBook = () => {
     topic: "",
     incoming_number: "",
     referral: "",
-    user_id: 0,
+    user_id: null,
     note: "",
     incoming_date: "",
   });
@@ -81,6 +103,13 @@ const AddBook = () => {
     }
   };
 
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      user_id: user_id.id || null,
+    }));
+  }, [user_id]);
+
   const handleRemoveFile = () => {
     setFormData({
       ...formData,
@@ -93,8 +122,16 @@ const AddBook = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    const newErrors = {};
+
+    if (!formData.account_id) {
+      newErrors.account_id = "اسم او تسلسل البطاقة مطلوب";
+    }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
@@ -184,7 +221,7 @@ const AddBook = () => {
         },
       });
       console.log(response.data);
-      console.log(data);
+      // console.log(data);
 
       navigate("/BookReceived"); // Adjust the path to where you want to navigate after success
     } catch (error) {
@@ -222,6 +259,11 @@ const AddBook = () => {
             Remove File
           </button>
         )}
+        {/* {errors.file && (
+          <p style={{ color: "red", fontSize: "10px", margin: "0px" }}>
+            {errors.file}
+          </p>
+        )} */}
       </div>
       <div className="form-group">
         <label htmlFor="account_id">تسلسل بطاقة:</label>
@@ -235,6 +277,11 @@ const AddBook = () => {
           <option value=""></option>
           {renderCards()}
         </select>
+        {errors.account_id && (
+          <p style={{ color: "red", fontSize: "10px", margin: "0px" }}>
+            {errors.account_id}
+          </p>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="type">نوع الكتاب:</label>

@@ -9,26 +9,36 @@ export default function Login() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form submission
 
-    if (username === "" || password === "") {
-      alert("Please fill all the fields");
-    } else {
+    const newErrors = {};
+
+    if (!username) {
+      newErrors.username = "اسم المستخدم مطلوب";
+    }
+
+    if (!password) {
+      newErrors.password = "كلمة المرور مطلوبة";
+    }
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
       try {
-        console.log(username, password);
+        // console.log(username, password);
         const response = await axios.post(`http://127.0.0.1:4000/users/login`, {
           username: username,
           password: password,
         });
         if (response) {
           alert("Login successful");
-          console.log(response.data);
+          // console.log(response.data);
           // console.log(response.data.user);
           // console.log(response.data.user.id);
           // console.log(response.data.user.role);
-          console.log(localStorage);
+          // console.log(localStorage);
           localStorage.setItem("userId", JSON.stringify(response.data.user.id));
           localStorage.setItem(
             "userRole",
@@ -91,6 +101,11 @@ export default function Login() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="اسم المستخدم"
             ></input>
+            {errors.username && (
+              <p style={{ color: "red", fontSize: "10px", margin: "0px" }}>
+                {errors.username}
+              </p>
+            )}
             <label htmlFor="password">كلمة المرور</label>
             <input
               style={{ outline: "0.5px solid #0000003d" }}
@@ -101,11 +116,16 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="كلمة المرور"
             ></input>
+            {errors.password && (
+              <p style={{ color: "red", fontSize: "10px", margin: "0px" }}>
+                {errors.password}
+              </p>
+            )}
             <input
               type="submit"
               onClick={handleSubmit}
               value="تسجيل الدخول"
-              style={{ position: "absolute", bottom: "120px" }}
+              style={{ position: "absolute", bottom: "100px" }}
             />
           </form>
         </div>

@@ -20,6 +20,9 @@ export default function Card() {
           <Link to={`/CardInfo/${id}`}>
             <button className="add-card-button">عرض معلومات البطاقة</button>
           </Link>
+          <Link to={`/AddCard/${id}`}>
+            <button className="btn-primary">تعديل معلومات البطاقة</button>
+          </Link>
         </div>
       </div>
       <span className="log">

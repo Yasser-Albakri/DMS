@@ -15,6 +15,7 @@ const BookPublish = ({ book }) => {
   const userToken = localStorage.getItem("userToken");
 
   const [bookData, setBookData] = useState([]);
+  const [renewal, setRenewal] = useState([]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -27,14 +28,36 @@ const BookPublish = ({ book }) => {
         }
         const result = await response.json();
         setBookData(result.data.outgoing);
-        console.log(result);
-        console.log(result.data.outgoing);
+        // console.log(result);
+        // console.log(result.data.outgoing);
       } catch (error) {
         console.error(error);
       }
     };
     fetchBook();
-  }, [Id]);
+  }, [Id, userToken]);
+
+  useEffect(() => {
+    const fetchAttach = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/renewal`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setRenewal(result.data.renewals);
+        // console.log(result);
+        // console.log(result.data.renewals);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchAttach();
+  }, [userToken]);
 
   const getFileType = (filePath) => {
     filePath = filePath.replace(/\\/g, "/"); // Convert backslashes to forward slashes
@@ -52,7 +75,55 @@ const BookPublish = ({ book }) => {
     typeBook = "اجازة";
   }
 
-  console.log(bookData);
+  // console.log(bookData);
+
+  const renderRenew = () => {
+    if (!Array.isArray(renewal)) return null;
+
+    const filteredAtta = renewal.filter((item) => item.inc_id === bookData.id);
+
+    return filteredAtta.map((item) => {
+      // const filePath =
+      //   item.file_path === null
+      //     ? "لا يوجد فايل"
+      //     : `http://127.0.0.1:4000/${item.file_path.replace(/\\/g, "/")}`;
+      // const fileType = getFileType(filePath);
+
+      return (
+        <span key={item.id}>
+          <Link to={`/Mural/${item.id}`}>
+            {/* <div className="attache">
+            {fileType === "pdf" ? (
+              <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+                <Viewer fileUrl={filePath} />
+              </Worker>
+            ) : (
+              <img
+                crossOrigin="anonymous"
+                src={filePath}
+                alt="Book Preview"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: '40px' }}
+              />
+            )}
+          </div> */}
+            <p
+              style={{ display: "inline-block", margin: "5px", color: "black" }}
+            >
+              {item.number}
+            </p>
+            <p
+              style={{ display: "inline-block", margin: "5px", color: "black" }}
+            >
+              {item.topic},
+            </p>
+          </Link>
+        </span>
+      );
+    });
+  };
+  // console.log(renderRenew());
 
   return (
     <div className="book-container">
@@ -113,6 +184,9 @@ const BookPublish = ({ book }) => {
           {bookData.map((item) => (
             <span key={item.id}>{item.note}</span>
           ))}
+        </p>
+        <p>
+          <strong>الجداريات:</strong> <span>{renderRenew()}</span>
         </p>
         {/* <form method="POST">
           <label>اضافة ملاحظة :</label>

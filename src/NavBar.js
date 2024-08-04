@@ -6,11 +6,40 @@ import { useState, useEffect } from "react";
 export default function NavBar() {
   const loca = useLocation();
 
+  const [user_id, setUser_id] = useState([]);
+  const userToken = localStorage.getItem("userToken");
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser_id(result.data.user);
+        // console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBook();
+  }, [userToken]);
+
   return (
     <nav>
       <ul className="ul">
         {" "}
-        <h3>البريد المركزي</h3>
+        <h3>
+          {user_id.role === "0"
+            ? "Admin"
+            : user_id.role === "1"
+            ? "البريد المركزي"
+            : "الموظف"}
+        </h3>
         <hr />
         <li
           className="flex"
@@ -202,7 +231,7 @@ export default function NavBar() {
               to="/Vacations"
               style={loca.pathname === "/Vacations" ? { color: "white" } : {}}
             >
-              اجازات شعبة الاجازات
+              الاجازات
             </Link>
           </p>
           <ul
@@ -219,7 +248,7 @@ export default function NavBar() {
             {/* <li><Link to="/AddMural">اضافة جدارية</Link></li> */}
           </ul>
         </li>
-        <li
+        {/* <li
           className="flex"
           style={
             loca.pathname === "/Divisions"
@@ -240,7 +269,7 @@ export default function NavBar() {
           >
             اجازات النفقة الخاصة
           </Link>
-        </li>
+        </li> */}
         <li className="flex">
           <img alt="" src="/branch.png" />
           <Link to="/AddBranch">اضافة تصنيف</Link>

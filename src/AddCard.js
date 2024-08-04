@@ -184,7 +184,7 @@ const MultiStepForm = () => {
         data.append(key, formData[key]);
       }
     }
-    console.log(url);
+    // console.log(url);
 
     // Debug: Log formDataToSend to check if all fields are correctly appended
 
@@ -233,10 +233,10 @@ const MultiStepForm = () => {
         },
       });
 
-      console.log(response);
-      console.log(data);
-      console.log(url);
-      console.log(response.data);
+      // console.log(response);
+      // console.log(data);
+      // console.log(url);
+      // console.log(response.data);
       alert("Card added successfully");
       history("/Cards");
     } catch (error) {

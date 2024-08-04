@@ -51,8 +51,8 @@ const BookRec = () => {
         }
         const result = await response.json();
         setAttached(result.data.attachedDocuments);
-        console.log(result);
-        console.log(result.data);
+        // console.log(result);
+        // console.log(result.data);
       } catch (error) {
         console.error(error);
       }

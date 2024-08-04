@@ -26,6 +26,7 @@ import QrInfo from "./QrInfo";
 import RenewalMural from "./RenewalMural";
 import AddBranch from "./AddBranch";
 import AddSubBranch from "./AddSubBranch";
+import Mural from "./Mural";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -133,6 +134,10 @@ const router = createBrowserRouter([
   {
     path: "RenewalMural/:id",
     element: <RenewalMural />,
+  },
+  {
+    path: "Mural/:id",
+    element: <Mural />,
   },
   {
     path: "AddBranch",
