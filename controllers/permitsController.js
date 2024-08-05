@@ -21,6 +21,26 @@ exports.getAllParams = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.getAllIncomesBySection = catchAsync(async (req, res, next) => {
+  try {
+    const { section_id } = req.params;
+    const permits = await featuresModel.getAllIncomesBySection(section_id);
+    if (!permits) {
+      return next(new AppError("No data found for that section", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      length: permits.length,
+      data: {
+        permits,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return next(new AppError("Error retrieving data by section", 500));
+  }
+});
+
 exports.getParamById = catchAsync(async (req, res, next) => {
   try {
     const param = await paramsModel.getPermitById(req.params.id);

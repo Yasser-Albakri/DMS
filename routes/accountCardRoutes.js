@@ -9,6 +9,10 @@ router
   .post(authController.protect, accountCardController.createCard);
 
 router
+  .route("/section/:section_id")
+  .get(authController.protect, accountCardController.getAllCardsBySections);
+
+router
   .route("/:id")
   .get(authController.protect, accountCardController.getCard)
   .patch(authController.protect, accountCardController.updateCard)

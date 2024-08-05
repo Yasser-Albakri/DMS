@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const generalModel = require("./../models/generalModel");
+const featuresModel = require("./../models/featuresModel");
 const upload = require("./../config/multerConfig");
 
 exports.getAllCards = catchAsync(async (req, res, next) => {
@@ -15,6 +16,26 @@ exports.getAllCards = catchAsync(async (req, res, next) => {
     });
   } catch (err) {
     return next(new AppError("Error retrieving cards", 500));
+  }
+});
+
+exports.getAllCardsBySections = catchAsync(async (req, res, next) => {
+  const { section_id } = req.params;
+  try {
+    const cards = await featuresModel.getCardsBySection(section_id);
+    if (cards.length === 0) {
+      return next(new AppError("No cards found in this section", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      length: cards.length,
+      data: {
+        cards,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return next(new AppError("Error retrieving data", 500));
   }
 });
 

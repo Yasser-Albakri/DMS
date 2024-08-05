@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const generalModel = require("./../models/generalModel");
+const featuresModel = require("./../models/featuresModel");
 const upload = require("./../config/multerConfig");
 
 const nameTable = "outgoing";
@@ -18,6 +19,26 @@ exports.getAllOutgoing = catchAsync(async (req, res, next) => {
   } catch (err) {
     console.log(err);
     return next(new AppError("Error retrieving outgoing", 500));
+  }
+});
+
+exports.getAllOutgoingBySection = catchAsync(async (req, res, next) => {
+  try {
+    const { section_id } = req.params;
+    const outgoing = await featuresModel.getOutgoingBySection(section_id);
+    if (!outgoing) {
+      return next(new AppError("No data found for that section", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      length: outgoing.length,
+      data: {
+        outgoing,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return next(new AppError("Error retrieving data by section", 500));
   }
 });
 

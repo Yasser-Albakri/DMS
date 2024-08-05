@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const generalModel = require("./../models/generalModel");
+const featuresModel = require("./../models/featuresModel");
 const upload = require("./../config/multerConfig");
 
 const nameTable = "incoming";
@@ -18,6 +19,26 @@ exports.getAllIncomes = catchAsync(async (req, res, next) => {
   } catch (err) {
     console.log(err);
     return next(new AppError("Error retrieving incomes", 500));
+  }
+});
+
+exports.getAllIncomesBySection = catchAsync(async (req, res, next) => {
+  try {
+    const { section_id } = req.params;
+    const incomes = await featuresModel.getIncomingBySection(section_id);
+    if (!incomes) {
+      return next(new AppError("No data found for that section", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      length: incomes.length,
+      data: {
+        incomes,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return next(new AppError("Error retrieving data by section", 500));
   }
 });
 

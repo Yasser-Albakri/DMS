@@ -13,6 +13,10 @@ router
   .get(authController.protect, incomingController.getAllIncomesInfo);
 
 router
+  .route("/section/:section_id")
+  .get(authController.protect, incomingController.getAllIncomesBySection);
+
+router
   .route("/:id")
   .get(authController.protect, incomingController.getIncome)
   .patch(authController.protect, incomingController.updateIncome)

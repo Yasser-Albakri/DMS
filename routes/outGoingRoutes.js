@@ -13,6 +13,10 @@ router
   .get(authController.protect, outgoingController.getAllOutgoingInfo);
 
 router
+  .route("/section/:section_id")
+  .get(authController.protect, outgoingController.getAllOutgoingBySection);
+
+router
   .route("/:id")
   .get(outgoingController.getOutgoing)
   .patch(authController.protect, outgoingController.updateOutgoing)
