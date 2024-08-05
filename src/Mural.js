@@ -25,7 +25,7 @@ export default function Mural() {
         }
         const result = await response.json();
         setRenewal(result.data.renewal);
-        console.log(result);
+        // console.log(result);
         // console.log(result);
       } catch (error) {
         console.error(error);
@@ -109,9 +109,12 @@ export default function Mural() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:4000/generateQR/${Id}`, {
-          headers: { Authorization: `Bearer ${userToken}` },
-        });
+        const response = await fetch(
+          `http://127.0.0.1:4000/generateQR/${renewal.map((i) => i.permit_id)}`,
+          {
+            headers: { Authorization: `Bearer ${userToken}` },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch book");
         }
@@ -125,7 +128,7 @@ export default function Mural() {
       }
     };
     fetchBook();
-  }, [Id, userToken]);
+  }, [renewal, userToken]);
 
   return (
     <div className="Mural step" id="content">
@@ -152,7 +155,7 @@ export default function Mural() {
           ? "تجديد اجازة"
           : "منح اجازة"}
       </h3>
-      {console.log(renewal.map((i) => i.topic))}
+      {/* {console.log(renewal.map((i) => i.topic))} */}
       <h3 className="center">رخصة عمل مؤقتة</h3>
       <h4 className="center">
         استنادا الى الصلاحية المخولة لنا بموجب احكام قانون تأسيس المؤسسات الصحية
