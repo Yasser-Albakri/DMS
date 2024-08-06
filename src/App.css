@@ -316,6 +316,7 @@ body:has(.cardInfo) {
 
 .center {
   text-align: center;
+  margin: 5px;
 }
 
 .personalInformation,

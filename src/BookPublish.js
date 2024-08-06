@@ -80,7 +80,9 @@ const BookPublish = ({ book }) => {
   const renderRenew = () => {
     if (!Array.isArray(renewal)) return null;
 
-    const filteredAtta = renewal.filter((item) => item.inc_id === bookData.id);
+    const filteredAtta = renewal.filter(
+      (item) => item.permit_id.toString() === Id
+    );
 
     return filteredAtta.map((item) => {
       // const filePath =
@@ -124,6 +126,7 @@ const BookPublish = ({ book }) => {
     });
   };
   // console.log(renderRenew());
+  // console.log(Id);
 
   return (
     <div className="book-container">

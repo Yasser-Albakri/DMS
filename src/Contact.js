@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import FetchCard from "./FetchData/FrtchCard";
-import { useNavigate } from "react-router-dom";
 
 export default function Contact({
   searchTerm,
@@ -38,16 +37,19 @@ export default function Contact({
   const [lenBoIn, setLenBoIn] = useState([]);
   const [lenBoUt, setLenBoUt] = useState([]);
   const [allDoc, setAllDoc] = useState([]);
+  const [user, setUser] = useState([]);
+  const [userCard, setUserCard] = useState([]);
+  const [userOutgoing, setUserOutgoing] = useState([]);
+  const [userIncome, setUserIncome] = useState([]);
 
   const loc = useLocation();
-  const userId = localStorage.getItem("userId");
-  const userRole = localStorage.getItem("userRole");
   const userToken = localStorage.getItem("userToken");
-  // console.log(userId);
-  // console.log(userRole);
 
   useEffect(() => {
-    if (loc.pathname === "/BookReceived" || loc.pathname === "/Reports") {
+    if (
+      (loc.pathname === "/BookReceived" && user.section_id === null) ||
+      (loc.pathname === "/Reports" && user.section_id === null)
+    ) {
       const fetchIncom = async () => {
         try {
           const response = await fetch(`http://127.0.0.1:4000/income`, {
@@ -71,13 +73,13 @@ export default function Contact({
       };
       fetchIncom();
     }
-  }, [loc.pathname, userToken]);
+  }, [loc.pathname, userToken, user]);
 
   useEffect(() => {
     if (
-      loc.pathname === "/PublishedBook" ||
-      loc.pathname === "/Vacations" ||
-      loc.pathname === "/Reports"
+      (loc.pathname === "/PublishedBook" && user.section_id === null) ||
+      (loc.pathname === "/Vacations" && user.section_id === null) ||
+      (loc.pathname === "/Reports" && user.section_id === null)
     ) {
       const fetchOutgoing = async () => {
         try {
@@ -102,13 +104,12 @@ export default function Contact({
       };
       fetchOutgoing();
     }
-  }, [loc.pathname, userToken]);
+  }, [loc.pathname, userToken, user]);
 
   useEffect(() => {
     if (
-      loc.pathname === "/Cards" ||
-      loc.pathname === "/Home" ||
-      loc.pathname === "/Vacations"
+      (loc.pathname === "/Cards" && user.section_id === null) ||
+      (loc.pathname === "/Home" && user.section_id === null)
     ) {
       const fetchCards = async () => {
         try {
@@ -151,7 +152,7 @@ export default function Contact({
 
       fetchCards();
     }
-  }, [loc.pathname, userToken]);
+  }, [loc.pathname, userToken, user]);
 
   // useEffect(() => {
   //   const fetchSection = async () => {
@@ -204,44 +205,189 @@ export default function Contact({
   }, [id, loc.pathname, userToken]);
 
   useEffect(() => {
-    const fetchgeneral = async () => {
+    if (loc.pathname !== "/Vacations") {
+      const fetchgeneral = async () => {
+        try {
+          const response = await fetch("http://127.0.0.1:4000/general", {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
+          const result = await response.json();
+          setAllBook(result.data.cards[0].result);
+          setAllNote(result.data.cards[3].result);
+          setBookIn(result.data.cards[2].result);
+          setBookOut(result.data.cards[1].result);
+          setRequest(result.data.cards[6].result);
+          setNoteIn(result.data.cards[5].result);
+          setNoteOut(result.data.cards[4].result);
+          setVac(result.data.cards[7].result);
+          // console.log(result);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchgeneral();
+    }
+  }, [userToken, loc]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:4000/general", {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
         });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
         const result = await response.json();
-        setAllBook(result.data.cards[0].result);
-        setAllNote(result.data.cards[3].result);
-        setBookIn(result.data.cards[2].result);
-        setBookOut(result.data.cards[1].result);
-        setRequest(result.data.cards[6].result);
-        setNoteIn(result.data.cards[5].result);
-        setNoteOut(result.data.cards[4].result);
-        setVac(result.data.cards[7].result);
+        setUser(result.data.user);
         // console.log(result);
+        // console.log(result.data.outgoing);
       } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
+        console.error(error);
       }
     };
-    fetchgeneral();
+    fetchUser();
   }, [userToken]);
+
+  useEffect(() => {
+    if (
+      (loc.pathname === "/Cards" && user.section_id !== null) ||
+      (loc.pathname === "/Home" && user.section_id !== null)
+    ) {
+      const fetchUserCards = async () => {
+        if (user && user.section_id) {
+          try {
+            const response = await fetch(
+              `http://127.0.0.1:4000/cards/section/${user.section_id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `Network response was not ok: ${response.statusText}`
+              );
+            }
+
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+              const text = await response.text();
+              throw new Error(
+                `Expected JSON, got ${contentType}. Response: ${text}`
+              );
+            }
+
+            const result = await response.json();
+            if (result.data && result.data.cards) {
+              setUserCard(result.data.cards);
+              // setLengthCard(result.length);
+            } else {
+              throw new Error("Invalid response structure");
+            }
+
+            // console.log(result);
+          } catch (error) {
+            console.error("Fetch error:", error);
+            setError(error);
+          } finally {
+            setLoading(false);
+          }
+        }
+      };
+
+      fetchUserCards();
+    }
+  }, [loc.pathname, userToken, user]);
+
+  useEffect(() => {
+    const fetchUserOutgoing = async () => {
+      if (
+        (loc.pathname === "/PublishedBook" && user.section_id !== null) ||
+        (loc.pathname === "/Vacations" && user.section_id !== null) ||
+        (loc.pathname === "/Reports" && user.section_id !== null)
+      ) {
+        if (user && user.section_id) {
+          try {
+            const response = await fetch(
+              `http://127.0.0.1:4000/outgoing/section/${user.section_id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const result = await response.json();
+            setUserOutgoing(result.data.outgoing);
+            // setLenBoUt(result.length);
+            // console.log(result);
+            // console.log(result.data.outgoing);
+          } catch (error) {
+            setError(error);
+          } finally {
+            setLoading(false);
+          }
+        }
+      }
+    };
+    fetchUserOutgoing();
+  }, [loc.pathname, userToken, user]);
+
+  useEffect(() => {
+    if (
+      (loc.pathname === "/BookReceived" && user.section_id !== null) ||
+      (loc.pathname === "/Reports" && user.section_id !== null)
+    ) {
+      const fetchUserIncom = async () => {
+        if (user && user.section_id) {
+          try {
+            const response = await fetch(
+              `http://127.0.0.1:4000/income/section/${user.section_id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const result = await response.json();
+            setUserIncome(result.data.incomes);
+            // setLenBoIn(result.length);
+            // console.log(result.data.incomes);
+            // console.log(result.data);
+          } catch (error) {
+            setError(error);
+          } finally {
+            setLoading(false);
+          }
+        }
+      };
+      fetchUserIncom();
+    }
+  }, [loc.pathname, userToken, user]);
 
   // useEffect(() => {
   //   const fetchgeneralAll = async () => {
   //     try {
-  //       const response = await fetch("http://127.0.0.1:4000/general", {
-  //         method: "POST",
+  //       const response = await fetch("http://127.0.0.1:4000/get/me", {
   //         headers: {
   //           Authorization: `Bearer ${userToken}`,
   //         },
   //       });
   //       const result = await response.json();
-  //       setAllDoc(result.data.cards);
-  //       console.log(result.data.cards);
+  //       setUser(result.data.cards);
+  //       console.log(result.data);
   //       console.log(result);
   //     } catch (error) {
   //       setError(error);
@@ -349,11 +495,10 @@ export default function Contact({
     const filteredOutgoing = outgoing.filter((outgoingItem) =>
       filterCard.some((card) => outgoingItem.account_id === card.id)
     );
-    console.log(filterCard);
-    console.log(filteredOutgoing);
 
-    const filteredOutVaca = outgoing.filter((outgoing) => outgoing.type === 3);
-    console.log(filteredOutVaca);
+    const filteredOutVaca = outgoing.filter(
+      (outgoing) => Number(outgoing.type) === 3
+    );
 
     return filteredOutVaca.map((outgoing) => (
       <tr className="rendVac" key={outgoing.id}>
@@ -373,6 +518,92 @@ export default function Contact({
     ));
   };
 
+  //render user permissions
+  const renderUserCards = () => {
+    if (!Array.isArray(userCard) || userCard.length === 0)
+      return <p>No cards available.</p>;
+    return userCard.map((card) => (
+      <tr className="card" key={card.id}>
+        <Link
+          to={`/Card/${card.id}`}
+          style={{
+            textDecoration: "none",
+            margin: "5px",
+            padding: "10px",
+          }}
+        >
+          <td>{card.id}</td>
+          <td>{card.fullname}</td>
+          <td>{card.company_name}</td>
+          <td>{card.renewal}</td>
+        </Link>
+      </tr>
+    ));
+  };
+
+  const renderUserOutgoing = () => {
+    if (!Array.isArray(userOutgoing)) return null;
+    return userOutgoing.map((outgoing) => (
+      <tr key={outgoing.id}>
+        <Link
+          to={`/BookPublish/${outgoing.id}`}
+          style={{
+            textDecoration: "none",
+            margin: "5px",
+            padding: "10px",
+          }}
+        >
+          <td>{outgoing.document_number}</td>
+          <td>{outgoing.subject}</td>
+        </Link>
+      </tr>
+    ));
+  };
+
+  const renderUserIncom = () => {
+    if (!Array.isArray(userIncome)) return null;
+    return userIncome.map((Incom) => (
+      <tr key={Incom.id}>
+        <Link
+          to={`/BookRec/${Incom.id}`}
+          style={{
+            textDecoration: "none",
+            margin: "5px",
+            padding: "10px",
+          }}
+        >
+          <td>{Incom.book_number}</td>
+          <td>{Incom.topic}</td>
+        </Link>
+      </tr>
+    ));
+  };
+
+  const renderUserVaca = () => {
+    const filteredOutVaca = userOutgoing.filter(
+      (outgoing) => outgoing.type === 3
+    );
+    // console.log(filteredOutVaca);
+
+    return filteredOutVaca.map((outgoing) => (
+      <tr className="rendVac" key={outgoing.id}>
+        <Link
+          to={`/BookPublish/${outgoing.id}`}
+          style={{
+            textDecoration: "none",
+            margin: "5px",
+            padding: "10px",
+          }}
+        >
+          <td>{outgoing.document_number}</td>
+          <td>{outgoing.subject}</td>
+          <td>{outgoing.leave_status}</td>
+        </Link>
+      </tr>
+    ));
+  };
+
+  // render search
   const renderSearch = () => {
     if (searchTerm === "") {
       return renderCards();
@@ -408,11 +639,82 @@ export default function Contact({
     }
   };
 
+  const renderUserSearch = () => {
+    if (searchTerm === "") {
+      return renderCards();
+    } else {
+      const filteredCards = userCard.filter(
+        (card) =>
+          (card.fullname &&
+            card.fullname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (card.company_name &&
+            card.company_name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (card.id && card.id.toString().includes(searchTerm))
+      );
+
+      return filteredCards.map((card) => (
+        <tr className="card" key={card.id}>
+          <Link
+            to={`/Card/${card.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{card.id}</td>
+            <td>{card.fullname}</td>
+            <td>{card.company_name}</td>
+            <td>{card.renewal}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
   const renderSearchIncom = () => {
     if (searchTerm === "") {
       return renderIncom();
     } else {
       const filteredIncom = Income.filter(
+        (Income) =>
+          (Income.topic &&
+            Income.topic.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (Income.section &&
+            Income.section.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (Income.issuing_authority &&
+            Income.issuing_authority
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (Income.book_number &&
+            Income.book_number.toString().includes(searchTerm))
+      );
+
+      return filteredIncom.map((Income) => (
+        <tr key={Income.id}>
+          <Link
+            to={`/BookRec/${Income.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{Income.book_number}</td>
+            <td>{Income.topic}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
+  const renderUserSearchIncom = () => {
+    if (searchTerm === "") {
+      return renderUserIncom();
+    } else {
+      const filteredIncom = userIncome.filter(
         (Income) =>
           (Income.topic &&
             Income.topic.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -484,11 +786,96 @@ export default function Contact({
     }
   };
 
+  const renderUserSearchOutgoing = () => {
+    if (searchTerm === "") {
+      return renderOutgoing();
+    } else {
+      const filteredOutgoing = userOutgoing.filter(
+        (outgoing) =>
+          (outgoing.addressed_entity &&
+            outgoing.addressed_entity
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.subject &&
+            outgoing.subject
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.executing_uthority &&
+            outgoing.executing_uthority
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.document_number &&
+            outgoing.document_number.toString().includes(searchTerm))
+      );
+
+      return filteredOutgoing.map((outgoing) => (
+        <tr key={outgoing.id}>
+          <Link
+            to={`/BookPublish/${outgoing.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{outgoing.document_number}</td>
+            <td>{outgoing.subject}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
   const renderSearchVac = () => {
     if (searchTerm === "") {
       return renderVaca();
     } else {
       const filteredOutgoing = outgoing.filter(
+        (outgoing) =>
+          (outgoing.addressed_entity &&
+            outgoing.addressed_entity
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.subject &&
+            outgoing.subject
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.executing_uthority &&
+            outgoing.executing_uthority
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (outgoing.document_number &&
+            outgoing.document_number.toString().includes(searchTerm))
+      );
+
+      const filteredOutVaca = filteredOutgoing.filter(
+        (outgoing) => outgoing.type === 3
+      );
+
+      return filteredOutVaca.map((outgoing) => (
+        <tr className="rendVac" key={outgoing.id}>
+          <Link
+            to={`/BookPublish/${outgoing.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{outgoing.document_number}</td>
+            <td>{outgoing.subject}</td>
+            <td>{outgoing.executing_uthority}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
+  const renderUserSearchVac = () => {
+    if (searchTerm === "") {
+      return renderVaca();
+    } else {
+      const filteredOutgoing = userOutgoing.filter(
         (outgoing) =>
           (outgoing.addressed_entity &&
             outgoing.addressed_entity
@@ -699,6 +1086,259 @@ export default function Contact({
     }
   };
 
+  const renderUserSearchIncomReports = () => {
+    if (
+      from === "" &&
+      to === "" &&
+      topicBook === "" &&
+      numberBook === "" &&
+      dateBook === "" &&
+      sourceBook === ""
+    ) {
+      return <h3>{"الرجاء البحث اولا"}</h3>;
+    } else {
+      let filteredIncom = userIncome;
+
+      if (topicBook !== "") {
+        filteredIncom = filteredIncom.filter(
+          (income) =>
+            income.topic &&
+            income.topic.toLowerCase().includes(topicBook.toLowerCase())
+        );
+      }
+
+      if (dateBook !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          // console.log("Comparing dates:", income.book_date, dateBook);
+          return (
+            income.book_date &&
+            income.book_date
+              .toLowerCase()
+              .replace(/-/g, "/")
+              .includes(dateBook.toLowerCase().replace(/-/g, "/"))
+          );
+        });
+      }
+
+      if (sourceBook !== "") {
+        filteredIncom = filteredIncom.filter(
+          (income) =>
+            income.issuing_authority &&
+            income.issuing_authority
+              .toLowerCase()
+              .includes(sourceBook.toLowerCase())
+        );
+      }
+
+      if (numberBook !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          // console.log("Comparing numbers:", income.book_number, numberBook);
+          return (
+            income.book_number &&
+            income.book_number.toString().includes(numberBook)
+          );
+        });
+      }
+      if (from !== "" && to !== "") {
+        filteredIncom = filteredIncom.filter((income) => {
+          const incomeDate = new Date(income.create_at);
+          const fromData = new Date(from);
+          const toData = new Date(to);
+          // console.log("Checking date range:", incomeDate, fromData, toData);
+          return incomeDate >= fromData && incomeDate <= toData;
+        });
+      }
+
+      // console.log("Filtered Income: ", filteredIncom);
+
+      return filteredIncom.map((income) => (
+        <tr key={income.id}>
+          <Link
+            to={`/BookRec/${income.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{income.book_number}</td>
+            <td>{income.topic}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
+  const renderUserSearchOutgoingReports = () => {
+    if (
+      from === "" &&
+      to === "" &&
+      topicBook === "" &&
+      numberBook === "" &&
+      dateBook === "" &&
+      sourceBook === ""
+    ) {
+      return;
+    } else {
+      let filteredOutgoing = userOutgoing;
+
+      if (topicBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter(
+          (outgoing) =>
+            outgoing.subject &&
+            outgoing.subject.toLowerCase().includes(topicBook.toLowerCase())
+        );
+      }
+
+      if (dateBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          // console.log("Comparing dates:", outgoing.document_date, dateBook);
+          return (
+            outgoing.document_date &&
+            outgoing.document_date
+              .toLowerCase()
+              .replace(/-/g, "/")
+              .includes(dateBook.toLowerCase().replace(/-/g, "/"))
+          );
+        });
+      }
+
+      if (sourceBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter(
+          (outgoing) =>
+            outgoing.addressed_entity &&
+            outgoing.addressed_entity
+              .toLowerCase()
+              .includes(sourceBook.toLowerCase())
+        );
+      }
+
+      if (numberBook !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          // console.log(
+          //   "Comparing numbers:",
+          //   outgoing.document_number,
+          //   numberBook
+          // );
+          return (
+            outgoing.document_number &&
+            outgoing.document_number.toString().includes(numberBook)
+          );
+        });
+      }
+      if (from !== "" && to !== "") {
+        filteredOutgoing = filteredOutgoing.filter((outgoing) => {
+          const outgoingDate = new Date(outgoing.create_at);
+          const fromData = new Date(from);
+          const toData = new Date(to);
+          // console.log("Checking date range:", outgoingDate, fromData, toData);
+          return outgoingDate >= fromData && outgoingDate <= toData;
+        });
+      }
+
+      // console.log("Filtered outgoing: ", filteredOutgoing);
+
+      return filteredOutgoing.map((outgoing) => (
+        <tr key={outgoing.id}>
+          <Link
+            to={`/BookRec/${outgoing.id}`}
+            style={{
+              textDecoration: "none",
+              margin: "5px",
+              padding: "10px",
+            }}
+          >
+            <td>{outgoing.document_number}</td>
+            <td>{outgoing.subject}</td>
+          </Link>
+        </tr>
+      ));
+    }
+  };
+
+  //select permisions
+  const selectRenderCards = () => {
+    if (user.section_id !== null) {
+      if (searchTerm === "") {
+        return renderUserCards();
+      } else {
+        return renderUserSearch();
+      }
+    } /*(user.role === "0" || user.role === "1")*/ else {
+      if (searchTerm === "") {
+        return renderCards();
+      } else {
+        return renderSearch();
+      }
+    }
+  };
+
+  const selectRenderOutgoing = () => {
+    if (user.section_id !== null) {
+      if (searchTerm === "") {
+        return renderUserOutgoing();
+      } else {
+        return renderUserSearchOutgoing();
+      }
+    } /*(user.role === "0" || user.role === "1")*/ else {
+      if (searchTerm === "") {
+        return renderOutgoing();
+      } else {
+        return renderSearchOutgoing();
+      }
+    }
+  };
+
+  const selectRenderIncome = () => {
+    if (user.section_id !== null) {
+      if (searchTerm === "") {
+        return renderUserIncom();
+      } else {
+        return renderUserSearchIncom();
+      }
+    } /*(user.role === "0" || user.role === "1")*/ else {
+      if (searchTerm === "") {
+        return renderIncom();
+      } else {
+        return renderSearchIncom();
+      }
+    }
+  };
+
+  const selectRenderVac = () => {
+    if (user.section_id !== null) {
+      if (searchTerm === "") {
+        return renderUserVaca();
+      } else {
+        return renderUserSearchVac();
+      }
+    } /*(user.role === "0" || user.role === "1")*/ else {
+      if (searchTerm === "") {
+        return renderVaca();
+      } else {
+        return renderSearchVac();
+      }
+    }
+  };
+
+  const selectRenderReports = () => {
+    if (user.section_id !== null) {
+      return (
+        <>
+          {renderUserSearchIncomReports()}
+          {renderUserSearchOutgoingReports()}
+        </>
+      );
+    } else {
+      return (
+        <>
+          {renderSearchIncomReports()}
+          {renderSearchOutgoingReports()}
+        </>
+      );
+    }
+  };
+
   const renderContent = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -746,16 +1386,14 @@ export default function Contact({
                 }}
               >
                 <td className="td1">الرقم</td>
-                <td>الموضوع</td>
+                <td>اسم المستثمر</td>
                 <td>اسم المؤسسة</td>
                 <td>التجديد</td>
               </tr>
             </table>
             <hr />
             <table>
-              <tbody>
-                {searchTerm === "" ? renderCards() : renderSearch()}
-              </tbody>
+              <tbody>{selectRenderCards()}</tbody>
             </table>
           </div>
         );
@@ -805,10 +1443,7 @@ export default function Contact({
             </table>
             <hr />
             <table>
-              <tbody>
-                {renderSearchIncomReports()}
-                {renderSearchOutgoingReports()}
-              </tbody>
+              <tbody>{selectRenderReports()}</tbody>
             </table>
           </div>
         );
@@ -841,9 +1476,7 @@ export default function Contact({
             </table>
             <hr />
             <table>
-              <tbody>
-                {searchTerm === "" ? renderCards() : renderSearch()}
-              </tbody>
+              <tbody>{selectRenderCards()}</tbody>
             </table>
           </div>
         );
@@ -868,9 +1501,7 @@ export default function Contact({
             </table>
             <hr />
             <table>
-              <tbody>
-                {searchTerm === "" ? renderVaca() : renderSearchVac()}
-              </tbody>
+              <tbody>{selectRenderVac()}</tbody>
             </table>
           </div>
         );
@@ -911,9 +1542,7 @@ export default function Contact({
             </table>
             <hr />
             <table>
-              <tbody>
-                {searchTerm === "" ? renderIncom() : renderSearchIncom()}
-              </tbody>
+              <tbody>{selectRenderIncome()}</tbody>
             </table>
           </div>
         );
@@ -954,9 +1583,7 @@ export default function Contact({
             </table>
             <hr />
             <table>
-              <tbody>
-                {searchTerm === "" ? renderOutgoing() : renderSearchOutgoing()}
-              </tbody>
+              <tbody>{selectRenderOutgoing()}</tbody>
             </table>
           </div>
         );

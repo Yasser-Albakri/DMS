@@ -59,31 +59,6 @@ export default function RenewalMural() {
   }, [userToken]);
 
   useEffect(() => {
-    const fetchCard = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:4000/cards/${bookData.map(
-            (item) => item.account_id
-          )}`,
-          {
-            headers: { Authorization: `Bearer ${userToken}` },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setCard(result.data.card);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if (bookData.length > 0) {
-      fetchCard();
-    }
-  }, [bookData, userToken]);
-
-  useEffect(() => {
     const fetchBook = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:4000/generateQR/${Id}`, {
@@ -147,9 +122,9 @@ export default function RenewalMural() {
   return (
     <div className="Mural step" id="content">
       <div className="MurInf">
-        <h4>جمهورية العراق</h4>
-        <h4> وزارة الصحة</h4>
-        <h4>قسم القطاع الصحي الخاص</h4>
+        <h4 className="center">جمهورية العراق</h4>
+        <h4 className="center"> وزارة الصحة</h4>
+        <h4 className="center">قسم القطاع الصحي الخاص</h4>
         <form>
           <h4>
             العدد :
@@ -187,60 +162,13 @@ export default function RenewalMural() {
       <h3 className="center">تجديد اجازة</h3>
       <h3 className="center">رخصة عمل مؤقتة</h3>
       <h4 className="center">
-        استنادا الى الصلاحية المخولة لنا بموجب احكام قانون تأسيس المؤسسات الصحية
-        الخاصة الاتحادي المرقم (25) لسنة 2015 تقرر :
-      </h4>
-      <h4
-        className="center"
-        style={
-          card.map((item) => item.section).toString() === "الاجازات"
-            ? { display: "block" }
-            : { display: "none" }
-        }
-      >
-        <span>واشارة الى موافقة اللجان الاستشارية المركزية تقرر:-</span>
-      </h4>
-      <h4
-        className="center"
-        style={{ maxWidth: "800px", textWrap: "wrap", margin: "auto" }}
-      >
-        تجديد رخصة مؤقتة للدكتور (
-        {card.map((item) => (
-          <span key={item.id}>{item.fullname}</span>
-        ))}
-        ) اخصائي{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.job_position}</span>
-        ))}{" "}
-        /{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.nationality}</span>
-        ))}{" "}
-        الجنسية للعمل في (
-        {card.map((item) => (
-          <span key={item.id}>{item.company_name}</span>
-        ))}
-        /
-        {card.map((item) => (
-          <span key={item.id}>{item.governorate}</span>
-        ))}
-        ) وخلال فترة الاقامة التي تمنح له
+        <textarea></textarea>
       </h4>
       <div className="MurInf2">
-        <h4>الصيدلاني</h4>
-        <h4>عباس بدر الفرطوسي</h4>
-        <h4>مدير قسم القطاع الصحي الخاص</h4>
-        <h4>
-          <span></span>
-        </h4>
+        <textarea></textarea>
       </div>
       <div className="MurInf1">
-        <h4>الدكتور</h4>
-        <h4>هاني موسى العقابي</h4>
-        <h4>الوكيل الفني لوزارة الصحة وكالة</h4>
-        <h4>
-          <span></span>
-        </h4>
+        <textarea></textarea>
       </div>
       <button
         onClick={submit}

@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
 import axios from "axios";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
 
 export default function AddMural() {
   const params = useParams();
@@ -40,6 +38,46 @@ export default function AddMural() {
 
   useEffect(() => {
     const fetchBook = async () => {
+      if (bookData && bookData.map((i) => i.account_id)) {
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:4000/cards/${bookData.map((i) => i.account_id)}`,
+            {
+              headers: { Authorization: `Bearer ${userToken}` },
+            }
+          );
+          if (!response.ok) {
+            throw new Error(
+              `Network response was not ok: ${response.statusText}`
+            );
+          }
+
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            throw new Error(
+              `Expected JSON, got ${contentType}. Response: ${text}`
+            );
+          }
+
+          const result = await response.json();
+          if (result.data && result.data.card) {
+            setCard(result.data.card[0]);
+          } else {
+            throw new Error("Invalid response structure");
+          }
+
+          // console.log(result);
+        } catch (error) {
+          console.error("Fetch error:", error);
+        }
+      }
+    };
+    fetchBook();
+  }, [Id, userToken, bookData]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:4000/users/me`, {
           headers: { Authorization: `Bearer ${userToken}` },
@@ -57,31 +95,6 @@ export default function AddMural() {
     };
     fetchBook();
   }, [userToken]);
-
-  useEffect(() => {
-    const fetchCard = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:4000/cards/${bookData.map(
-            (item) => item.account_id
-          )}`,
-          {
-            headers: { Authorization: `Bearer ${userToken}` },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setCard(result.data.card);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if (bookData.length > 0) {
-      fetchCard();
-    }
-  }, [bookData, userToken]);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -108,73 +121,64 @@ export default function AddMural() {
   // console.log(user_id.id);
 
   const submit = () => {
-    const content = document.getElementById("content");
+    // const content = document.getElementById("content");
 
-    html2canvas(content).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, "PNG", 0, 0);
-      const pdfBlob = pdf.output("blob");
+    // html2canvas(content).then((canvas) => {
+    //   const imgData = canvas.toDataURL("image/png");
+    //   const pdf = new jsPDF();
+    //   pdf.addImage(imgData, "PNG", 0, 0);
+    //   const pdfBlob = pdf.output("blob");
 
-      // Send the PDF to the server
-      const formData = new FormData();
-      formData.append("topic", "منح جدارية");
-      formData.append("number", Number(number));
-      formData.append("permit_id", Number(Id));
-      formData.append("user_id", Number(user_id.id));
-      formData.append("date", date);
+    // Send the PDF to the server
+    const formData = new FormData();
+    formData.append("topic", "منح جدارية");
+    formData.append("number", Number(number));
+    formData.append("permit_id", Number(Id));
+    formData.append("user_id", Number(user_id.id));
+    formData.append("date", date);
 
-      axios
-        .post("http://127.0.0.1:4000/renewal", formData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-        })
-        .then((response) => {
-          alert("PDF sent to the server successfully!");
-          // console.log(number);
-          // console.log(formData);
-          console.log(response);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          alert("An error occurred while sending the PDF to the server.");
-        });
-    });
+    axios
+      .post("http://127.0.0.1:4000/renewal", formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then((response) => {
+        alert("تمت اضافة الجدارية بنجاح");
+        // console.log(number);
+        // console.log(formData);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while sending the PDF to the server.");
+      });
   };
 
   return (
     <div className="Mural step" id="content">
       <div className="MurInf">
-        <h4>جمهورية العراق</h4>
-        <h4> وزارة الصحة</h4>
-        <h4>قسم القطاع الصحي الخاص</h4>
+        <h4 className="center">جمهورية العراق</h4>
+        <h4 className="center"> وزارة الصحة</h4>
+        <h4 className="center">قسم القطاع الصحي الخاص</h4>
         <form>
-          <h4>
-            العدد :
-            <span>
-              <input
-                type="text"
-                name="number"
-                id="number"
-                onChange={(e) => setNumber(e.target.value)}
-                style={{ display: "inline-block", backgroundColor: "#869dce" }}
-              />
-            </span>
-          </h4>
-          <h4>
-            التاريخ :
-            <span>
-              <input
-                type="date"
-                name="date"
-                id="date"
-                onChange={(e) => setDate(e.target.value)}
-                style={{ display: "inline-block", backgroundColor: "#869dce" }}
-              />
-            </span>
-          </h4>
+          العدد :
+          <input
+            type="text"
+            name="number"
+            id="number"
+            onChange={(e) => setNumber(e.target.value)}
+            style={{ backgroundColor: "#869dce" }}
+          />
+          <label htmlFor="date">التاريخ</label>
+          <input
+            type="date"
+            name="date"
+            id="date"
+            onChange={(e) => setDate(e.target.value)}
+            style={{ backgroundColor: "#869dce" }}
+          />
         </form>
       </div>
       <div className="MurInf1">
@@ -184,65 +188,46 @@ export default function AddMural() {
         <h4>بة شي كة رتي ندورسى نايبة ت</h4>
       </div>
       <img className="Qr" alt="Qr Code" src={qr}></img>
-      <h3 className="center">منح اجازة</h3>
-      <h3 className="center">رخصة عمل مؤقتة</h3>
-      <h4 className="center">
-        استنادا الى الصلاحية المخولة لنا بموجب احكام قانون تأسيس المؤسسات الصحية
-        الخاصة الاتحادي المرقم (25) لسنة 2015 تقرر :
-      </h4>
-      <h4
+      <h3
         className="center"
         style={
-          card.map((item) => item.section).toString() === "الاجازات"
-            ? { display: "block" }
-            : { display: "none" }
+          card.section_id === 1 ? { display: "block" } : { display: "none" }
         }
       >
-        {console.log(card.map((item) => item.section))}
-        {console.log("الاجازات")}
-        <span>واشارة الى موافقة اللجان الاستشارية المركزية تقرر:-</span>
-      </h4>
-      <h4
+        شهادة جدارية
+      </h3>
+      <h3 className="center">
+        الاسم/
+        <input
+          type="text"
+          style={{
+            display: "inline",
+            width: "300px",
+            backgroundColor: "#869dce",
+          }}
+        />
+      </h3>
+      <h3 className="center">
+        <span>م/</span>منح اجازة
+      </h3>
+      <h3
         className="center"
-        style={{ maxWidth: "800px", textWrap: "wrap", margin: "auto" }}
+        style={
+          card.section_id === 1 || card.section_id === 3
+            ? { display: "none" }
+            : { display: "block" }
+        }
       >
-        منح رخصة مؤقتة للدكتور (
-        {card.map((item) => (
-          <span key={item.id}>{item.fullname}</span>
-        ))}
-        ) اخصائي{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.job_position}</span>
-        ))}{" "}
-        /{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.nationality}</span>
-        ))}{" "}
-        الجنسية للعمل في (
-        {card.map((item) => (
-          <span key={item.id}>{item.company_name}</span>
-        ))}
-        /
-        {card.map((item) => (
-          <span key={item.id}>{item.governorate}</span>
-        ))}
-        ) وخلال فترة الاقامة التي تمنح له
+        رخصة عمل مؤقتة
+      </h3>
+      <h4 className="center">
+        <textarea></textarea>
       </h4>
       <div className="MurInf2">
-        <h4>الصيدلاني</h4>
-        <h4>عباس بدر الفرطوسي</h4>
-        <h4>مدير قسم القطاع الصحي الخاص</h4>
-        <h4>
-          <span></span>
-        </h4>
+        <textarea></textarea>
       </div>
       <div className="MurInf1">
-        <h4>الدكتور</h4>
-        <h4>هاني موسى العقابي</h4>
-        <h4>الوكيل الفني لوزارة الصحة وكالة</h4>
-        <h4>
-          <span></span>
-        </h4>
+        <textarea></textarea>
       </div>
       <button
         onClick={submit}

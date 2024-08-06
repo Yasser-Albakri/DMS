@@ -335,14 +335,13 @@ div .btn-secondary {
 
 .MurInf h4 {
   margin: 5px;
-  text-align: center;
 }
 
 .MurInf1 {
   display: inline-block;
   position: absolute;
-  left: 120px;
-  margin: 20px 10px;
+  left: 6%;
+  margin: 10px 10px;
 }
 
 .MurInf1 h4 {
@@ -353,7 +352,6 @@ div .btn-secondary {
 .MurInf2 {
   display: inline-block;
   margin: 5px 120px;
-  margin-top: 30px;
 }
 
 .MurInf2 h4 {
@@ -413,11 +411,25 @@ input[type="submit"]:active {
 
 .Mural {
   position: relative;
-  margin-top: 40px;
+  margin-top: 70px;
 }
 
 .Qr {
   position: absolute;
   left: 10%;
-  top: 25%;
+  top: 20%;
+}
+
+.center textarea {
+  width: 800px;
+  height: 200px;
+}
+
+textarea {
+  height: 100px;
+  width: 300px;
+}
+
+.step .MurInf form input {
+  padding: 5px;
 }
