@@ -1,6 +1,7 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const paramsModel = require("./../models/permitsModel");
+const featuresModel = require("./../models/featuresModel");
 
 exports.getAllParams = catchAsync(async (req, res, next) => {
   try {
@@ -21,10 +22,10 @@ exports.getAllParams = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.getAllIncomesBySection = catchAsync(async (req, res, next) => {
+exports.getAllPermitsBySection = catchAsync(async (req, res, next) => {
   try {
     const { section_id } = req.params;
-    const permits = await featuresModel.getAllIncomesBySection(section_id);
+    const permits = await featuresModel.getPermitsBySection(section_id);
     if (!permits) {
       return next(new AppError("No data found for that section", 404));
     }

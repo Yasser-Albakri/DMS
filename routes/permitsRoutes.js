@@ -7,7 +7,7 @@ router.route("/").get(permitsController.getAllParams);
 
 router
   .route("/section/:section_id")
-  .get(authController.protect, permitsController.getAllIncomesBySection);
+  .get(authController.protect, permitsController.getAllPermitsBySection);
 
 router
   .route("/:id")
