@@ -83,11 +83,11 @@ exports.getRenwalByPermit = async (id) => {
 
 exports.createRenewal = async (data) => {
   try {
-    const { permit_id, date, topic, user_id, number } = data;
+    const { permit_id, date, topic, user_id, number,body,type } = data;
 
     const result = await client.query(
-      `INSERT INTO  renewals (permit_id, date, topic,user_id, number) VALUES ($1, $2, $3, $4,$5) RETURNING *`,
-      [permit_id, date, topic, user_id, number]
+      `INSERT INTO  renewals (permit_id, date, topic,user_id, number,body,type) VALUES ($1, $2, $3, $4,$5,$6,$7) RETURNING *`,
+      [permit_id, date, topic, user_id, number,body,type]
     );
     return result.rows;
   } catch (err) {
