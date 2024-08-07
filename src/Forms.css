@@ -330,7 +330,7 @@ div .btn-secondary {
 
 .MurInf {
   display: inline-block;
-  margin: 20px 120px;
+  margin: 20px 50px;
 }
 
 .MurInf h4 {
@@ -340,7 +340,7 @@ div .btn-secondary {
 .MurInf1 {
   display: inline-block;
   position: absolute;
-  left: 6%;
+  left: 4%;
   margin: 10px 10px;
 }
 
@@ -351,7 +351,7 @@ div .btn-secondary {
 
 .MurInf2 {
   display: inline-block;
-  margin: 5px 120px;
+  margin: 5px 50px;
 }
 
 .MurInf2 h4 {

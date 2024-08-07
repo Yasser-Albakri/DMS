@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
 
@@ -10,8 +9,7 @@ export default function Mural() {
 
   const [bookData, setBookData] = useState([]);
   const [card, setCard] = useState([]);
-  const [qr, setQr] = useState([]);
-  //   const [user_id, setUser_id] = useState([]);
+  const [qr, setQr] = useState(null);
   const [renewal, setRenewal] = useState([]);
 
   useEffect(() => {
@@ -25,8 +23,7 @@ export default function Mural() {
         }
         const result = await response.json();
         setRenewal(result.data.renewal);
-        // console.log(result);
-        // console.log(result);
+        // console.log("Renewal Data:", result.data.renewal); // Log renewal data
       } catch (error) {
         console.error(error);
       }
@@ -48,34 +45,15 @@ export default function Mural() {
         }
         const result = await response.json();
         setBookData(result.data.outgoing);
-        // console.log(result);
-        // console.log(result.data.outgoing);
+        // console.log("Book Data:", result.data.outgoing); // Log book data
       } catch (error) {
         console.error(error);
       }
     };
-    fetchBook();
+    if (renewal.length > 0) {
+      fetchBook();
+    }
   }, [Id, userToken, renewal]);
-
-  //   useEffect(() => {
-  //     const fetchBook = async () => {
-  //       try {
-  //         const response = await fetch(`http://127.0.0.1:4000/users/me`, {
-  //           headers: { Authorization: `Bearer ${userToken}` },
-  //         });
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch book");
-  //         }
-  //         const result = await response.json();
-  //         setUser_id(result.data.user);
-  //         // console.log(result);
-  //         // console.log(result.data.outgoing);
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     };
-  //     fetchBook();
-  //   }, [userToken]);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -94,6 +72,7 @@ export default function Mural() {
         const result = await response.json();
         if (Array.isArray(result.data.card)) {
           setCard(result.data.card);
+          // console.log("Card Data:", result.data.card); // Log card data
         } else {
           console.error("Expected an array for card data");
         }
@@ -109,8 +88,12 @@ export default function Mural() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        const permit_id = renewal.map((i) => i.permit_id);
+        if (!permit_id) {
+          throw new Error("No book ID provided");
+        }
         const response = await fetch(
-          `http://127.0.0.1:4000/generateQR/${renewal.map((i) => i.permit_id)}`,
+          `http://127.0.0.1:4000/generateQR/${permit_id}`,
           {
             headers: { Authorization: `Bearer ${userToken}` },
           }
@@ -128,14 +111,14 @@ export default function Mural() {
       }
     };
     fetchBook();
-  }, [renewal, userToken]);
+  }, [userToken, renewal]);
 
   return (
     <div className="Mural step" id="content">
       <div className="MurInf">
-        <h4>جمهورية العراق</h4>
-        <h4> وزارة الصحة</h4>
-        <h4>قسم القطاع الصحي الخاص</h4>
+        <h4 className="center">جمهورية العراق</h4>
+        <h4 className="center"> وزارة الصحة</h4>
+        <h4 className="center">قسم القطاع الصحي الخاص</h4>
         <h4>
           العدد :<span>{renewal.map((i) => i.number)}</span>
         </h4>
@@ -149,73 +132,85 @@ export default function Mural() {
         <h4>نووسيكه ى وةزير</h4>
         <h4>بة شي كة رتي ندورسى نايبة ت</h4>
       </div>
-      <img className="Qr" alt="Qr Code" src={qr}></img>
+      <img className="Qr" alt="Qr Code" src={qr} style={{ top: "30%" }}></img>
+      <h3
+        className="center"
+        style={
+          card.map((item) => item.section_id).toString() === "1"
+            ? { display: "block" }
+            : { display: "none" }
+        }
+      >
+        (شهادة جدارية)
+      </h3>
+      <h3
+        className="center"
+        style={
+          card.map((i) => i.section_id).toString() === "1"
+            ? { display: "block" }
+            : { display: "none" }
+        }
+      >
+        الاسم/
+        <h3
+          style={{
+            width: "300px",
+            display: "inline-block",
+            textAlign: "start",
+          }}
+        >
+          {card.map((i) => i.fullname)}
+        </h3>
+      </h3>
       <h3 className="center">
         {renewal.map((i) => i.topic).toString() === "تجديد جدارية"
           ? "تجديد اجازة"
           : "منح اجازة"}
       </h3>
-      {/* {console.log(renewal.map((i) => i.topic))} */}
-      <h3 className="center">رخصة عمل مؤقتة</h3>
-      <h4 className="center">
-        استنادا الى الصلاحية المخولة لنا بموجب احكام قانون تأسيس المؤسسات الصحية
-        الخاصة الاتحادي المرقم (25) لسنة 2015 تقرر :
-      </h4>
-      <h4
+      <h3
         className="center"
         style={
-          card.map((item) => item.section).toString() === "الاجازات"
-            ? { display: "block" }
-            : { display: "none" }
+          card.map((i) => i.section_id).toString() === "1" ||
+          card.map((i) => i.section_id).toString() === "3"
+            ? { display: "none" }
+            : { display: "block" }
         }
       >
-        <span>واشارة الى موافقة اللجان الاستشارية المركزية تقرر:-</span>
-      </h4>
+        رخصة عمل مؤقتة
+      </h3>
       <h4
-        className="center"
-        style={{ maxWidth: "800px", textWrap: "wrap", margin: "auto" }}
+        style={{ maxWidth: "800px", margin: "auto" }}
+        dangerouslySetInnerHTML={{
+          __html: renewal
+            .map((i) => i.body)
+            .join("")
+            .replace(/\n/g, "<br>"),
+        }}
       >
-        <span>
-          {renewal.map((i) => i.topic).toString() === "تجديد جدارية"
-            ? "تجديد"
-            : "منح"}
-        </span>{" "}
-        رخصة مؤقتة للدكتور (
-        {card.map((item) => (
-          <span key={item.id}>{item.fullname}</span>
-        ))}
-        ) اخصائي{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.job_position}</span>
-        ))}{" "}
-        /{" "}
-        {card.map((item) => (
-          <span key={item.id}>{item.nationality}</span>
-        ))}{" "}
-        الجنسية للعمل في (
-        {card.map((item) => (
-          <span key={item.id}>{item.company_name}</span>
-        ))}
-        /
-        {card.map((item) => (
-          <span key={item.id}>{item.governorate}</span>
-        ))}
-        ) وخلال فترة الاقامة التي تمنح له
+        {/* {renewal.map((i) => i.body)} */}
       </h4>
-      <div className="MurInf2">
-        <h4>الصيدلاني</h4>
-        <h4>عباس بدر الفرطوسي</h4>
-        <h4>مدير قسم القطاع الصحي الخاص</h4>
-        <h4>
-          <span></span>
+      <div className="MurInf2" style={{ maxWidth: "250px" }}>
+        <h4
+          dangerouslySetInnerHTML={{
+            __html: renewal
+              .map((i) => i.sign1)
+              .join("")
+              .replace(/\n/g, "<br>"),
+          }}
+        >
+          {/* {renewal.map((i) => i.sign1)} */}
         </h4>
       </div>
-      <div className="MurInf1">
-        <h4>الدكتور</h4>
-        <h4>هاني موسى العقابي</h4>
-        <h4>الوكيل الفني لوزارة الصحة وكالة</h4>
-        <h4>
-          <span></span>
+      <div className="MurInf1" style={{ maxWidth: "250px", marginTop: "80px" }}>
+        <h4
+          dangerouslySetInnerHTML={{
+            __html: renewal
+              .map((i) => i.sign2)
+              .join("")
+              .replace(/\n/g, "<br>"),
+          }}
+        >
+          {/*{renewal.map((i) => i.sign2)}*/}
         </h4>
       </div>
     </div>
