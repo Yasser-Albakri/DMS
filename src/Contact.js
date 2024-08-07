@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import FetchCard from "./FetchData/FrtchCard";
@@ -18,6 +18,7 @@ export default function Contact({
 }) {
   const params = useParams();
   const id = params.id;
+  const isFetching = useRef(false);
 
   const loca = useLocation();
   const [Income, setIncome] = useState([]);
@@ -44,6 +45,26 @@ export default function Contact({
 
   const loc = useLocation();
   const userToken = localStorage.getItem("userToken");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch book");
+        }
+        const result = await response.json();
+        setUser(result.data.user);
+        // console.log(result);
+        // console.log(result.data.outgoing);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUser();
+  }, [userToken]);
 
   useEffect(() => {
     if (
@@ -107,49 +128,52 @@ export default function Contact({
   }, [loc.pathname, userToken, user]);
 
   useEffect(() => {
-    if (
-      (loc.pathname === "/Cards" && user.section_id === null) ||
-      (loc.pathname === "/Home" && user.section_id === null)
-    ) {
-      const fetchCards = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:4000/cards`, {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          });
+    const fetchCards = async () => {
+      try {
+        setLoading(true);
+        isFetching.current = true;
 
-          if (!response.ok) {
-            throw new Error(
-              `Network response was not ok: ${response.statusText}`
-            );
-          }
+        const response = await fetch(`http://127.0.0.1:4000/cards`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
 
-          const contentType = response.headers.get("content-type");
-          if (!contentType || !contentType.includes("application/json")) {
-            const text = await response.text();
-            throw new Error(
-              `Expected JSON, got ${contentType}. Response: ${text}`
-            );
-          }
-
-          const result = await response.json();
-          if (result.data && result.data.cards) {
-            setCards(result.data.cards);
-            setLengthCard(result.length);
-          } else {
-            throw new Error("Invalid response structure");
-          }
-
-          // console.log(result);
-        } catch (error) {
-          console.error("Fetch error:", error);
-          setError(error);
-        } finally {
-          setLoading(false);
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.statusText}`
+          );
         }
-      };
 
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(
+            `Expected JSON, got ${contentType}. Response: ${text}`
+          );
+        }
+
+        const result = await response.json();
+        if (result.data && result.data.cards) {
+          setCards(result.data.cards);
+          setLengthCard(result.length); // Assuming this is the correct length
+        } else {
+          throw new Error("Invalid response structure");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setError(error);
+      } finally {
+        isFetching.current = false;
+        setLoading(false);
+      }
+    };
+
+    if (
+      (loc.pathname === "/Cards" || loc.pathname === "/Home") &&
+      user.section_id === null &&
+      !isFetching.current
+    ) {
       fetchCards();
     }
   }, [loc.pathname, userToken, user]);
@@ -232,26 +256,6 @@ export default function Contact({
       fetchgeneral();
     }
   }, [userToken, loc]);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:4000/users/me`, {
-          headers: { Authorization: `Bearer ${userToken}` },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch book");
-        }
-        const result = await response.json();
-        setUser(result.data.user);
-        // console.log(result);
-        // console.log(result.data.outgoing);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchUser();
-  }, [userToken]);
 
   useEffect(() => {
     if (
