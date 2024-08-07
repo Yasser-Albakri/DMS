@@ -104,7 +104,7 @@ export default function Mural() {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setQr(url);
-        console.log(response);
+        // console.log(response);
         // console.log(response.url);
       } catch (error) {
         console.error(error);
@@ -179,7 +179,6 @@ export default function Mural() {
         رخصة عمل مؤقتة
       </h3>
       <h4
-        className="center"
         style={{ maxWidth: "800px", margin: "auto" }}
         dangerouslySetInnerHTML={{
           __html: renewal
