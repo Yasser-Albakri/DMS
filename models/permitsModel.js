@@ -86,11 +86,12 @@ exports.createRenewal = async (data) => {
     const { permit_id, date, topic, user_id, number,body,sign1,sign2 } = data;
 
     const result = await client.query(
-      `INSERT INTO  renewals (permit_id, date, topic,user_id, number,body,type) VALUES ($1, $2, $3, $4,$5,$6,$7,$8) RETURNING *`,
+      `INSERT INTO  renewals (permit_id, date, topic,user_id, number,body,sign1,sign2) VALUES ($1, $2, $3, $4,$5,$6,$7,$8) RETURNING *`,
       [permit_id, date, topic, user_id, number,body,sign1,sign2]
     );
     return result.rows;
   } catch (err) {
+    console.log("Database error: Unable to create renewal " + err.message,);
     return new AppError(
       "Database error: Unable to create renewal " + err.message,
       500

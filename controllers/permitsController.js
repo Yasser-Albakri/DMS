@@ -139,6 +139,7 @@ exports.createRenewal = catchAsync(async (req, res, next) => {
   try {
     const data = req.body;
     const renewal = await paramsModel.createRenewal(data);
+    
     if (renewal.status === "error") {
       console.log();
       return next(new AppError("Wrong id !", 404));
